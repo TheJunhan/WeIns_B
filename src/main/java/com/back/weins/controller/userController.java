@@ -1,6 +1,7 @@
 package com.back.weins.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Tools.UserAndAvatar;
 import com.back.weins.entity.Avatar;
 import com.back.weins.entity.user;
@@ -56,6 +57,7 @@ public class userController {
         use.setType(7);
         use.setReg_time(time);
         userRep.save(use);
+        if(base64.equals("default")) return 1;
         Avatar avatar = new Avatar();
         avatar.setBookId(use.getUid());
         avatar.setImgBase64(base64);
@@ -72,10 +74,34 @@ public class userController {
         avatarRepository.save(avatar);
         return true;
     }
-//    @Autowired
-//    UserService userService;
-//    @RequestMapping(value="/user/reg", produces="application/json;charset=UTF-8")
-//    public Integer Regist(){
-//
-//    }
+    @RequestMapping(value="/user/login", produces="application/json;charset=UTF-8")
+    public JSONObject Login(String phone, String password){
+        JSONObject object = new JSONObject();
+        if(userRep.check(phone)==1) {
+            object.put("res",false);
+            return object;
+        }
+        user u = userRep.findByPhone(phone);
+        if(!password.equals(u.getPassword())) {
+            object.put("res",false);
+            return object;
+        }
+        Avatar avatar = avatarRepository.findByUid(u.getUid());
+        //System.out.print(avatar);
+        object.put("res", true);
+        object.put("uid", u.getUid());
+        object.put("name", u.getName());
+        //object.put("phone", u.getPhone());
+        object.put("birthday", u.getBirthday());
+        object.put("reg_time", u.getReg_time());
+        object.put("type", u.getType());
+        if(avatar == null) {
+            object.put("base64", "default");
+            return object;
+        }
+        object.put("base64", avatar.getImgBase64());
+        return object;
+    }
+
+
 }
