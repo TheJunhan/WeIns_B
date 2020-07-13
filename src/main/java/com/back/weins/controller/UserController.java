@@ -5,7 +5,9 @@ import com.back.weins.entity.Avatar;
 import com.back.weins.entity.User;
 import com.back.weins.repository.AvatarRepository;
 import com.back.weins.repository.UserRepository;
+import com.back.weins.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
@@ -17,9 +19,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    AvatarRepository avatarRepository;
+    private AvatarRepository avatarRepository;
+
+    @Autowired
+    private UserServiceImpl userService;
 
     private final DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -28,9 +33,16 @@ public class UserController {
         return userRepository.findById(uid).orElse(null);
     }
 
-    @GetMapping(value = "/user/reg", produces = "application/json;charset=UTF-8")
+    @GetMapping(value = "/getOne", produces = "application/json;charset=UTF-8")
+    public User getOne(@RequestParam("id") Integer id) {
+        return userService.getByID(id);
+    }
+
+    @GetMapping(value = "/reg", produces = "application/json;charset=UTF-8")
     public Integer insertUser(String name, Integer sex, String phone, String password, String birthday, String base64) {
-        if(userRepository.check(phone)==0) return 0;
+        if(userRepository.check(phone)==0)
+            return 0;
+
         User use = new User();
         use.setName(name);
         use.setBirthday(birthday);
