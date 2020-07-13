@@ -1,6 +1,6 @@
 package com.back.weins.repository;
 
-import com.back.weins.entity.user;
+import com.back.weins.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class UserRepositoryTest {
     @Autowired
-    private com.back.weins.repository.userRepository userRepository;
+    UserRepository userRepository;
 
     @Test
     void insertOne() {
-        user user = new user();
+        User user = new User();
         user.setUid(3);
         user.setName("ayc");
         user.setBirthday("2001-07-25");
@@ -38,7 +38,7 @@ class UserRepositoryTest {
 
     @Test
     void updateOne() {
-        user user = userRepository.findById(3).get();
+        User user = userRepository.findById(3).get();
         user.setType(3);
         userRepository.save(user);
         System.out.println("update one test passed!");

@@ -2,8 +2,9 @@ package com.back.weins.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.entity.Avatar;
-import com.back.weins.entity.user;
+import com.back.weins.entity.User;
 import com.back.weins.repository.AvatarRepository;
+import com.back.weins.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +16,19 @@ import java.util.List;
 @RequestMapping("/user")
 public class userController {
     @Autowired
-    com.back.weins.repository.userRepository userRepository;
+    UserRepository userRepository;
     @Autowired
     AvatarRepository avatarRepository;
 
     @GetMapping(value="/user/{uid}", produces = "application/json;charset=UTF-8")
-    public user getUser(@PathVariable("uid") Integer uid){
+    public User getUser(@PathVariable("uid") Integer uid){
         return userRepository.findById(uid).orElse(null);
     }
 
     @GetMapping(value = "/user/reg", produces = "application/json;charset=UTF-8")
     public Integer insertUser(String name, Integer sex, String phone, String password, String birthday, String base64) {
         if(userRepository.check(phone)==0) return 0;
-        user use = new user();
+        User use = new User();
         use.setName(name);
         use.setBirthday(birthday);
         use.setSex(sex);
@@ -45,7 +46,7 @@ public class userController {
     }
 
     @RequestMapping(value="/alluser", produces = "application/json;charset=UTF-8")
-    public List<user> AllUser(user use){
+    public List<User> AllUser(User use){
         return userRepository.findAll();
     }
     @GetMapping(value="/uploadimage")
@@ -60,7 +61,7 @@ public class userController {
             object.put("res",false);
             return object;
         }
-        user u = userRepository.findByPhone(phone);
+        User u = userRepository.findByPhone(phone);
         if(!password.equals(u.getPassword())) {
             object.put("res",false);
             return object;
