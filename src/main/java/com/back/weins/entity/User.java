@@ -2,9 +2,7 @@ package com.back.weins.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.Proxy;
-
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -26,7 +24,7 @@ public class User {
     @Column
     private String birthday;
     @Column
-    private BigDecimal reg_time;
+    private String reg_time;
     @Column
     private Integer type;
 
