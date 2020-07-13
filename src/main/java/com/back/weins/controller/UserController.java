@@ -7,7 +7,6 @@ import com.back.weins.repository.AvatarRepository;
 import com.back.weins.repository.UserRepository;
 import com.back.weins.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
@@ -28,7 +27,7 @@ public class UserController {
 
     private final DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    @GetMapping(value="/user/{uid}", produces = "application/json;charset=UTF-8")
+    @GetMapping(value="/{uid}", produces = "application/json;charset=UTF-8")
     public User getUser(@PathVariable("uid") Integer uid){
         return userRepository.findById(uid).orElse(null);
     }
@@ -55,6 +54,7 @@ public class UserController {
         userRepository.save(use);
         if(base64.equals("default")) return 1;
         Avatar avatar = new Avatar();
+        avatar.setId(use.getUid());
         avatar.setBase64(base64);
         avatarRepository.save(avatar);
         return 1;
@@ -70,7 +70,7 @@ public class UserController {
         return true;
     }
 
-    @RequestMapping(value="/user/login", produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/login", produces="application/json;charset=UTF-8")
     public JSONObject Login(String phone, String password){
         JSONObject object = new JSONObject();
         if(userRepository.check(phone)==1) {
@@ -97,5 +97,9 @@ public class UserController {
         }
         object.put("base64", avatar.getBase64());
         return object;
+    }
+    @RequestMapping(value="/ban")
+    boolean UserBan(Integer id){
+        return userService.userBan(id);
     }
 }

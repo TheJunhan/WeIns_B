@@ -15,4 +15,6 @@ public interface UserService {
     String update(User user);
 
     void delete(Integer id);
+
+    boolean userBan(Integer id);
 }
