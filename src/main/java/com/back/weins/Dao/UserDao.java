@@ -9,6 +9,8 @@ public interface UserDao {
 
     User getByName(String name);
 
+    User getByPhone(String phone);
+
     List<User> getAll();
 
     void save(User user);
@@ -16,6 +18,4 @@ public interface UserDao {
     void update(User user);
 
     void delete(Integer id);
-
-    boolean userBan(Integer id);
 }

@@ -12,7 +12,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Integer uid;
+    private Integer id;
     @Column
     private String name;
     @Column
