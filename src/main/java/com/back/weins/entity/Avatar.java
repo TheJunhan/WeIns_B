@@ -1,33 +1,22 @@
 package com.back.weins.entity;
 
+import lombok.Data;
+import org.hibernate.annotations.Proxy;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-@Document(collection="avatar")
+@Data
+@Document(collection = "avatar")
+@Proxy(lazy = false)
 public class Avatar {
     @Id
-    @Field("book_id")
-    private Integer bookId;
+    private Integer id; // 对应用户id
+    private String base64;
 
-    @Field("img_base64")
-    private String imgBase64;
+    public Avatar(){}
 
-    public Integer getBookId() {
-        return bookId;
-    }
-
-    public String getImgBase64() {
-        return imgBase64;
-    }
-
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
-    }
-
-    public void setImgBase64(String imgBase64) {
-        this.imgBase64 = imgBase64;
+    public Avatar(Integer id, String base64) {
+        this.id = id;
+        this.base64 = base64;
     }
 }
