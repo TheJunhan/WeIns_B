@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name="user", schema="weins")
 @Proxy(lazy = false)
-public class user {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
