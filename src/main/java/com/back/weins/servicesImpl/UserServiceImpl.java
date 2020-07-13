@@ -52,4 +52,7 @@ public class UserServiceImpl implements UserService {
     public void delete(Integer id){
         userDao.delete(id);
     }
+
+    @Override
+    public boolean userBan(Integer id) { return userDao.userBan(id); }
 }

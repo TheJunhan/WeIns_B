@@ -80,4 +80,12 @@ public class UserDaoImpl implements UserDao{
         userRepository.deleteById(id);
         avatarRepository.deleteById(id);
     }
+
+    @Override
+    public boolean userBan(Integer id){
+        User user = userRepository.getOne(id);
+        user.setType(-1);
+        userRepository.save(user);
+        return true;
+    }
 }
