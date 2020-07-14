@@ -30,8 +30,8 @@ public class LabelDaoImpl implements LabelDao {
             Label label1 = labelRepository.findByContent(label.getContent());
 
             // exists and deleted, set non-deleted
-            if (label1 != null && label1.getDelete() == 1) {
-                label1.setDelete(0);
+            if (label1 != null && label1.getFlag() == 1) {
+                label1.setFlag(0);
                 labelRepository.save(label1);
                 System.out.println("exits");
             }
@@ -53,10 +53,10 @@ public class LabelDaoImpl implements LabelDao {
     public void deleteById(Integer id) {
         Label label = labelRepository.getOne(id);
 
-        if (label.getDelete() == 0)
+        if (label.getFlag() == 0)
             return;
 
-        label.setDelete(1);
+        label.setFlag(1);
         save(label);
     }
 
@@ -64,8 +64,8 @@ public class LabelDaoImpl implements LabelDao {
     public void deleteByContent(String content) {
         Label label = labelRepository.findByContent(content);
 
-        if (label != null && label.getDelete() == 1) {
-            label.setDelete(1);
+        if (label != null && label.getFlag() == 1) {
+            label.setFlag(1);
             save(label);
         }
     }
