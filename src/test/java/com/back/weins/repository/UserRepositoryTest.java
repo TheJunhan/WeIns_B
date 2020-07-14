@@ -13,7 +13,7 @@ class UserRepositoryTest {
     @Test
     void insertOne() {
         User user = new User();
-        user.setUid(3);
+        user.setId(3);
         user.setName("ayc");
         user.setBirthday("2001-07-25");
         user.setPhone("15972777067");

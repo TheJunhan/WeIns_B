@@ -21,7 +21,7 @@ public class UserDaoImpl implements UserDao{
 
     // 将用户与其头像整合
     public User implUser(User user){
-        Integer id = user.getUid();
+        Integer id = user.getId();
         Optional<Avatar> avatar = avatarRepository.findById(id);
 
         if(avatar.isPresent())
@@ -46,6 +46,13 @@ public class UserDaoImpl implements UserDao{
         return (user == null) ? null : implUser(user);
     }
 
+    @Override
+    public User getByPhone(String phone) {
+        User user = userRepository.findByPhone(phone);
+
+        return (user == null) ? null : implUser(user);
+    }
+
     public List<User> implUsers(List<User> users) {
         List<User> res = new ArrayList<>();
         for (User user : users) {
@@ -64,9 +71,9 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void save(User user){
         userRepository.save(user);
-        User res = userRepository.findByName(user.getName());
+        User res = userRepository.findByPhone(user.getPhone());
         assert res != null;
-        Avatar avatar = new Avatar(res.getUid(), user.getAvatar().getBase64());
+        Avatar avatar = new Avatar(res.getId(), user.getAvatar().getBase64());
         avatarRepository.save(avatar);
     }
 
@@ -79,13 +86,5 @@ public class UserDaoImpl implements UserDao{
     public void delete(Integer id){
         userRepository.deleteById(id);
         avatarRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean userBan(Integer id){
-        User user = userRepository.getOne(id);
-        user.setType(-1);
-        userRepository.save(user);
-        return true;
     }
 }

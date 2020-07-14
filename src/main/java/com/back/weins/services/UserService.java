@@ -8,6 +8,8 @@ public interface UserService {
 
     User getByName(String name);
 
+    User getByPhone(String phone);
+
     List<User> getAll();
 
     String save(User user);
@@ -16,5 +18,7 @@ public interface UserService {
 
     void delete(Integer id);
 
-    boolean userBan(Integer id);
+    String register(User user);
+
+    User login(String phone, String password);
 }
