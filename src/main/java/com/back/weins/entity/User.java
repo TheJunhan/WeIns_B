@@ -29,5 +29,5 @@ public class User {
     private Integer type;
 
     @Transient
-    private Avatar avatar;
+    private UserMongo userMongo;
 }

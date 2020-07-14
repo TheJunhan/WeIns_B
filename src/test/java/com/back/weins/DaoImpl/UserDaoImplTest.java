@@ -18,6 +18,11 @@ class UserDaoImplTest {
     }
 
     @Test
+    void save() {
+
+    }
+
+    @Test
     void update() {
         String reg_time = "2020-07-10 08:00:00";
         User user = userDao.getOne(3);
