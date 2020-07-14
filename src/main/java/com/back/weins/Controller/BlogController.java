@@ -1,4 +1,4 @@
-package com.back.weins.controller;
+package com.back.weins.Controller;
 
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
