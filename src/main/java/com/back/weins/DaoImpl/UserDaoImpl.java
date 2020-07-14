@@ -1,9 +1,9 @@
 package com.back.weins.DaoImpl;
 
-import com.back.weins.entity.Avatar;
 import com.back.weins.entity.User;
 import com.back.weins.Dao.UserDao;
-import com.back.weins.repository.AvatarRepository;
+import com.back.weins.entity.UserMongo;
+import com.back.weins.repository.UserMongoRepository;
 import com.back.weins.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,17 +17,15 @@ public class UserDaoImpl implements UserDao{
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private AvatarRepository avatarRepository;
+    private UserMongoRepository userMongoRepository;
 
-    // 将用户与其头像整合
     public User implUser(User user){
-        Integer id = user.getId();
-        Optional<Avatar> avatar = avatarRepository.findById(id);
+        Optional<UserMongo> userMongo = userMongoRepository.findById(user.getId());
 
-        if(avatar.isPresent())
-            user.setAvatar(avatar.get());
+        if(userMongo.isPresent())
+            user.setUserMongo(userMongo.get());
         else
-            user.setAvatar(null);
+            user.setUserMongo(null);
 
         return user;
     }
@@ -40,7 +38,7 @@ public class UserDaoImpl implements UserDao{
     }
 
     @Override
-    public User getByName(String name){
+    public User getByName(String name) {
         User user = userRepository.findByName(name);
 
         return (user == null) ? null : implUser(user);
@@ -71,10 +69,17 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void save(User user){
         userRepository.save(user);
-        User res = userRepository.findByPhone(user.getPhone());
-        assert res != null;
-        Avatar avatar = new Avatar(res.getId(), user.getAvatar().getBase64());
-        avatarRepository.save(avatar);
+        UserMongo userMongo = user.getUserMongo();
+
+        // insert new
+        if (user.getId() == null) {
+            User user1 = userRepository.findByPhone(user.getPhone());
+            assert user1 != null;
+            userMongo.setId(user1.getId());
+        }
+
+        // update
+        userMongoRepository.save(userMongo);
     }
 
     @Override
@@ -85,6 +90,6 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void delete(Integer id){
         userRepository.deleteById(id);
-        avatarRepository.deleteById(id);
+        userMongoRepository.deleteById(id);
     }
 }

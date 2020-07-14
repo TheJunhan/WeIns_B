@@ -21,4 +21,6 @@ public interface UserService {
     String register(User user);
 
     User login(String phone, String password);
+
+    void follow_relation(Integer sub, Integer obj, Integer flag);
 }
