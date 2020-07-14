@@ -17,15 +17,15 @@ public class Label {
     private String content;
 
     @Column
-    private Integer delete;
+    private Integer flag;
 
     public Label() {
-        this.delete = 0;
+        this.flag = 0;
     }
 
     public Label(Integer id, String content) {
         this.id = id;
         this.content = content;
-        this.delete = 0;
+        this.flag = 0;
     }
 }
