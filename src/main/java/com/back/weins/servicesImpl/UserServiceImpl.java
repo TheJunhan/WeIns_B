@@ -2,6 +2,7 @@ package com.back.weins.servicesImpl;
 
 import com.back.weins.DaoImpl.UserDaoImpl;
 import com.back.weins.entity.User;
+import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,5 +102,34 @@ public class UserServiceImpl implements UserService {
         user1.setPassword(null);
 
         return user1;
+    }
+
+    @Override
+    public void follow_relation(Integer sub, Integer obj, Integer flag) {
+        User user1 = userDao.getOne(sub);
+        User user2 = userDao.getOne(obj);
+
+        UserMongo userMongo1 = user1.getUserMongo();
+        UserMongo userMongo2 = user2.getUserMongo();
+
+        List<Integer> followings = userMongo1.getFollowings();
+        List<Integer> followers  = userMongo2.getFollowers();
+
+        if (flag == 1) { // follow
+            followings.add(obj);
+            followers.add(sub);
+        }
+
+        else if (flag == -1) {
+            followers.remove(sub);
+            followings.remove(obj);
+        }
+
+        userMongo1.setFollowings(followings);
+        userMongo1.setFollowing_num(userMongo1.getFollowing_num() + flag);
+        userMongo2.setFollowers(followers);
+        userMongo2.setFollower_num(userMongo2.getFollower_num() + flag);
+        userDao.update(user1);
+        userDao.update(user2);
     }
 }
