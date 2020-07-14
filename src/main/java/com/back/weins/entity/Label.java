@@ -1,31 +1,31 @@
 package com.back.weins.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
+@Data
 @Entity
 @Table(name="Label")
 public class Label {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Integer lid;
+    private Integer id;
 
-    @Column(name="content")
+    @Column
     private String content;
 
-    public Integer getLid() {
-        return lid;
+    @Column
+    private Integer delete;
+
+    public Label() {
+        this.delete = 0;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setLid(Integer lid) {
-        this.lid = lid;
-    }
-
-    public void setContent(String content) {
+    public Label(Integer id, String content) {
+        this.id = id;
         this.content = content;
+        this.delete = 0;
     }
 }

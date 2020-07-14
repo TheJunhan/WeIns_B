@@ -4,6 +4,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
+import java.util.List;
 
 @Document(collection = "blog")
 public class BlogMongo {
@@ -11,10 +12,12 @@ public class BlogMongo {
     @Field
     private Integer id;
 
-    // 0代表图片 1代表视频
-    @Field("type")
-    private Integer type;
+    @Field("video")
+    private String video;
 
     @Field("base64")
-    private String base64;
+    private List<String> images;
+
+    @Field("label")
+    private List<Label> labels;
 }

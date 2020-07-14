@@ -11,8 +11,8 @@ import java.util.List;
 @Document(collection="follow")
 public class UserMongo {
     @Id
-    @Field("uid")
-    private Integer uid;
+    @Field("id")
+    private Integer id;
 
     @Field("follower_num")
     private Integer follower_num;
