@@ -22,7 +22,7 @@ public class BlogControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void ccc(){
+    public void testSetBlog(){
         List<String> image = new ArrayList<String>();
         image.add("徐珺涵");
         image.add("敖宇晨");
@@ -35,13 +35,19 @@ public class BlogControllerTest {
         la.setContent("学习");
         la.setFlag(0);
         labe.add(la);
-        la.setId(3);
-        la.setContent("游戏");
-        la.setFlag(0);
-        labe.add(la);
+        Label la1 = new Label();
+        la1.setId(3);
+        la1.setContent("游戏");
+        la1.setFlag(0);
+        labe.add(la1);
         String lab = JSON.toJSONString(labe);
         blogController.setBlog(1, 1, "2020-7-15", "null", ima,
-                lab, "徐珺涵", ":whale:");
+                lab, "徐珺涵", "default");
+    }
+
+    @Test
+    public void testGetBlog(){
+        System.out.print(blogController.getPublicBlogs());
     }
 
 }
