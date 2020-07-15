@@ -12,6 +12,14 @@ public class LabelDaoImpl implements LabelDao {
     private LabelRepository labelRepository;
 
     @Override
+    public void setLabel(String label) {
+        System.out.print("运行在dao成功！");
+        Label label1 = new Label();
+        label1.setContent(label);
+        labelRepository.save(label1);
+    }
+
+    @Override
     public Label getById(Integer id) {
         return labelRepository.getOne(id);
     }

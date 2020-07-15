@@ -13,8 +13,6 @@ public class Blog {
     @Column
     private Integer id;
 
-    @Column(name="label_id")
-    private Integer label_id;
 
     @Column(name = "uid")
     private Integer uid;
