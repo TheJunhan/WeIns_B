@@ -1,6 +1,8 @@
 package com.back.weins.repository;
 
 import com.back.weins.entity.UserMongo;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,40 +10,34 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 @SpringBootTest
 class UserMongoRepositoryTest {
     @Autowired
-    UserMongoRepository userMongoRepository;
+    private UserMongoRepository userMongoRepository;
+
+    @BeforeEach
+    public void start() {
+        System.out.println("test start");
+    }
+
+    @AfterEach
+    public void end() {
+        System.out.println("test end");
+    }
 
     @Test
     void save() {
-        List<Integer> followings = new ArrayList<Integer>();
-        List<Integer> followers  = new ArrayList<Integer>();
-        List<Integer> blogs      = new ArrayList<Integer>();
+        for (int i = 1; i <= 5; ++i) {
+            UserMongo userMongo = new UserMongo();
+            userMongo.setId(i);
+            userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
+            userMongoRepository.save(userMongo);
 
-        followers.add(178);
-        followers.add(123);
-        followers.add(24);
-
-        followings.add(179);
-        followings.add(13);
-        followings.add(145);
-
-        blogs.add(41);
-        blogs.add(424);
-        blogs.add(4342);
-
-        UserMongo userMongo = new UserMongo();
-        userMongo.setId(1);
-        userMongo.setAvatar("This is a handsome picture");
-        userMongo.setFollowers(followers);
-        userMongo.setFollowings(followings);
-        userMongo.setBlogs(blogs);
-        userMongo.setBlog_num(3);
-        userMongo.setFollower_num(3);
-        userMongo.setFollowing_num(3);
-
-        userMongoRepository.save(userMongo);
+            assertEquals(userMongoRepository.findById(i).get().getAvatar(),
+                    "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
+        }
     }
 
     // save passed
@@ -50,41 +46,34 @@ class UserMongoRepositoryTest {
     void update() {
         List<Integer> followings = new ArrayList<Integer>();
         List<Integer> followers  = new ArrayList<Integer>();
-        List<Integer> blogs      = new ArrayList<Integer>();
 
-        followers.add(178);
-        followers.add(123);
+        followers.add(1);
+        followers.add(3);
 
-        followings.add(179);
-        followings.add(13);
-        followings.add(145);
-
-        blogs.add(41);
+        followings.add(1);
+        followings.add(2);
+        followings.add(4);
 
         UserMongo userMongo = new UserMongo();
-        userMongo.setId(1);
-        userMongo.setAvatar("This is a handsome picture");
+        userMongo.setId(5);
+        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
         userMongo.setFollowers(followers);
         userMongo.setFollowings(followings);
-        userMongo.setBlogs(blogs);
-        userMongo.setBlog_num(1);
         userMongo.setFollower_num(2);
         userMongo.setFollowing_num(3);
 
         userMongoRepository.save(userMongo);
+
+        assertEquals(userMongoRepository.findById(5).get().getAvatar(),
+                "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
     }
 
     // update passed
 
     @Test
     void delete() {
-        userMongoRepository.deleteById(2);
+        userMongoRepository.deleteById(5);
     }
 
     // delete passed
-
-    @Test
-    void find() {
-        System.out.println(userMongoRepository.findById(2));
-    }
 }

@@ -38,20 +38,10 @@ class LabelRepositoryTest {
         assertEquals(label1, labelRepository.findByContent("任锐"));
     }
 
-    // update and save passed
+    // update, save and find test passed
 
-    @Test
-    void delete() {
-        labelRepository.deleteById(2);
-    }
-
-    // delete passed
-
-    @Test
-    void findByContent() {
-        System.out.println(labelRepository.findByContent("付玉晗"));
-        System.out.println(labelRepository.findByContent("敖宇晨"));
-    }
-
-    // find by content passed
+    /*
+     *  delete is unnecessary because we do not really delete a tuple,
+     *  just set a flag to show whether it is deleted
+     */
 }
