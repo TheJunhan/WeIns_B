@@ -14,7 +14,7 @@ public class LabelAndBlog {
     private Integer id;
 
     @Column
-    private Integer uid;
+    private Integer lid;
 
     @Column
     private Integer bid;
