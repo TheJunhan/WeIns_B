@@ -21,8 +21,9 @@ public class BlogController {
     }
 
     @RequestMapping("/setBlog")
-    public void setBlog(Integer uid, Integer type, String post_day, String video, String imag, String label){
-        blogService.setBlog(uid, type, post_day, video, imag, label);
+    public Integer setBlog(Integer uid, Integer type, String post_day, String video,
+                           String imag, String label, String username, String useravatar){
+        return blogService.setBlog(uid, type, post_day, video, imag, label, username, useravatar);
 
     }
 }
