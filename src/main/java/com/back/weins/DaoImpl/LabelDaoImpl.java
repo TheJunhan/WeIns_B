@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class LabelDaoImpl implements LabelDao {
+
+
     @Autowired
     private LabelRepository labelRepository;
 

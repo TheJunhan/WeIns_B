@@ -14,6 +14,9 @@ public class BlogMongo {
     @Field
     private Integer id;
 
+    @Field("useravatar")
+    private String useravatar;
+
     @Field("video")
     private String video;
 
@@ -22,4 +25,7 @@ public class BlogMongo {
 
     @Field("label")
     private List<Label> labels;
+
+    @Field("comment")
+    private List<Comment> comments;
 }
