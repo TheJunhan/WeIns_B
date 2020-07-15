@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
-@Mapper
 public interface BlogDao {
 
-    void setBlog(Integer uid, Integer type, String post_day, String video, List<String> imag, List<Label> label);
+    Integer setBlog(Integer uid, Integer type, String post_day, String video, List<String> imag,
+                    List<Label> label, String username, String useravatar);
 }

@@ -3,6 +3,8 @@ package com.back.weins.servicesImpl;
 import com.alibaba.fastjson.JSON;
 import com.back.weins.Dao.BlogDao;
 import com.back.weins.Dao.LabelDao;
+import com.back.weins.DaoImpl.BlogDaoImpl;
+import com.back.weins.DaoImpl.LabelDaoImpl;
 import com.back.weins.entity.Label;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.List;
 public class BlogServiceImpl implements BlogService {
     @Autowired
     private LabelDao labelDao;
+
     @Autowired
     private BlogDao blogDao;
 
@@ -27,9 +30,9 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void setBlog(Integer uid, Integer type, String post_day, String video, String imag, String lab) {
+    public Integer setBlog(Integer uid, Integer type, String post_day, String video, String imag, String lab, String username, String useravatar) {
         List<String> image = JSON.parseArray(imag, String.class);
         List<Label> label = JSON.parseArray(lab, Label.class);
-        blogDao.setBlog(uid, type, post_day, video, image, label);
+        return blogDao.setBlog(uid, type, post_day, video, image, label, username, useravatar);
     }
 }
