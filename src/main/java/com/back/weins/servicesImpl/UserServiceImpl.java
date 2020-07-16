@@ -159,6 +159,11 @@ public class UserServiceImpl implements UserService {
                 if (subject != 8)
                     return "sub not boss";
             }
+
+            // 对普通用户的封禁/解禁需要100的权限
+            else if (subject < 4) {
+                return "sub no ban auth";
+            }
         }
 
         else {

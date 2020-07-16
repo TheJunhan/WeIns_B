@@ -62,17 +62,8 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void save(User user){
         UserMongo userMongo = user.getUserMongo();
-
-        if (user.getId() == null) {// insert new
-            userRepository.save(user);
-            User user1 = userRepository.findByPhone(user.getPhone());
-            assert user1 != null;
-            userMongo.setId(user1.getId());
-        }
-
-        else // update
-            userRepository.save(user);
-
+        User user1 = userRepository.saveAndFlush(user);
+        userMongo.setId(user1.getId());
         userMongoRepository.save(userMongo);
     }
 
