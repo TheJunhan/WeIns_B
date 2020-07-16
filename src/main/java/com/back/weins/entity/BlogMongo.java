@@ -18,6 +18,9 @@ public class BlogMongo {
     @Field("useravatar")
     private String useravatar;
 
+    @Field("content")
+    private String content;
+
     @Field("video")
     private String video;
 
@@ -35,4 +38,7 @@ public class BlogMongo {
 
     @Field("who_collect")
     private List<Integer> who_collect = new ArrayList<Integer>();
+
+    @Field("who_reblog")
+    private List<Integer> who_reblog = new ArrayList<Integer>();
 }

@@ -23,9 +23,9 @@ public class BlogController {
     }
 
     @RequestMapping("/setBlog")
-    public Integer setBlog(Integer uid, Integer type, String post_day, String video,
+    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
                            String imag, String label, String username, String useravatar){
-        return blogService.setBlog(uid, type, post_day, video, imag, label, username, useravatar);
+        return blogService.setBlog(uid, type, content, post_day, video, imag, label, username, useravatar);
 
     }
 
@@ -44,19 +44,33 @@ public class BlogController {
         return blogService.getBlogsLogined(uid);
     }
 
-    @PostMapping("like")
+    @PostMapping("/like")
     public boolean setLike(Integer uid, Integer bid){
         return blogService.setLike(uid, bid);
     }
 
-    @PostMapping("collect")
+    @PostMapping("/collect")
     public boolean setCollect(Integer uid, Integer bid, boolean flag){
         return blogService.setCollect(uid, bid, flag);
     }
 
-    @PostMapping("removeLike")
+    @PostMapping("/removeLike")
     public boolean removeLike(Integer uid, Integer bid){
         return blogService.removeLike(uid, bid);
     }
 
+    @PostMapping("/setReblog")
+    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day, String username, String useravatar){
+        return blogService.setReblog(uid, bid, type, content, post_day, username, useravatar);
+    }
+
+    @PostMapping("/removeBlog")
+    public boolean removeBlog(Integer uid, Integer bid, Integer type){
+        return blogService.removeBlog(uid, bid, type);
+    }
+
+    @PostMapping("/setComment")
+    public boolean setComment(Integer uid, String username, Integer to_uid, String to_username, Integer bid, String content){
+        return blogService.setComment(uid, username, to_uid, to_username, bid, content);
+    }
 }
