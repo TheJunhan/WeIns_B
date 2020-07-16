@@ -54,4 +54,19 @@ public class BlogServiceImpl implements BlogService {
     public List<JSONObject> getBlogsLogined(Integer uid) {
         return blogDao.getBlogsLogined(uid);
     }
+
+    @Override
+    public boolean setLike(Integer uid, Integer bid) {
+        return blogDao.setLike(uid, bid);
+    }
+
+    @Override
+    public boolean setCollect(Integer uid, Integer bid, boolean flag) {
+        return blogDao.setCollect(uid, bid, flag);
+    }
+
+    @Override
+    public boolean removeLike(Integer uid, Integer bid) {
+        return blogDao.removeLike(uid, bid);
+    }
 }

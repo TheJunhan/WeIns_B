@@ -23,6 +23,10 @@ public class Blog {
     @Column(name = "com_number")
     private Integer com_number;
 
+    @Column(name = "coll_number")
+    private Integer coll_number;
+
+
     @Column(name = "uid")
     private Integer uid;
 
@@ -35,11 +39,14 @@ public class Blog {
     @Column(name = "type")
     private Integer type;
 
+    @Column(name = "reblog_id")
+    private Integer reblog_id;
+
     public Blog(){
         like = 0;
         reblog = 0;
         com_number = 0;
-
+        coll_number = 0;
     }
 
     @Transient

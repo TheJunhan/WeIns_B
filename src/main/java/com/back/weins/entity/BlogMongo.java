@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,11 +22,17 @@ public class BlogMongo {
     private String video;
 
     @Field("base64")
-    private List<String> images;
+    private List<String> images = new ArrayList<String>();
 
     @Field("label")
-    private List<Label> labels;
+    private List<Label> labels = new ArrayList<Label>();
 
     @Field("comment")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<Comment>();
+
+    @Field("who_like")
+    private List<Integer> who_like = new ArrayList<Integer>();
+
+    @Field("who_collect")
+    private List<Integer> who_collect = new ArrayList<Integer>();
 }
