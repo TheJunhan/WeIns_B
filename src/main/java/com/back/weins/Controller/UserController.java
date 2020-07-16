@@ -56,4 +56,16 @@ public class UserController {
         else
             return "flag";
     }
+
+    @PostMapping("/auth")
+    public String auth(@RequestParam("sub") Integer sub, @RequestParam("obj") Integer obj,
+                       @RequestParam("tar") Integer target) {
+        if (target < -8 || target >= 8)
+            return "target error";
+
+        if (Objects.equals(sub, obj))
+            return "self";
+
+        return userService.auth(sub, obj, target);
+    }
 }

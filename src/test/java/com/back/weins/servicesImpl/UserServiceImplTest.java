@@ -98,11 +98,10 @@ class UserServiceImplTest extends WeinsApplicationTests {
     @Test
     public void register() {
         User user = new User();
-        user.setName("敖宇晨");
+        user.setName("徐珺涵");
         user.setPhone("15972777067");
-        user.setBirthday("1911-03-14");
+        user.setBirthday("1991-03-14");
         user.setPassword("111111");
-        user.setReg_time("2020-07-15 14:00:00");
         user.setSex(0);
         user.setType(0);
 
@@ -113,12 +112,12 @@ class UserServiceImplTest extends WeinsApplicationTests {
         // phone exists
         assertEquals("phone error", userService.register(user));
 
-        user.setPhone("15970677277");
+        user.setPhone("15970777277");
 
         // name exists
         assertEquals("name error", userService.register(user));
 
-        user.setName("沈佳威");
+        user.setName("吴侃真");
 
         // success
         assertEquals("success", userService.register(user));
@@ -166,5 +165,16 @@ class UserServiceImplTest extends WeinsApplicationTests {
         List<Integer> followings2 = userService.getByID(1).getUserMongo().getFollowings();
 
         assertEquals("3", followings2.get(0).toString());
+    }
+
+    @Test
+    public void auth() {
+        assertEquals("target equals", userService.auth(1, 2, 7));
+        assertEquals("obj is boss", userService.auth(2, 1, 4));
+        assertEquals("sub not boss", userService.auth(21, 2, 0));
+        assertEquals("sub not boss", userService.auth(21, 3, 5));
+        assertEquals("sub not admin", userService.auth(3, 24 ,-8));
+        assertEquals("success", userService.auth(1, 22, -7));
+        assertEquals("success", userService.auth(1, 24, -8));
     }
 }
