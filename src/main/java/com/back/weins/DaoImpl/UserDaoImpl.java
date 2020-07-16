@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class UserDaoImpl implements UserDao{
@@ -20,13 +19,7 @@ public class UserDaoImpl implements UserDao{
     private UserMongoRepository userMongoRepository;
 
     public User implUser(User user){
-        Optional<UserMongo> userMongo = userMongoRepository.findById(user.getId());
-
-        if(userMongo.isPresent())
-            user.setUserMongo(userMongo.get());
-        else
-            user.setUserMongo(null);
-
+        user.setUserMongo(userMongoRepository.findById(user.getId()).get());
         return user;
     }
 
@@ -68,17 +61,18 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public void save(User user){
-        userRepository.save(user);
         UserMongo userMongo = user.getUserMongo();
 
-        // insert new
-        if (user.getId() == null) {
+        if (user.getId() == null) {// insert new
+            userRepository.save(user);
             User user1 = userRepository.findByPhone(user.getPhone());
             assert user1 != null;
             userMongo.setId(user1.getId());
         }
 
-        // update
+        else // update
+            userRepository.save(user);
+
         userMongoRepository.save(userMongo);
     }
 

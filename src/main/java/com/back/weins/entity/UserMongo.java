@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,13 +27,13 @@ public class UserMongo {
     private Integer blog_num;
 
     @Field("followers")
-    private List<Integer> followers;
+    private List<Integer> followers = new ArrayList<Integer>();
 
     @Field("followings")
-    private List<Integer> followings;
+    private List<Integer> followings = new ArrayList<Integer>();
 
     @Field("blogs")
-    private List<Integer> blogs;
+    private List<Integer> blogs = new ArrayList<Integer>();
 
     public UserMongo() {
         this.follower_num = 0;
