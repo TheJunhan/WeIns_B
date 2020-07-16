@@ -33,11 +33,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Integer setBlog(Integer uid, Integer type, String post_day, String video, String imag, String lab, String username, String useravatar) {
+    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, String imag, String lab, String username, String useravatar) {
         List<String> image = JSON.parseArray(imag, String.class);
         List<Label> label = JSON.parseArray(lab, Label.class);
 
-        return blogDao.setBlog(uid, type, post_day, video, image, label, username, useravatar);
+        return blogDao.setBlog(uid, type, content, post_day, video, image, label, username, useravatar);
     }
 
     @Override
@@ -69,4 +69,21 @@ public class BlogServiceImpl implements BlogService {
     public boolean removeLike(Integer uid, Integer bid) {
         return blogDao.removeLike(uid, bid);
     }
+
+    @Override
+    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day, String username, String useravatar) {
+        return blogDao.setReblog(uid, bid, type, content, post_day, username, useravatar);
+    }
+
+    @Override
+    public boolean removeBlog(Integer uid, Integer bid, Integer type) {
+        return blogDao.removeBlog(uid, bid,type);
+    }
+
+    @Override
+    public boolean setComment(Integer uid, String username, Integer to_uid, String to_username, Integer bid, String content) {
+        return blogDao.setComment(uid, username, to_uid, to_username, bid, content);
+    }
+
+
 }

@@ -26,6 +26,8 @@ public class Blog {
     @Column(name = "coll_number")
     private Integer coll_number;
 
+    @Column(name = "is_del")
+    private Integer is_del;
 
     @Column(name = "uid")
     private Integer uid;
@@ -47,6 +49,7 @@ public class Blog {
         reblog = 0;
         com_number = 0;
         coll_number = 0;
+        is_del = 0;
     }
 
     @Transient
