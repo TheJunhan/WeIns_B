@@ -70,11 +70,19 @@ public class BlogDaoImpl implements BlogDao {
             JSONObject tmp = new JSONObject();
             tmp.put("blog", blogs.get(i));
             tmp.put("blogMongo", blogMongos.get(i));
-
+            if(blogs.get(i).getReblog_id() != -1) {
+                tmp.put("reblog", blogRepository.findById(blogs.get(i).getReblog_id()));
+                tmp.put("reblogMongo", blogMongoRepository.findById(blogs.get(i).getReblog_id()));
+            }
+            else {
+                tmp.put("reblog", "null");
+                tmp.put("reblogMongo", "null");
+            }
             res.add(tmp);
         }
         return res;
     }
+
 
     @Override
     public List<JSONObject> getBlogsByLabel(Integer lid, Integer uid) {
@@ -99,6 +107,14 @@ public class BlogDaoImpl implements BlogDao {
             jsonObject.put("blog", blog);
             BlogMongo blogMongo = blogMongoRepository.findById(lab.get(i)).orElse(null);
             jsonObject.put("blogMongo", blogMongo);
+            if(blog.getReblog_id() != -1) {
+                jsonObject.put("reblog", blogRepository.findById(blog.getReblog_id()));
+                jsonObject.put("reblogMongo", blogMongoRepository.findById(blog.getReblog_id()));
+            }
+            else {
+                jsonObject.put("reblog", "null");
+                jsonObject.put("reblogMongo", "null");
+            }
             res.add(jsonObject);
         }
 
@@ -124,6 +140,14 @@ public class BlogDaoImpl implements BlogDao {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("blog", blogs.get(i));
             jsonObject.put("blogMongo", blogMongos.get(i));
+            if(blogs.get(i).getReblog_id() != -1) {
+                jsonObject.put("reblog", blogRepository.findById(blogs.get(i).getReblog_id()));
+                jsonObject.put("reblogMongo", blogMongoRepository.findById(blogs.get(i).getReblog_id()));
+            }
+            else {
+                jsonObject.put("reblog", "null");
+                jsonObject.put("reblogMongo", "null");
+            }
 
             res.add(jsonObject);
         }
@@ -132,17 +156,106 @@ public class BlogDaoImpl implements BlogDao {
 
     @Override
     public boolean setLike(Integer uid, Integer bid) {
+
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
         blog.setLike(blog.getLike() + 1);
         BlogMongo blogMongo = blogMongoRepository.findById(blog.getId()).orElse(null);
-        assert blogMongo != null;
+        //assert blogMongo != null;
+        if(blogMongo == null) return false;
         List<Integer> list = blogMongo.getWho_like();
+        if(list.contains(uid)) return false;
         list.add(uid);
         blogMongo.setWho_like(list);
         blogRepository.saveAndFlush(blog);
         blogMongoRepository.deleteById(blog.getId());
         blogMongoRepository.save(blogMongo);
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return false;
+        List<Integer> setlike_blog = userMongo.getLike_blog();
+        setlike_blog.add(bid);
+        userMongo.setLike_blog(setlike_blog);
+        userMongoRepository.deleteById(uid);
+        userMongoRepository.save(userMongo);
+        return true;
+    }
+
+    @Override
+    public boolean setCollect(Integer uid, Integer bid, boolean flag) {
+
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return false;
+        List<Integer> tmplist = userMongo.getCollect_blog();
+
+        if(flag) {
+            if(tmplist.contains(bid)) return false;
+            tmplist.add(bid);
+
+        }
+        else{
+            if(!tmplist.contains(bid)) return false;
+            for(int i = 0; i < tmplist.size(); ++i){
+                if(tmplist.get(i).equals(bid)) {
+                    tmplist.remove(i);
+                    break;
+                }
+            }
+        }
+        userMongo.setCollect_blog(tmplist);
+        userMongoRepository.deleteById(uid);
+        userMongoRepository.save(userMongo);
+
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
+        List<Integer> who_collectList = blogMongo.getWho_collect();
+        if(flag) {
+            blog.setColl_number(blog.getCom_number() + 1);
+            who_collectList.add(uid);
+            blogMongo.setWho_collect(who_collectList);
+        }
+        else {
+            blog.setColl_number(blog.getCom_number() - 1);
+            for(int i = 0; i < who_collectList.size(); ++i) if(who_collectList.get(i).equals(uid)) {
+                who_collectList.remove(i);
+                break;
+            }
+        }
+        blogRepository.saveAndFlush(blog);
+        blogMongoRepository.deleteById(bid);
+        blogMongoRepository.save(blogMongo);
+        return true;
+    }
+
+    @Override
+    public boolean removeLike(Integer uid, Integer bid) {
+        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
+        if(blogMongo == null) return false;
+        List<Integer> blogList = blogMongo.getWho_like();
+        if(!blogList.contains(uid)) return false;
+        for(int i = 0; i < blogList.size(); ++i){
+            if(blogList.get(i).equals(uid)) {
+                blogList.remove(i);
+                break;
+            }
+        }
+        blogMongo.setWho_like(blogList);
+        blogMongoRepository.deleteById(bid);
+        blogMongoRepository.save(blogMongo);
+
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        if(blog == null) return false;
+        blog.setLike(blog.getLike() - 1);
+        blogRepository.saveAndFlush(blog);
+
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return false;
+        List<Integer> likeBlogList = userMongo.getLike_blog();
+        for(int i = 0; i < likeBlogList.size(); ++i) if(likeBlogList.get(i).equals(bid)){
+            blogList.remove(i);
+            break;
+        }
+        userMongoRepository.deleteById(uid);
+        userMongoRepository.save(userMongo);
         return true;
     }
 

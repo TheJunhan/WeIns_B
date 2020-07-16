@@ -32,4 +32,7 @@ public class BlogMongo {
 
     @Field("who_like")
     private List<Integer> who_like = new ArrayList<Integer>();
+
+    @Field("who_collect")
+    private List<Integer> who_collect = new ArrayList<Integer>();
 }

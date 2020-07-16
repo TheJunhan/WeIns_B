@@ -35,6 +35,12 @@ public class UserMongo {
     @Field("blogs")
     private List<Integer> blogs = new ArrayList<Integer>();
 
+    @Field("like_blog")
+    List<Integer> like_blog = new ArrayList<Integer>();
+
+    @Field("clloect_blog")
+    List<Integer> collect_blog = new ArrayList<Integer>();
+
     public UserMongo() {
         this.follower_num = 0;
         this.following_num = 0;

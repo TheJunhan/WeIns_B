@@ -81,7 +81,7 @@ public class BlogControllerTest {
     }
 
     @Test
-    void setLikeTest(){
+    public void setLikeTest(){
         blogController.setLike(1, 5);
     }
 
