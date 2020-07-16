@@ -12,4 +12,5 @@ public interface BlogService {
     List<JSONObject> getPublicBlog();
     List<JSONObject> getBlogsByLabel(Integer lid, Integer uid);
     List<JSONObject> getBlogsLogined(Integer uid);
+    boolean setLike(Integer uid, Integer bid);
 }

@@ -92,6 +92,7 @@ public class BlogDaoImpl implements BlogDao {
             }
             else if(blog.getType() == 5 || blog.getType() == 1){
                 if(following.contains(blog.getUid())) flag = true;
+                else if(blog.getUid() == uid) flag = true;
             }
             if(!flag) continue;
             JSONObject jsonObject = new JSONObject();
@@ -117,7 +118,8 @@ public class BlogDaoImpl implements BlogDao {
                 if(blogs.get(i).getUid() != uid) continue;
             }
             else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){
-                if(!following.contains(blogs.get(i).getUid())) continue;
+                if(!following.contains(blogs.get(i).getUid()) && blogs.get(i).getUid() != uid) continue;
+
             }
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("blog", blogs.get(i));
@@ -127,5 +129,22 @@ public class BlogDaoImpl implements BlogDao {
         }
         return res;
     }
+
+    @Override
+    public boolean setLike(Integer uid, Integer bid) {
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        if(blog == null) return false;
+        blog.setLike(blog.getLike() + 1);
+        BlogMongo blogMongo = blogMongoRepository.findById(blog.getId()).orElse(null);
+        assert blogMongo != null;
+        List<Integer> list = blogMongo.getWho_like();
+        list.add(uid);
+        blogMongo.setWho_like(list);
+        blogRepository.saveAndFlush(blog);
+        blogMongoRepository.deleteById(blog.getId());
+        blogMongoRepository.save(blogMongo);
+        return true;
+    }
+
 
 }
