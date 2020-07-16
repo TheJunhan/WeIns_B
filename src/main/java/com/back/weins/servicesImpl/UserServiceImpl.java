@@ -132,4 +132,42 @@ public class UserServiceImpl implements UserService {
         userDao.update(user1);
         userDao.update(user2);
     }
+
+    @Override
+    public String auth(Integer sub, Integer obj, Integer target) {
+        User user1 = userDao.getOne(sub);
+        User user2 = userDao.getOne(obj);
+        Integer subject = user1.getType();
+        Integer origin = user2.getType();
+
+        if (Objects.equals(target, origin)) {
+            return "target equals";
+        }
+
+        // 主语必须是正常的管理员
+        if (subject < 1)
+            return "sub not admin";
+
+        if (origin == 8) {
+            return "obj is boss";
+        }
+
+        // 对象是普通用户
+        else if (origin == 0 || origin == -8) {
+            // 对普通用户的权限升级，需要主语为boss
+            if (target != 0 && target != -8) {
+                if (subject != 8)
+                    return "sub not boss";
+            }
+        }
+
+        else {
+            if (subject != 8)
+                return "sub not boss";
+        }
+
+        user2.setType(target);
+        userDao.save(user2);
+        return "success";
+    }
 }

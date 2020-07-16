@@ -1,59 +1,128 @@
 package com.back.weins.Controller;
 
 import com.back.weins.WeinsApplicationTests;
-import com.back.weins.servicesImpl.UserServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import com.back.weins.entity.User;
+import com.back.weins.entity.UserMongo;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.springframework.web.context.WebApplicationContext;
+import java.util.List;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class UserControllerTest extends WeinsApplicationTests {
-
-    private MockMvc mockMvc;
-
     @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
-    UserServiceImpl userService;
-
-    @Autowired
-    UserController userController;
-
-    private ObjectMapper om = new ObjectMapper();
+    private UserController userController;
 
     @BeforeEach
-    public void start() {
+    public void setUp() {
         System.out.println("test start");
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
     @AfterEach
-    public void end() {
+    public void tearDown() {
         System.out.println("test end");
     }
 
     @Test
-    public void getOne() throws Exception {
-        MvcResult result = mockMvc.perform(get("/user/getOne?id=1")
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("徐珺涵"))
-                .andReturn();
+    public void getOne() {
+        assertEquals("徐珺涵", userController.getOne(1).getName());
+        assertEquals("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg",
+                userController.getOne(2).getUserMongo().getAvatar());
+    }
+
+    @Test
+    public void getAll() {
+        List<User> users = userController.getAll();
+
+        assertEquals("徐珺涵", users.get(0).getName());
+        assertEquals("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg",
+                users.get(1).getUserMongo().getAvatar());
+    }
+
+    @Test
+    public void register() {
+        User user = new User();
+        user.setName("徐珺涵");
+        user.setPhone("15972777067");
+        user.setBirthday("1891-03-14");
+        user.setPassword("111111");
+        user.setSex(0);
+        user.setType(0);
+
+        UserMongo userMongo = new UserMongo();
+        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
+        user.setUserMongo(userMongo);
+
+        // phone exists
+        Assert.assertEquals("phone error", userController.register(user));
+
+        user.setPhone("15977777277");
+
+        // name exists
+        Assert.assertEquals("name error", userController.register(user));
+
+        user.setName("陈志立");
+
+        // success
+        Assert.assertEquals("success", userController.register(user));
+    }
+
+    @Test
+    public void login() {
+        // there is no this account
+        Assert.assertEquals("-1", userController.login("11111111111", "123456").getId().toString());
+
+        // password wrong
+        Assert.assertEquals("-2", userController.login("15972777067", "123456").getId().toString());
+
+        // success
+        Assert.assertEquals("3", userController.login("15972777067", "111111").getId().toString());
+
+        // expect password mask to keep security
+        assertNull(userController.login("15972777067", "111111").getPassword());
+    }
+
+    @Test
+    public void update() {
+        User user = userController.getOne(1);
+        user.setPassword("111111");
+        userController.update(user);
+
+        assertEquals("111111", userController.getOne(1).getPassword());
+    }
+
+    @Test
+    public void follow() {
+        assertEquals("flag", userController.follow(1, 2, 2));
+
+        assertEquals("self", userController.follow(1, 1, 1));
+
+        assertEquals("success", userController.follow(2, 3, 1));
+
+        assertEquals("success", userController.follow(2, 3, -1));
+    }
+
+    @Test
+    public void auth() {
+        assertEquals("self", userController.auth(2, 2, 3));
+        assertEquals("target error", userController.auth(2, 2, 8));
+        assertEquals("target equals", userController.auth(1, 2, 7));
+        assertEquals("obj is boss", userController.auth(2, 1, 4));
+        assertEquals("sub not boss", userController.auth(21, 2, 0));
+        assertEquals("sub not boss", userController.auth(21, 3, 5));
+        assertEquals("sub not admin", userController.auth(3, 24 ,-8));
+        assertEquals("success", userController.auth(1, 22, -7));
+        assertEquals("success", userController.auth(1, 24, -8));
     }
 }
+

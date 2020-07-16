@@ -23,4 +23,6 @@ public interface UserService {
     User login(String phone, String password);
 
     void follow_relation(Integer sub, Integer obj, Integer flag);
+
+    String auth(Integer sub, Integer obj, Integer target);
 }
