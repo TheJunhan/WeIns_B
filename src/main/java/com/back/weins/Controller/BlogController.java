@@ -44,4 +44,19 @@ public class BlogController {
         return blogService.getBlogsLogined(uid);
     }
 
+    @PostMapping("like")
+    public boolean setLike(Integer uid, Integer bid){
+        return blogService.setLike(uid, bid);
+    }
+
+    @PostMapping("collect")
+    public boolean setCollect(Integer uid, Integer bid, boolean flag){
+        return blogService.setCollect(uid, bid, flag);
+    }
+
+    @PostMapping("removeLike")
+    public boolean removeLike(Integer uid, Integer bid){
+        return blogService.removeLike(uid, bid);
+    }
+
 }
