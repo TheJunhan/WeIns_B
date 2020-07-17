@@ -50,6 +50,7 @@ public class Blog {
         com_number = 0;
         coll_number = 0;
         is_del = 0;
+        reblog_id = -1;
     }
 
     @Transient

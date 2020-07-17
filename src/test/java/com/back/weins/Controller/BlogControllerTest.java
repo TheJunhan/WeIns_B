@@ -3,6 +3,8 @@ package com.back.weins.Controller;
 import com.alibaba.fastjson.JSON;
 import com.back.weins.entity.Label;
 
+import com.back.weins.entity.User;
+import com.back.weins.entity.UserMongo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,7 @@ public class BlogControllerTest {
         la1.setFlag(0);
         labe.add(la1);
         String lab = JSON.toJSONString(labe);
-        Integer t = blogController.setBlog(1, 0, "2020-7-15", "null", ima,
+        Integer t = blogController.setBlog(1, 1, "自己可见：今天天气很晴朗，鸟儿生生唱", "2020-7-15", "null", ima,
                 lab, "徐珺涵", "default");
 
     }
@@ -59,14 +61,16 @@ public class BlogControllerTest {
     @Test
     public void testGetBlogsByLabel(){
         //userController.follow(2, 1, -1);
-        System.out.print(blogController.getBlogsByLabel(5, 1));
+        System.out.print(blogController.getBlogsByLabel(5, 1).size());
     }
     @Test
     public void testGetBlogsLogined(){
-//        userController.follow(2, 1, 1);
+//        userController.follow(1, 2, 1);
+//        userController.follow(3, 1, 1);
+//        userController.follow(3, 2, 1);
 //        User user = new User();
-//        user.setName("敖宇晨");
-//        user.setPhone("110");
+//        user.setName("老八");
+//        user.setPhone("15044341612");
 //        user.setBirthday("1911-03-14");
 //        user.setPassword("111111");
 //        user.setReg_time("2020-07-15 14:00:00");
@@ -77,12 +81,39 @@ public class BlogControllerTest {
 //        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
 //        user.setUserMongo(userMongo);
 //        userController.register(user);
-        System.out.print((blogController.getBlogsLogined(1)).size());
+        System.out.print((blogController.getBlogsLogined(3)).size());
     }
 
     @Test
     public void setLikeTest(){
-        blogController.setLike(1, 5);
+        blogController.setLike(2, 4);
+        blogController.setLike(3, 4);
+    }
+
+    @Test
+    public void removeLikeTest(){
+        blogController.removeLike(2, 4);
+    }
+
+    @Test
+    public void removeBlogTest(){
+        blogController.removeBlog(1, 4, 0);
+    }
+
+    @Test
+    public void setReblog(){
+        System.out.print(blogController.setReblog(3, 2, 3, "我也感觉很晴朗，声声唱", "2020-7-17", "老八", "default"));
+    }
+
+    @Test
+    public void setCommentTest(){
+        blogController.setComment(3, "老八", 1, "徐珺涵", 2, "老铁有境界");
+    }
+
+    @Test
+    public void setCollect(){
+//        blogController.setCollect(3, 3, true);
+        blogController.setCollect(3, 3, false);
     }
 
 }
