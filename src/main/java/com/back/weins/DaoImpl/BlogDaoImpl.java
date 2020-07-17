@@ -232,12 +232,12 @@ public class BlogDaoImpl implements BlogDao {
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         List<Integer> who_collectList = blogMongo.getWho_collect();
         if(flag) {
-            blog.setColl_number(blog.getCom_number() + 1);
+            blog.setColl_number(blog.getColl_number() + 1);
             who_collectList.add(uid);
             blogMongo.setWho_collect(who_collectList);
         }
         else {
-            blog.setColl_number(blog.getCom_number() - 1);
+            blog.setColl_number(blog.getColl_number() - 1);
             for(int i = 0; i < who_collectList.size(); ++i) if(who_collectList.get(i).equals(uid)) {
                 who_collectList.remove(i);
                 break;
@@ -277,6 +277,7 @@ public class BlogDaoImpl implements BlogDao {
             blogList.remove(i);
             break;
         }
+        userMongo.setLike_blog(blogList);
         userMongoRepository.deleteById(uid);
         userMongoRepository.save(userMongo);
         return true;
@@ -289,18 +290,24 @@ public class BlogDaoImpl implements BlogDao {
         blog.setUid(uid);
         blog.setUsername(username);
         blog.setPost_day(post_day);
+        blog.setType(type);
+        blogRepository.save(blog);
+        //System.out.print(blog);
+
         BlogMongo blogMongo = new BlogMongo();
         blogMongo.setId(blog.getId());
         blogMongo.setContent(content);
         blogMongo.setUseravatar(useravatar);
+        //System.out.print(blogMongo);
         BlogMongo tmp = blogMongoRepository.findById(bid).orElse(null);
         blogMongo.setLabels(tmp.getLabels());
         List<Integer> list = tmp.getWho_reblog();
         list.add(uid);
+
         blogMongoRepository.deleteById(bid);
         blogMongoRepository.save(tmp);
 
-        blogRepository.save(blog);
+
         blogMongoRepository.save(blogMongo);
         return true;
     }
@@ -320,6 +327,11 @@ public class BlogDaoImpl implements BlogDao {
     @Override
     public boolean setComment(Integer uid, String username, Integer to_uid,
                               String to_username, Integer bid, String content) {
+
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        blog.setCom_number(blog.getCom_number() + 1);
+        blogRepository.saveAndFlush(blog);
+
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         List<Comment> comments = blogMongo.getComments();
         Comment tmp = new Comment(uid, username, to_uid, to_username, content);
