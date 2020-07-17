@@ -55,7 +55,25 @@ public class UserServiceImpl implements UserService {
             if (userDao.getByName(user.getName()) != null)
                 return "error";
         }
-        userDao.save(user);
+
+        if (user.getPassword() != null)
+            res.setPassword(user.getPassword());
+
+        if (user.getType() != null)
+            res.setType(user.getType());
+
+        if (user.getBirthday() != null)
+            res.setBirthday(user.getBirthday());
+
+        if (user.getSex() != null)
+            res.setSex(user.getSex());
+
+        if (user.getUserMongo() != null) {
+            if (user.getUserMongo().getAvatar() != null)
+                res.setUserMongo(user.getUserMongo());
+        }
+
+        userDao.save(res);
         return "success";
     }
 
