@@ -56,6 +56,12 @@ public class UserServiceImpl implements UserService {
                 return "error";
         }
 
+        if (user.getName() != null)
+            res.setName(user.getName());
+
+        if (user.getPhone() != null)
+            res.setPhone(user.getPhone());
+
         if (user.getPassword() != null)
             res.setPassword(user.getPassword());
 
@@ -73,7 +79,7 @@ public class UserServiceImpl implements UserService {
                 res.setUserMongo(user.getUserMongo());
         }
 
-        userDao.save(res);
+        userDao.update(res);
         return "success";
     }
 
