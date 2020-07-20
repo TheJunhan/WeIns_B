@@ -1,9 +1,10 @@
 package com.back.weins.Controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Utils.RequestUtils.BlogUtil;
+import com.back.weins.Utils.RequestUtils.CommentUtils;
+import com.back.weins.Utils.RequestUtils.ReblogUtil;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class BlogController {
         System.out.println(blogUtil);
         return blogService.setBlog(blogUtil.getUid(), blogUtil.getType(), blogUtil.getContent(),
                 blogUtil.getPost_day(), blogUtil.getVideo(), blogUtil.getImag(), blogUtil.getLabel(),
-                blogUtil.getUsername(), blogUtil.getUseravatar());
+                blogUtil.getUsername());
     }
 
     @GetMapping("/getPublicBlogs")
@@ -62,8 +63,9 @@ public class BlogController {
     }
 
     @PostMapping("/setReblog")
-    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day, String username, String useravatar){
-        return blogService.setReblog(uid, bid, type, content, post_day, username, useravatar);
+    public boolean setReblog(@RequestBody ReblogUtil reblogUtil){
+        System.out.print(reblogUtil);
+        return blogService.setReblog(reblogUtil.getUid(), reblogUtil.getBid(), reblogUtil.getType(), reblogUtil.getContent(), reblogUtil.getPost_day(), reblogUtil.getUsername());
     }
 
     @PostMapping("/removeBlog")
@@ -72,7 +74,7 @@ public class BlogController {
     }
 
     @PostMapping("/setComment")
-    public boolean setComment(Integer uid, String username, Integer to_uid, String to_username, Integer bid, String content){
-        return blogService.setComment(uid, username, to_uid, to_username, bid, content);
+    public boolean setComment(@RequestBody CommentUtils commentUtils){
+        return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
     }
 }

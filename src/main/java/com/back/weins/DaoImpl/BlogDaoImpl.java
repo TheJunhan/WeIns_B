@@ -33,9 +33,15 @@ public class BlogDaoImpl implements BlogDao {
     @Autowired
     UserRepository userRepository;
 
+    private String findAvatar(Integer uid) {
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo==null) return "default";
+        return userMongo.getAvatar();
+    }
+
     @Override
     public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
-                           List<String> imag, List<Label> lab, String username, String useravatar) {
+                           List<String> imag, List<Label> lab, String username) {
         System.out.print(imag);
         System.out.print(lab);
 
@@ -53,7 +59,7 @@ public class BlogDaoImpl implements BlogDao {
         blogMongo.setVideo(video);
         blogMongo.setLabels(lab);
 
-        blogMongo.setUseravatar(useravatar);
+        // blogMongo.setUseravatar(useravatar);
         blogMongoRepository.save(blogMongo);
         for (Label label : lab) {
             labelAndBlogDao.setLAB(label.getId(), blog.getId());
@@ -66,7 +72,7 @@ public class BlogDaoImpl implements BlogDao {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
         List<BlogMongo> blogMongos = blogMongoRepository.findAll();
-        for(int i = 0; i < blogs.size(); ++i){
+        for(int i = 0; i < blogs.size(); ++i) {
             if(blogs.get(i).getType()!=3 && blogs.get(i).getType()!=7) continue;
             if(blogs.get(i).getIs_del() == 1) continue;
             JSONObject tmp = new JSONObject();
@@ -87,6 +93,7 @@ public class BlogDaoImpl implements BlogDao {
                 tmp.put("reblog", "null");
                 tmp.put("reblogMongo", "null");
             }
+            tmp.put("userAvatar", findAvatar(blogs.get(i).getUid()));
             res.add(tmp);
         }
         return res;
@@ -100,7 +107,7 @@ public class BlogDaoImpl implements BlogDao {
         UserMongo tmp = userMongoRepository.findById(uid).orElse(null);
 
         List<Integer> following = tmp.getFollowings();
-        for(int i = 0; i < lab.size(); ++i){
+        for(int i = 0; i < lab.size(); ++i) {
             Blog blog = blogRepository.findById(lab.get(i)).orElse(null);
             boolean flag = false;
             if(blog.getType() == 7 || blog.getType() == 3) flag = true;
@@ -131,6 +138,7 @@ public class BlogDaoImpl implements BlogDao {
                 jsonObject.put("reblog", "null");
                 jsonObject.put("reblogMongo", "null");
             }
+            jsonObject.put("userAvatar", findAvatar(blog.getUid()));
             res.add(jsonObject);
         }
 
@@ -171,7 +179,7 @@ public class BlogDaoImpl implements BlogDao {
                 jsonObject.put("reblog", "null");
                 jsonObject.put("reblogMongo", "null");
             }
-
+            jsonObject.put("userAvatar", findAvatar(blogs.get(i).getUid()));
             res.add(jsonObject);
         }
         return res;
@@ -284,7 +292,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day, String username, String useravatar) {
+    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day, String username) {
         Blog blog = new Blog();
         blog.setReblog_id(bid);
         blog.setUid(uid);
@@ -297,7 +305,7 @@ public class BlogDaoImpl implements BlogDao {
         BlogMongo blogMongo = new BlogMongo();
         blogMongo.setId(blog.getId());
         blogMongo.setContent(content);
-        blogMongo.setUseravatar(useravatar);
+
         //System.out.print(blogMongo);
         BlogMongo tmp = blogMongoRepository.findById(bid).orElse(null);
         blogMongo.setLabels(tmp.getLabels());

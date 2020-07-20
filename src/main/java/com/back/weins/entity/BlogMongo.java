@@ -15,8 +15,6 @@ public class BlogMongo {
     @Field
     private Integer id;
 
-    @Field("useravatar")
-    private String useravatar;
 
     @Field("content")
     private String content;
