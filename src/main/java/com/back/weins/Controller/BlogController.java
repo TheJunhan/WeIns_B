@@ -3,6 +3,7 @@ package com.back.weins.Controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.back.weins.Utils.RequestUtils.BlogUtil;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +23,12 @@ public class BlogController {
         blogService.setLabel(label);
     }
 
-    @RequestMapping("/setBlog")
-    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
-                           String imag, String label, String username, String useravatar){
-        return blogService.setBlog(uid, type, content, post_day, video, imag, label, username, useravatar);
-
+    @PostMapping("/setBlog")
+    public Integer setBlog(@RequestBody BlogUtil blogUtil) {
+        System.out.println(blogUtil);
+        return blogService.setBlog(blogUtil.getUid(), blogUtil.getType(), blogUtil.getContent(),
+                blogUtil.getPost_day(), blogUtil.getVideo(), blogUtil.getImag(), blogUtil.getLabel(),
+                blogUtil.getUsername(), blogUtil.getUseravatar());
     }
 
     @GetMapping("/getPublicBlogs")

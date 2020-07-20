@@ -5,7 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Dao.BlogDao;
 import com.back.weins.Dao.LabelAndBlogDao;
 import com.back.weins.Dao.LabelDao;
+import com.back.weins.DaoImpl.BlogDaoImpl;
+import com.back.weins.DaoImpl.LabelDaoImpl;
+import com.back.weins.DaoImpl.UserDaoImpl;
 import com.back.weins.entity.Label;
+import com.back.weins.entity.User;
+import com.back.weins.entity.UserMongo;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +22,13 @@ import java.util.List;
 @Transactional
 public class BlogServiceImpl implements BlogService {
     @Autowired
-    private LabelDao labelDao;
+    private LabelDaoImpl labelDao;
 
     @Autowired
-    private BlogDao blogDao;
+    private BlogDaoImpl blogDao;
 
-//    @Autowired
-//    private LabelAndBlogDao labelAndBlogDao;
-
+    @Autowired
+    private UserDaoImpl userDao;
 
     @Override
     public void setLabel(String label) {
@@ -37,7 +41,18 @@ public class BlogServiceImpl implements BlogService {
         List<String> image = JSON.parseArray(imag, String.class);
         List<Label> label = JSON.parseArray(lab, Label.class);
 
-        return blogDao.setBlog(uid, type, content, post_day, video, image, label, username, useravatar);
+        Integer blogId = blogDao.setBlog(uid, type, content, post_day, video, image, label, username, useravatar);
+
+        User user = userDao.getOne(uid);
+        UserMongo userMongo = user.getUserMongo();
+        List<Integer> blogs = userMongo.getBlogs();
+        blogs.add(blogId);
+        userMongo.setBlogs(blogs);
+        userMongo.setBlog_num(userMongo.getBlog_num() + 1);
+        user.setUserMongo(userMongo);
+        userDao.update(user);
+
+        return blogId;
     }
 
     @Override
