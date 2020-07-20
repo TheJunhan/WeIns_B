@@ -1,6 +1,7 @@
 package com.back.weins.Controller;
 
 import com.alibaba.fastjson.JSON;
+import com.back.weins.Utils.RequestUtils.BlogUtil;
 import com.back.weins.entity.Label;
 
 import com.back.weins.entity.User;
@@ -47,8 +48,9 @@ public class BlogControllerTest {
         la1.setFlag(0);
         labe.add(la1);
         String lab = JSON.toJSONString(labe);
-        Integer t = blogController.setBlog(1, 1, "自己可见：今天天气很晴朗，鸟儿生生唱", "2020-7-15", "null", ima,
+        BlogUtil blogUtil = new BlogUtil(1, 1, "自己可见：今天天气很晴朗，鸟儿生生唱", "2020-7-15", "null", ima,
                 lab, "徐珺涵", "default");
+        Integer t = blogController.setBlog(blogUtil);
 
     }
 
