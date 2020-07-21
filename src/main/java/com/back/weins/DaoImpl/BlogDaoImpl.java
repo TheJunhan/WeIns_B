@@ -186,6 +186,37 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    public List<JSONObject> getBlogsById(Integer uid) {
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return null;
+        List<Integer> blogs = userMongo.getBlogs();
+        List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+        for(int i = 0; i < blogs.size(); ++i){
+            JSONObject jsonObject = new JSONObject();
+            Blog blog = blogRepository.findById(blogs.get(i)).orElse(null);
+            if(blog.getIs_del()==1) continue;
+            BlogMongo blogMongo = blogMongoRepository.findById(blogs.get(i)).orElse(null);
+            if(blog.getReblog_id() != -1) {
+                Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);
+                if(blogtmp.getIs_del() == 1) {
+                    jsonObject.put("reblog", "del");
+                    jsonObject.put("reblogMongo", "del");
+                    continue;
+                }
+                jsonObject.put("reblog", blogRepository.findById(blog.getReblog_id()));
+                jsonObject.put("reblogMongo", blogMongoRepository.findById(blog.getReblog_id()));
+            }
+            else {
+                jsonObject.put("reblog", "null");
+                jsonObject.put("reblogMongo", "null");
+            }
+            jsonObject.put("userAvatar", userMongo.getAvatar());
+            jsonObjects.add(jsonObject);
+        }
+        return jsonObjects;
+    }
+
+    @Override
     public boolean setLike(Integer uid, Integer bid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);

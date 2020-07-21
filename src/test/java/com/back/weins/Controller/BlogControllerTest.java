@@ -49,7 +49,7 @@ public class BlogControllerTest {
         labe.add(la1);
         String lab = JSON.toJSONString(labe);
         BlogUtil blogUtil = new BlogUtil(1, 1, "自己可见：今天天气很晴朗，鸟儿生生唱", "2020-7-15", "null", ima,
-                lab, "徐珺涵", "default");
+                lab, "徐珺涵");
         Integer t = blogController.setBlog(blogUtil);
 
     }
@@ -104,12 +104,12 @@ public class BlogControllerTest {
 
     @Test
     public void setReblog(){
-        System.out.print(blogController.setReblog(3, 2, 3, "我也感觉很晴朗，声声唱", "2020-7-17", "老八", "default"));
+
     }
 
     @Test
     public void setCommentTest(){
-        blogController.setComment(3, "老八", 1, "徐珺涵", 2, "老铁有境界");
+
     }
 
     @Test
