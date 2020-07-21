@@ -19,6 +19,7 @@ public interface BlogDao {
 
     List<JSONObject> getBlogsById(Integer uid);
 
+    boolean removeComment(Integer uid, Integer cid, Integer type);
     boolean setLike(Integer uid, Integer bid);
     boolean setCollect(Integer uid, Integer bid, boolean flag);
 

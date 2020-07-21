@@ -13,6 +13,7 @@ public interface BlogService {
     List<JSONObject> getBlogsByLabel(Integer lid, Integer uid);
     List<JSONObject> getBlogsLogined(Integer uid);
     List<JSONObject> getBlogsById(Integer uid);
+    boolean removeComment(Integer uid, Integer cid, Integer type);
     boolean setLike(Integer uid, Integer bid);
 
     boolean setCollect(Integer uid, Integer bid, boolean flag);

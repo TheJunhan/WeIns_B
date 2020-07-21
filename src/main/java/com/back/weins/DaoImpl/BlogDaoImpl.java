@@ -48,6 +48,8 @@ public class BlogDaoImpl implements BlogDao {
         for(int i = 0; i < comments.size(); ++i){
             JSONObject jsonObject = new JSONObject();
             Comment comment = commentRepository.findById(comments.get(i)).orElse(null);
+            if(comment.getIs_del() == 1) continue;
+            jsonObject.put("cid", comment.getCid());
             jsonObject.put("uid", comment.getUid());
             jsonObject.put("username", comment.getUsername());
             jsonObject.put("to_uid", comment.getTo_uid());
@@ -250,6 +252,17 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    public boolean removeComment(Integer uid, Integer cid, Integer type) {
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        List<Integer> comments = userMongo.getComments();
+        if(!comments.contains(cid) && type != 8 && type != 1) return false;
+        Comment comment = commentRepository.findById(cid).orElse(null);
+        comment.setIs_del(1);
+        commentRepository.save(comment);
+        return true;
+    }
+
+    @Override
     public boolean setLike(Integer uid, Integer bid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -410,7 +423,9 @@ public class BlogDaoImpl implements BlogDao {
         List<Integer> comments = blogMongo.getComments();
 //        Comment tmp = new Comment(uid, username, to_uid, to_username, content);
         Comment tmp = new Comment(uid, username, to_uid, to_username, content);
+        commentRepository.save(tmp);
         comments.add(tmp.getCid());
+
         blogMongo.setComments(comments);
         blogMongoRepository.deleteById(bid);
         blogMongoRepository.save(blogMongo);
@@ -419,6 +434,8 @@ public class BlogDaoImpl implements BlogDao {
         if(userMongo == null) return false;
         List<Integer> list = userMongo.getComment_blog();
         list.add(bid);
+        List<Integer> list1 = userMongo.getComments();
+        list1.add(tmp.getCid());
         userMongo.setComment_blog(list);
         userMongoRepository.deleteById(uid);
         userMongoRepository.save(userMongo);

@@ -76,6 +76,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public boolean removeComment(Integer uid, Integer cid, Integer type) {
+        return blogDao.removeComment(uid, cid, type);
+    }
+
+    @Override
     public boolean setLike(Integer uid, Integer bid) {
         return blogDao.setLike(uid, bid);
     }
