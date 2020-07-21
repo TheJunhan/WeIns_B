@@ -80,4 +80,8 @@ public class BlogController {
     public boolean setComment(@RequestBody CommentUtils commentUtils){
         return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
     }
+    @PostMapping("removeComment")
+    public boolean removeComment(Integer uid, Integer cid, Integer type){
+        return blogService.removeComment(uid, cid, type);
+    }
 }
