@@ -57,6 +57,7 @@ public class BlogControllerTest {
     @Test
     public void testGetBlog(){
         System.out.print(blogController.getPublicBlogs());
+
     }
 
 
@@ -117,5 +118,7 @@ public class BlogControllerTest {
 //        blogController.setCollect(3, 3, true);
         blogController.setCollect(3, 3, false);
     }
+
+
 
 }

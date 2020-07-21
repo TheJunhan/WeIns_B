@@ -7,6 +7,7 @@ import com.back.weins.entity.Label;
 import java.util.List;
 
 public interface BlogDao {
+    JSONObject testBlog(Integer bid);
 
     Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, List<String> imag,
                     List<Label> label, String username);
