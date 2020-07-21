@@ -29,7 +29,7 @@ public class BlogMongo {
     private List<Label> labels = new ArrayList<Label>();
 
     @Field("comment")
-    private List<Comment> comments = new ArrayList<Comment>();
+    private List<Integer> comments = new ArrayList<Integer>();
 
     @Field("who_like")
     private List<Integer> who_like = new ArrayList<Integer>();
@@ -39,4 +39,5 @@ public class BlogMongo {
 
     @Field("who_reblog")
     private List<Integer> who_reblog = new ArrayList<Integer>();
+
 }
