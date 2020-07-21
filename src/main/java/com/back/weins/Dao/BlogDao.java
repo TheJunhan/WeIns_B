@@ -16,6 +16,8 @@ public interface BlogDao {
 
     List<JSONObject> getBlogsLogined(Integer uid);
 
+    List<JSONObject> getBlogsById(Integer uid);
+
     boolean setLike(Integer uid, Integer bid);
     boolean setCollect(Integer uid, Integer bid, boolean flag);
 

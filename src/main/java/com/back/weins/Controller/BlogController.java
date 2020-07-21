@@ -47,6 +47,9 @@ public class BlogController {
         return blogService.getBlogsLogined(uid);
     }
 
+    @GetMapping("/getBlogsById")
+    public List<JSONObject> getBlogsById(Integer uid) {return blogService.getBlogsById(uid); }
+
     @PostMapping("/like")
     public boolean setLike(Integer uid, Integer bid){
         return blogService.setLike(uid, bid);
