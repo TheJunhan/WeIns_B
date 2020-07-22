@@ -50,17 +50,17 @@ public class BlogController {
     @GetMapping("/getBlogsById")
     public List<JSONObject> getBlogsById(@RequestParam("uid") Integer uid) {return blogService.getBlogsById(uid); }
 
-    @PostMapping("/like")
+    @GetMapping("/like")
     public boolean setLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.setLike(uid, bid);
     }
 
-    @PostMapping("/collect")
+    @GetMapping("/collect")
     public boolean setCollect(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("flag") boolean flag){
         return blogService.setCollect(uid, bid, flag);
     }
 
-    @PostMapping("/removeLike")
+    @GetMapping("/removeLike")
     public boolean removeLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.removeLike(uid, bid);
     }
@@ -71,7 +71,7 @@ public class BlogController {
         return blogService.setReblog(reblogUtil.getUid(), reblogUtil.getBid(), reblogUtil.getType(), reblogUtil.getContent(), reblogUtil.getPost_day(), reblogUtil.getUsername());
     }
 
-    @PostMapping("/removeBlog")
+    @GetMapping("/removeBlog")
     public boolean removeBlog(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("type") Integer type){
         return blogService.removeBlog(uid, bid, type);
     }
@@ -80,7 +80,7 @@ public class BlogController {
     public boolean setComment(@RequestBody CommentUtils commentUtils){
         return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
     }
-    @PostMapping("removeComment")
+    @GetMapping("removeComment")
     public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){
         return blogService.removeComment(uid, cid, type);
     }
