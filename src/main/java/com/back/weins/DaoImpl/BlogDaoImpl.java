@@ -406,6 +406,12 @@ public class BlogDaoImpl implements BlogDao {
 
         blog.setIs_del(1);
         blogRepository.saveAndFlush(blog);
+        Integer tmp = blog.getUid();
+        UserMongo userMongo = userMongoRepository.findById(tmp).orElse(null);
+        userMongo.setBlog_num(userMongo.getBlog_num() - 1);
+        userMongoRepository.deleteById(tmp);
+        userMongoRepository.save(userMongo);
+
         return true;
     }
 
