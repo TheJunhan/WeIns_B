@@ -1,20 +1,41 @@
 package com.back.weins.entity;
 
+import lombok.Data;
+
+import javax.persistence.*;
+
+@Data
+@Entity
+@Table(name="comment")
 public class Comment {
 
-    private String content;
-    private Integer uid;
-    private String username;
-    private Integer to_uid;
-    private String to_username;
-    private Integer is_del;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    Integer cid;
+    @Column
+     String content;
+    @Column
+     Integer uid;
+    @Column
+     String username;
+    @Column
+     Integer to_uid;
+    @Column
+     String to_username;
+    @Column
+     Integer is_del;
 
-    public Comment(Integer ui, String usernam, Integer to_ui,String to_usernam, String con){
-        this.uid = ui;
-        this.username = usernam;
-        this.content = con;
-        this.to_uid = ui;
-        this.to_username = to_usernam;
+     public Comment(){
+         is_del = 0;
+     }
+
+    public Comment(Integer uid, String username, Integer to_uid,String to_username, String content){
+        this.uid = uid;
+        this.username = username;
+        this.content = content;
+        this.to_uid = to_uid;
+        this.to_username = to_username;
         this.is_del = 0;
     }
 

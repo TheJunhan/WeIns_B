@@ -44,6 +44,9 @@ public class UserMongo {
     @Field("comment_blog")
     List<Integer> comment_blog = new ArrayList<Integer>();
 
+    @Field("comments")
+    List<Integer> comments = new ArrayList<Integer>();
+
     public UserMongo() {
         this.follower_num = 0;
         this.following_num = 0;
