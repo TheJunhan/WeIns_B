@@ -7,6 +7,7 @@ import com.back.weins.Utils.RequestUtils.CommentUtils;
 import com.back.weins.Utils.RequestUtils.ReblogUtil;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +21,13 @@ public class BlogController {
     BlogService blogService;
 
     @GetMapping(value="/setLabel")
+    @PreAuthorize("hasRole('from_website')")
     public void setLabel(@RequestParam("label") String label) {
         blogService.setLabel(label);
     }
 
     @PostMapping("/setBlog")
+    @PreAuthorize("hasRole('from_website')")
     public Integer setBlog(@RequestBody BlogUtil blogUtil) {
         System.out.println(blogUtil);
         return blogService.setBlog(blogUtil.getUid(), blogUtil.getType(), blogUtil.getContent(),
@@ -33,54 +36,65 @@ public class BlogController {
     }
 
     @GetMapping("/getPublicBlogs")
+    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getPublicBlogs(){
         return blogService.getPublicBlog();
     }
 
     @GetMapping("/getBlogsByLabel")
+    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getBlogsByLabel(@RequestParam("lid") Integer lid, @RequestParam("uid") Integer uid){
         return blogService.getBlogsByLabel(lid, uid);
     }
 
     @GetMapping("/getBlogsLogined")
+    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getBlogsLogined(@RequestParam("uid") Integer uid){
         return blogService.getBlogsLogined(uid);
     }
 
     @GetMapping("/getBlogsById")
+    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getBlogsById(@RequestParam("uid") Integer uid) {return blogService.getBlogsById(uid); }
 
     @GetMapping("/like")
+    @PreAuthorize("hasRole('from_website')")
     public boolean setLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.setLike(uid, bid);
     }
 
     @GetMapping("/collect")
+    @PreAuthorize("hasRole('from_website')")
     public boolean setCollect(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("flag") boolean flag){
         return blogService.setCollect(uid, bid, flag);
     }
 
     @GetMapping("/removeLike")
+    @PreAuthorize("hasRole('from_website')")
     public boolean removeLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.removeLike(uid, bid);
     }
 
     @PostMapping("/setReblog")
+    @PreAuthorize("hasRole('from_website')")
     public boolean setReblog(@RequestBody ReblogUtil reblogUtil){
         System.out.print(reblogUtil);
         return blogService.setReblog(reblogUtil.getUid(), reblogUtil.getBid(), reblogUtil.getType(), reblogUtil.getContent(), reblogUtil.getPost_day(), reblogUtil.getUsername());
     }
 
     @GetMapping("/removeBlog")
+    @PreAuthorize("hasRole('from_website')")
     public boolean removeBlog(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("type") Integer type){
         return blogService.removeBlog(uid, bid, type);
     }
 
     @PostMapping("/setComment")
+    @PreAuthorize("hasRole('from_website')")
     public boolean setComment(@RequestBody CommentUtils commentUtils){
         return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
     }
     @GetMapping("removeComment")
+    @PreAuthorize("hasRole('from_website')")
     public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){
         return blogService.removeComment(uid, cid, type);
     }
