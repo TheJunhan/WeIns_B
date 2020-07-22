@@ -38,30 +38,30 @@ public class BlogController {
     }
 
     @GetMapping("/getBlogsByLabel")
-    public List<JSONObject> getBlogsByLabel(Integer lid, Integer uid){
+    public List<JSONObject> getBlogsByLabel(@RequestParam("lid") Integer lid, @RequestParam("uid") Integer uid){
         return blogService.getBlogsByLabel(lid, uid);
     }
 
     @GetMapping("/getBlogsLogined")
-    public List<JSONObject> getBlogsLogined(Integer uid){
+    public List<JSONObject> getBlogsLogined(@RequestParam("uid") Integer uid){
         return blogService.getBlogsLogined(uid);
     }
 
     @GetMapping("/getBlogsById")
-    public List<JSONObject> getBlogsById(Integer uid) {return blogService.getBlogsById(uid); }
+    public List<JSONObject> getBlogsById(@RequestParam("uid") Integer uid) {return blogService.getBlogsById(uid); }
 
     @PostMapping("/like")
-    public boolean setLike(Integer uid, Integer bid){
+    public boolean setLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.setLike(uid, bid);
     }
 
     @PostMapping("/collect")
-    public boolean setCollect(Integer uid, Integer bid, boolean flag){
+    public boolean setCollect(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("flag") boolean flag){
         return blogService.setCollect(uid, bid, flag);
     }
 
     @PostMapping("/removeLike")
-    public boolean removeLike(Integer uid, Integer bid){
+    public boolean removeLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.removeLike(uid, bid);
     }
 
@@ -72,7 +72,7 @@ public class BlogController {
     }
 
     @PostMapping("/removeBlog")
-    public boolean removeBlog(Integer uid, Integer bid, Integer type){
+    public boolean removeBlog(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("type") Integer type){
         return blogService.removeBlog(uid, bid, type);
     }
 
@@ -81,7 +81,7 @@ public class BlogController {
         return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
     }
     @PostMapping("removeComment")
-    public boolean removeComment(Integer uid, Integer cid, Integer type){
+    public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){
         return blogService.removeComment(uid, cid, type);
     }
 }

@@ -7,14 +7,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class LabelDaoImplTest {
-    @Autowired
-    private LabelDaoImpl labelDao;
-
-    @Test
-    void insert() {
-        Label label = new Label();
-        label.setContent("林旭亚纶");
-        System.out.println(label);
-        labelDao.save(label);
-    }
+//    @Autowired
+//    private LabelDaoImpl labelDao;
+//
+//    @Test
+//    void insert() {
+//        Label label = new Label();
+//        label.setContent("林旭亚纶");
+//        System.out.println(label);
+//        labelDao.save(label);
+//    }
 }
