@@ -11,4 +11,10 @@ public class Constant {
     public static final Integer NO_SUCH_USER = -1;
     public static final Integer MANAGER = 0;
     public static final Integer CUSTOMER = 1;
+
+    public static final String JWT_ID = "weins-2020";
+    public static final String JWT_SECRET = "Isi50b90fvJt+4IHoMJlHkS1ttg=";
+    public static final int JWT_TTL = 60*60*1000;
+    public static final int JWT_REFRESH_INTERVAL = 18 * 1000;
+    public static final int JWT_REFRESH_TTL = 60 * 1000;
 }

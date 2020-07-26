@@ -21,8 +21,8 @@ import java.util.List;
 @SpringBootTest
 public class BlogControllerTest {
 
-//    @Autowired
-//    private BlogController blogController;
+    @Autowired
+    private BlogController blogController;
 //
 //    @Autowired
 //    private UserController userController;
@@ -55,12 +55,12 @@ public class BlogControllerTest {
 //
 //    }
 //
-//    @Test
-//    public void testGetBlog(){
-//        System.out.print(blogController.getPublicBlogs());
-//
-//    }
-//
+    @Test
+    public void testGetBlog(){
+        System.out.print(blogController.getPublicBlogs());
+
+    }
+
 //
 //    @Test
 //    public void testGetBlogsByLabel(){

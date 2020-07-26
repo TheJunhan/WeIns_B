@@ -37,11 +37,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, String imag, String lab, String username) {
+    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, String imag, String lab) {
         List<String> image = JSON.parseArray(imag, String.class);
         List<Label> label = JSON.parseArray(lab, Label.class);
 
-        Integer blogId = blogDao.setBlog(uid, type, content, post_day, video, image, label, username);
+        Integer blogId = blogDao.setBlog(uid, type, content, post_day, video, image, label);
 
         User user = userDao.getOne(uid);
         UserMongo userMongo = user.getUserMongo();
@@ -71,8 +71,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<JSONObject> getBlogsById(Integer uid) {
-        return blogDao.getBlogsById(uid);
+    public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
+        return blogDao.getBlogsById(uid, to_see_uid);
     }
 
     @Override
@@ -96,8 +96,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day, String username) {
-        return blogDao.setReblog(uid, bid, type, content, post_day, username);
+    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day) {
+        return blogDao.setReblog(uid, bid, type, content, post_day);
     }
 
     @Override

@@ -20,8 +20,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class UserControllerTest extends WeinsApplicationTests {
-//    @Autowired
-//    private UserController userController;
+    @Autowired
+    private UserController userController;
+
+    @Test
+    public void loginTest() throws Exception {
+        System.out.print(userController.login("15044341612", "111111"));
+    }
+
+    @Test
+    public void parseTest() throws Exception {
+        userController.parseJwt("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ3ZWlucy0yMDIwIiwiaWF0IjoxNTk1NTY5MDI5LCJzdWIiOiJ7XCJiaXJ0aGRheVwiOlwiMTkxMS0wMy0xNFwiLFwiaWRcIjoyLFwibmFtZVwiOlwi5b6Q54-65ra1XCIsXCJwYXNzd29yZFwiOlwiMTExMTExXCIsXCJwaG9uZVwiOlwiMTUwNDQzNDE2MTJcIixcInJlZ190aW1lXCI6XCIyMDIwLTA3LTIxIDA0OjE5OjA2XCIsXCJzZXhcIjowLFwidHlwZVwiOjAsXCJ1c2VyTW9uZ29cIjp7XCJhdmF0YXJcIjpcImh0dHA6Ly9icGljLjU4OGt1LmNvbS9lbGVtZW50X3BpYy8wMS81NS8wOS82MzU3NDc0ZGJmMjQwOWMuanBnXCIsXCJibG9nX251bVwiOjAsXCJibG9nc1wiOltdLFwiY29sbGVjdF9ibG9nXCI6W10sXCJjb21tZW50X2Jsb2dcIjpbMV0sXCJjb21tZW50c1wiOlszXSxcImZvbGxvd2VyX251bVwiOjAsXCJmb2xsb3dlcnNcIjpbXSxcImZvbGxvd2luZ19udW1cIjowLFwiZm9sbG93aW5nc1wiOltdLFwiaWRcIjoyLFwibGlrZV9ibG9nXCI6W119fSIsImV4cCI6MTU5NTU3MjYyOX0.c2wDWAleYnTbpxCoaSd3v2EZB6WvMKnMyGV2EVllywU");
+
+    }
 //
 //    @BeforeEach
 //    public void setUp() {
