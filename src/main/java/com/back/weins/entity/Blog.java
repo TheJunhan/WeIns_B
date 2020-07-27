@@ -32,8 +32,6 @@ public class Blog {
     @Column(name = "uid")
     private Integer uid;
 
-    @Column(name = "username")
-    private String username;
 
     @Column(name = "post_day")
     private String post_day;
