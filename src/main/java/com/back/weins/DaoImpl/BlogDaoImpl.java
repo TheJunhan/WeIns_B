@@ -230,16 +230,33 @@ public class BlogDaoImpl implements BlogDao {
 
     @Override
     public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
-        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+
+        UserMongo userMongo = userMongoRepository.findById(to_see_uid).orElse(null);
         if(userMongo == null) return null;
-        User user = userRepository.findById(uid).orElse(null);
+        User user = userRepository.findById(to_see_uid).orElse(null);
         if(user == null) return null;
+        User user1 = userRepository.findById(uid).orElse(null);
+        if(user1 == null) return null;
+        UserMongo userMongo1 = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo1 == null) return null;
+
         List<Integer> blogs = userMongo.getBlogs();
+        List<Integer> fans = userMongo1.getFollowings();
         List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+
         for(int i = 0; i < blogs.size(); ++i){
-            JSONObject jsonObject = new JSONObject();
             Blog blog = blogRepository.findById(blogs.get(i)).orElse(null);
             if(blog.getIs_del()==1) continue;
+            //判断这条说说该不该给他看
+            Integer integer = user1.getType();
+            if(blog.getType() == 0 || blog.getType() == 4)
+                if(uid != to_see_uid && integer != 1 && integer != 2 && integer != 4 && integer != 8) continue;
+            if(blog.getType() == 1 || blog.getType() == 5)
+                if(!fans.contains(uid)) continue;
+
+
+            JSONObject jsonObject = new JSONObject();
+
             BlogMongo blogMongo = blogMongoRepository.findById(blogs.get(i)).orElse(null);
 
             jsonObject.put("blog", blog);
