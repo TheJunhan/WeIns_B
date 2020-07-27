@@ -3,6 +3,7 @@ package com.back.weins.Controller;
 import com.alibaba.fastjson.JSON;
 import com.back.weins.Utils.RequestUtils.BlogUtil;
 import com.back.weins.Utils.RequestUtils.CommentUtils;
+import com.back.weins.Utils.RequestUtils.ReblogUtil;
 import com.back.weins.entity.Label;
 
 import com.back.weins.entity.User;
@@ -57,8 +58,9 @@ public class BlogControllerTest {
 //
     @Test
     public void testGetBlog(){
-        System.out.print(blogController.getPublicBlogs());
-
+//        System.out.print(blogController.getPublicBlogs());
+        ReblogUtil reblogUtil = new ReblogUtil(2, 3, 3, "开心", "2020-7-27", "疾风剑豪");
+        blogController.setReblog(reblogUtil);
     }
 
 //

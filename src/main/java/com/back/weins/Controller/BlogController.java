@@ -41,7 +41,7 @@ public class BlogController {
                 blogUtil.getPost_day(), blogUtil.getVideo(), blogUtil.getImag(), blogUtil.getLabel());
     }
 
-    @PostMapping("/getPublicBlogs")
+    @GetMapping("/getPublicBlogs")
 //    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getPublicBlogs(){
         return blogService.getPublicBlog();
