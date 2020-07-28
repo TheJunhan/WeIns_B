@@ -46,6 +46,11 @@ public class BlogDaoImpl implements BlogDao {
         if(user == null) return "该用户不存在";
         return user.getName();
     }
+    private BlogMongo findBlog(Integer bid) {
+        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
+        return blogMongo;
+
+    }
     private List<JSONObject> findAllComments(Integer bid){
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         List<Integer> comments = blogMongo.getComments();
@@ -108,13 +113,14 @@ public class BlogDaoImpl implements BlogDao {
     public List<JSONObject> getPublicBlog() {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
-        List<BlogMongo> blogMongos = blogMongoRepository.findAll();
+        //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
         for(int i = 0; i < blogs.size(); ++i) {
             if(blogs.get(i).getType()!=3 && blogs.get(i).getType()!=7) continue;
             if(blogs.get(i).getIs_del() == 1) continue;
             JSONObject tmp = new JSONObject();
             tmp.put("blog", blogs.get(i));
-            tmp.put("blogMongo", blogMongos.get(i));
+            //tmp.put("blogMongo", blogMongos.get(i));
+            tmp.put("blogMongo", findBlog(blogs.get(i).getId()));
 
             if(blogs.get(i).getReblog_id() != -1) {
                 Blog blogtmp = blogRepository.findById(blogs.get(i).getReblog_id()).orElse(null);
@@ -190,7 +196,7 @@ public class BlogDaoImpl implements BlogDao {
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
-        List<BlogMongo> blogMongos = blogMongoRepository.findAll();
+        //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
         UserMongo tmp = userMongoRepository.findById(uid).orElse(null);
 
         List<Integer> following = tmp.getFollowings();
@@ -205,7 +211,8 @@ public class BlogDaoImpl implements BlogDao {
             if(blogs.get(i).getIs_del() == 1) continue;
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("blog", blogs.get(i));
-            jsonObject.put("blogMongo", blogMongos.get(i));
+            //jsonObject.put("blogMongo", blogMongos.get(i));
+            jsonObject.put("blogMongo", findBlog(blogs.get(i).getId()));
             if(blogs.get(i).getReblog_id() != -1) {
                 Blog blogtmp = blogRepository.findById(blogs.get(i).getReblog_id()).orElse(null);
                 if(blogtmp.getIs_del() == 1) {
