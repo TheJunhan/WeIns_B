@@ -1,6 +1,8 @@
 package com.back.weins.servicesImpl;
 
+import com.back.weins.Constant.Constant;
 import com.back.weins.DaoImpl.UserDaoImpl;
+import com.back.weins.Utils.JwtTokenUtil;
 import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
@@ -15,6 +17,13 @@ import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+
+//    private final JwtTokenUtil jwtTokenUtil= new JwtTokenUtil();
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     private UserDaoImpl userDao;
 
@@ -54,6 +63,9 @@ public class UserServiceImpl implements UserService {
         if (!Objects.equals(user.getName(), res.getName())) {
             if (userDao.getByName(user.getName()) != null)
                 return "error";
+        }
+        if(userDao.getByPhone(user.getPhone()) != null){
+            return "errorPhone";
         }
 
         if (user.getName() != null)
@@ -112,21 +124,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(String phone, String password) {
+    public User login(String phone, String password){
         User user1 = userDao.getByPhone(phone);
-
         if (user1 == null) {
             return userMask(-1);
         }
-
         else if (!Objects.equals(user1.getPassword(), password)) {
             return userMask(-2);
         }
-
-        user1.setPassword(null);
-
+        String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user1), Constant.JWT_TTL);
+        user1.setPassword(jwt);
         return user1;
     }
+
+//    @Override
+//    public User login(String phone, String password) {
+//
+//        User user1 = userDao.getByPhone(phone);
+//
+//        if (user1 == null) {
+//
+//            return userMask(-1);
+//
+//        }
+//        else if (!Objects.equals(user1.getPassword(), password)) {
+//
+//            return userMask(-2);
+//        }
+//        user1.setPassword(null);
+//
+//        return user1;
+//    }
+
+
 
     @Override
     public void follow_relation(Integer sub, Integer obj, Integer flag) {
