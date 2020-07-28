@@ -64,8 +64,11 @@ public class UserServiceImpl implements UserService {
             if (userDao.getByName(user.getName()) != null)
                 return "error";
         }
-        if(userDao.getByPhone(user.getPhone()) != null){
-            return "errorPhone";
+
+        if (!Objects.equals(user.getPhone(), res.getPhone())) {
+            if (userDao.getByPhone(user.getPhone()) != null) {
+                return "errorPhone";
+            }
         }
 
         if (user.getName() != null)
@@ -87,8 +90,11 @@ public class UserServiceImpl implements UserService {
             res.setSex(user.getSex());
 
         if (user.getUserMongo() != null) {
-            if (user.getUserMongo().getAvatar() != null)
-                res.setUserMongo(user.getUserMongo());
+            if (user.getUserMongo().getAvatar() != null) {
+                UserMongo userMongo = res.getUserMongo();
+                userMongo.setAvatar(user.getUserMongo().getAvatar());
+                res.setUserMongo(userMongo);
+            }
         }
 
         userDao.update(res);

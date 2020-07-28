@@ -69,6 +69,10 @@ public class BlogDaoImpl implements BlogDao {
         }
         return list;
     }
+    private String findReblogUsername(Integer uid){
+        User user = userRepository.findById(uid).orElse(null);
+        return user.getName();
+    }
 
     @Override
     public JSONObject testBlog(Integer bid) {
@@ -127,14 +131,16 @@ public class BlogDaoImpl implements BlogDao {
                 if(blogtmp.getIs_del() == 1) {
                     tmp.put("reblog", "del");
                     tmp.put("reblogMongo", "del");
-                    continue;
+                    tmp.put("reblogUserName", "del");
                 }
                 tmp.put("reblog", blogtmp);
                 tmp.put("reblogMongo", blogMongoRepository.findById(blogs.get(i).getReblog_id()));
+                tmp.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
             }
             else {
                 tmp.put("reblog", "null");
                 tmp.put("reblogMongo", "null");
+                tmp.put("reblogUserName", "null");
             }
 
             tmp.put("userAvatar", findAvatar(blogs.get(i).getUid()));
@@ -174,14 +180,17 @@ public class BlogDaoImpl implements BlogDao {
                 if(blogtmp.getIs_del() == 1) {
                     jsonObject.put("reblog", "del");
                     jsonObject.put("reblogMongo", "del");
-                    continue;
+                    jsonObject.put("reblogUserName", "del");
+
                 }
                 jsonObject.put("reblog", blogtmp);
                 jsonObject.put("reblogMongo", blogMongoRepository.findById(blog.getReblog_id()));
+                jsonObject.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
             }
             else {
                 jsonObject.put("reblog", "null");
                 jsonObject.put("reblogMongo", "null");
+                jsonObject.put("reblogUserName", "null");
             }
             jsonObject.put("userAvatar", findAvatar(blog.getUid()));
             jsonObject.put("userName", findUsername(blog.getUid()));
@@ -218,14 +227,16 @@ public class BlogDaoImpl implements BlogDao {
                 if(blogtmp.getIs_del() == 1) {
                     jsonObject.put("reblog", "del");
                     jsonObject.put("reblogMongo", "del");
-                    continue;
+                    jsonObject.put("reblogUserName", "del");
                 }
-                jsonObject.put("reblog", blogRepository.findById(blogs.get(i).getReblog_id()));
+                jsonObject.put("reblog", blogtmp);
                 jsonObject.put("reblogMongo", blogMongoRepository.findById(blogs.get(i).getReblog_id()));
+                jsonObject.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
             }
             else {
                 jsonObject.put("reblog", "null");
                 jsonObject.put("reblogMongo", "null");
+                jsonObject.put("reblogUserName", "null");
             }
             jsonObject.put("userAvatar", findAvatar(blogs.get(i).getUid()));
             jsonObject.put("userName", findUsername(blogs.get(i).getUid()));
@@ -267,21 +278,23 @@ public class BlogDaoImpl implements BlogDao {
             BlogMongo blogMongo = blogMongoRepository.findById(blogs.get(i)).orElse(null);
 
             jsonObject.put("blog", blog);
-            jsonObject.put("reblog", blogMongo);
+            jsonObject.put("blogMongo", blogMongo);
 
             if(blog.getReblog_id() != -1) {
                 Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);
                 if(blogtmp.getIs_del() == 1) {
                     jsonObject.put("reblog", "del");
                     jsonObject.put("reblogMongo", "del");
-                    continue;
+                    jsonObject.put("reblogUserName", "del");
                 }
-                jsonObject.put("reblog", blogRepository.findById(blog.getReblog_id()));
+                jsonObject.put("reblog", blogtmp);
                 jsonObject.put("reblogMongo", blogMongoRepository.findById(blog.getReblog_id()));
+                jsonObject.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
             }
             else {
                 jsonObject.put("reblog", "null");
                 jsonObject.put("reblogMongo", "null");
+                jsonObject.put("reblogUserName", "null");
             }
             jsonObject.put("userAvatar", userMongo.getAvatar());
             jsonObject.put("userName", user.getName());
