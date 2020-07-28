@@ -99,7 +99,7 @@ public class BlogController {
     @PostMapping("/setComment")
 //    @PreAuthorize("hasRole('from_website')")
     public boolean setComment(@RequestBody CommentUtils commentUtils){
-        return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
+        return blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time());
     }
     @GetMapping("/removeComment")
 //    @PreAuthorize("hasRole('from_website')")
@@ -107,4 +107,13 @@ public class BlogController {
         return blogService.removeComment(uid, cid, type);
     }
 
+    @PostMapping("/changeBlog")
+    public boolean changeBlog(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("content") String content, @RequestParam("type") Integer type) {
+        return blogService.changeBlog(uid, bid, content, type);
+    }
+
+    @PostMapping("/getSingleBlog")
+    public JSONObject getSingleBlog(Integer bid) {
+        return blogSevice.getSingleBlog(bid);
+    }
 }

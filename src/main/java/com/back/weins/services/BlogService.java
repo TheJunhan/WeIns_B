@@ -23,5 +23,10 @@ public interface BlogService {
 
     boolean removeBlog(Integer uid, Integer bid, Integer type);
 
-    boolean setComment(Integer uid, String username, Integer to_uid, String to_username, Integer bid, String content);
+    boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time);
+
+    boolean changeBlog(Integer uid, Integer bid, String content, Integer type);
+
+    JSONObject getSingleBlog(Integer bid);
+
 }
