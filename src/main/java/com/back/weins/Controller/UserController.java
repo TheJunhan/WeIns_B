@@ -31,6 +31,13 @@ public class UserController {
         return userService.getByID(id);
     }
 
+    @GetMapping("/getPlainOne")
+    public User getPlainOne(@RequestParam("id") Integer id) {
+        User user = userService.getByID(id);
+        user.setPassword(null);
+        return user;
+    }
+
     @GetMapping("/getAll")
 //    @PreAuthorize("hasRole('from_website')")
     public List<User> getAll() {
@@ -47,6 +54,20 @@ public class UserController {
 //    @PreAuthorize("hasRole('from_website')")
     public User login(@RequestParam("ph") String phone, @RequestParam("pwd") String password){
         return userService.login(phone, password);
+    }
+
+    @PostMapping("/tokenLogin")
+    public User tokenLogin(@RequestParam("token") String token) throws Exception {
+        String res = token.replace(" ", "");
+        Claims claims = jwtTokenUtil.parseJWT(res);
+
+        String subject = claims.getSubject();
+
+        JSONObject jsonObject = JSON.parseObject(subject);
+
+        User user = JSON.toJavaObject(jsonObject, User.class);
+
+        return login(user.getPhone(), user.getPassword());
     }
 
     @PostMapping("/update")
