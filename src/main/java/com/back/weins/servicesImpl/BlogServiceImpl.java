@@ -106,8 +106,18 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public boolean setComment(Integer uid, String username, Integer to_uid, String to_username, Integer bid, String content) {
-        return blogDao.setComment(uid, username, to_uid, to_username, bid, content);
+    public boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time) {
+        return blogDao.setComment(uid, to_uid, bid, content, post_time);
+    }
+
+    @Override
+    public boolean changeBlog(Integer uid, Integer bid, String content, Integer type) {
+        return blogDao.changeBlog(uid, bid, content, type);
+    }
+
+    @Override
+    public JSONObject getSingleBlog(Integer bid) {
+        return blogDao.getSingleBlog(bid);
     }
 
 

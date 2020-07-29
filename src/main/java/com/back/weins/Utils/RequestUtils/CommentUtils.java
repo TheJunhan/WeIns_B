@@ -7,9 +7,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class CommentUtils {
     Integer uid;
-    String username;
+
     Integer to_uid;
-    String to_username;
+    String post_time;
     Integer bid;
     String content;
 }
