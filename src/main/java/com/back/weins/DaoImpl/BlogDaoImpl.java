@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Repository
@@ -60,17 +61,26 @@ public class BlogDaoImpl implements BlogDao {
         for(int i = 0; i < comments.size(); ++i){
             JSONObject jsonObject = new JSONObject();
 
-
             Comment comment = commentRepository.findById(comments.get(i)).orElse(null);
+            assert comment != null;
+
+            if(comment.getIs_del() == 1)
+                continue;
+
             User user1 = userRepository.findById(comment.getUid()).orElse(null);
             User user2 = userRepository.findById(comment.getTo_uid()).orElse(null);
-            if(comment.getIs_del() == 1) continue;
+            UserMongo userMongo1 = userMongoRepository.findById(comment.getUid()).orElse(null);
+            UserMongo userMongo2 = userMongoRepository.findById(comment.getTo_uid()).orElse(null);
+
             jsonObject.put("cid", comment.getCid());
             jsonObject.put("uid", comment.getUid());
             jsonObject.put("username", user1.getName());
             jsonObject.put("to_uid", comment.getTo_uid());
             jsonObject.put("to_username", user2.getName());
             jsonObject.put("content", comment.getContent());
+            jsonObject.put("post_time", comment.getPost_time());
+            jsonObject.put("avatar", userMongo1.getAvatar());
+            jsonObject.put("to_avatar", userMongo2.getAvatar());
             list.add(jsonObject);
         }
         return list;
@@ -213,13 +223,13 @@ public class BlogDaoImpl implements BlogDao {
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
-        //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
+
         UserMongo tmp = userMongoRepository.findById(uid).orElse(null);
 
         List<Integer> following = tmp.getFollowings();
         for(int i = 0; i < blogs.size(); ++i){
             if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){
-                if(blogs.get(i).getUid() != uid) continue;
+                if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;
             }
             else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){
                 if(!following.contains(blogs.get(i).getUid()) && blogs.get(i).getUid() != uid) continue;
