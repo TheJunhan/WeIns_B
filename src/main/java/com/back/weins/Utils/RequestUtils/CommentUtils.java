@@ -11,5 +11,6 @@ public class CommentUtils {
     Integer to_uid;
     String post_time;
     Integer bid;
+    Integer to_cid;
     String content;
 }

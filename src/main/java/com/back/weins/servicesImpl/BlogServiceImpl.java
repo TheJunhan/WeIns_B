@@ -106,8 +106,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time) {
-        return blogDao.setComment(uid, to_uid, bid, content, post_time);
+    public boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time, Integer to_cid) {
+        return blogDao.setComment(uid, to_uid, bid, content, post_time, to_cid);
     }
 
     @Override
