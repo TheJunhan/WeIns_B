@@ -25,6 +25,9 @@ public class Comment {
     Integer bid;
 
     @Column
+    Integer to_cid;
+
+    @Column
      Integer is_del;
 
     @Column
@@ -34,13 +37,14 @@ public class Comment {
          is_del = 0;
      }
 
-    public Comment(Integer uid, Integer to_uid, Integer bid, String content, String post_time){
+    public Comment(Integer uid, Integer to_uid, Integer bid, String content, String post_time, Integer to_cid){
         this.uid = uid;
         this.bid = bid;
         this.content = content;
         this.to_uid = to_uid;
         this.post_time = post_time;
         this.is_del = 0;
+        this.to_cid = to_cid;
     }
 
 }

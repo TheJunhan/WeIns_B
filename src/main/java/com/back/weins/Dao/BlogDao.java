@@ -27,7 +27,7 @@ public interface BlogDao {
     boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day);
 
     boolean removeBlog(Integer uid, Integer bid, Integer type);
-    boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time);
+    boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time, Integer to_cid);
 
     boolean changeBlog(Integer uid, Integer bid, String content, Integer type);
 
