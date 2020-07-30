@@ -111,12 +111,12 @@ public class BlogControllerTest {
 //
 //    }
 //
-    @Test
-    public void setCommentTest(){
-        CommentUtils commentUtils = new CommentUtils(2, 1, "2020-7-29", 1, -1, "第二条评论！！");
-
-        blogController.setComment(commentUtils);
-    }
+//    @Test
+//    public void setCommentTest(){
+//        CommentUtils commentUtils = new CommentUtils(2, 1, "2020-7-29", 1, -1, "第二条评论！！");
+//
+//        blogController.setComment(commentUtils);
+//    }
 //
 //    @Test
 //    public void setCollect(){

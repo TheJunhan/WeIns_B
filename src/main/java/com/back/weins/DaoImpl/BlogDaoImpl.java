@@ -65,6 +65,7 @@ public class BlogDaoImpl implements BlogDao {
 
         jsonObject.put("cid", comment.getCid());
         jsonObject.put("uid", comment.getUid());
+        jsonObject.put("bid", comment.getBid());
         jsonObject.put("username", user1.getName());
         jsonObject.put("to_uid", comment.getTo_uid());
         jsonObject.put("to_username", user2.getName());
