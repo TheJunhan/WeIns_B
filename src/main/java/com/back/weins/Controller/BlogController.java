@@ -89,7 +89,7 @@ public class BlogController {
 
     @PostMapping("/setComment")
     public boolean setComment(@RequestBody CommentUtils commentUtils){
-        return blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid());
+        return blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid(), commentUtils.getRoot_cid());
     }
     @PostMapping("/removeComment")
     public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){

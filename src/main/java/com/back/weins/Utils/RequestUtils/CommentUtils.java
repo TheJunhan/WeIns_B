@@ -13,4 +13,5 @@ public class CommentUtils {
     Integer bid;
     Integer to_cid;
     String content;
+    Integer root_cid;
 }

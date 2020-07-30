@@ -73,6 +73,7 @@ public class BlogDaoImpl implements BlogDao {
         jsonObject.put("avatar", userMongo1.getAvatar());
         jsonObject.put("to_avatar", userMongo2.getAvatar());
         jsonObject.put("to_cid", comment.getTo_cid());
+        jsonObject.put("root_cid", comment.getRoot_cid());
 
         return jsonObject;
     }
@@ -500,7 +501,7 @@ public class BlogDaoImpl implements BlogDao {
 
     @Override
     public boolean setComment(Integer uid, Integer to_uid,
-                               Integer bid, String content, String post_time, Integer to_cid) {
+                               Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -511,7 +512,7 @@ public class BlogDaoImpl implements BlogDao {
         if(blogMongo == null) return false;
         List<Integer> comments = blogMongo.getComments();
 //        Comment tmp = new Comment(uid, username, to_uid, to_username, content);
-        Comment tmp = new Comment(uid, to_uid, bid, content, post_time, to_cid);
+        Comment tmp = new Comment(uid, to_uid, bid, content, post_time, to_cid, root_cid);
         commentRepository.save(tmp);
         comments.add(tmp.getCid());
 
