@@ -107,7 +107,7 @@ public class BlogController {
     }
 
     @GetMapping("/test")
-    public List<List<JSONObject>> test(Integer bid) {
+    public List<JSONObject> test(@RequestParam("bid") Integer bid) {
         return blogDao.findAllComments(bid);
     }
 }

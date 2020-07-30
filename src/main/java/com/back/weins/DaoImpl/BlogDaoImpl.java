@@ -1,20 +1,17 @@
 package com.back.weins.DaoImpl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Dao.BlogDao;
 import com.back.weins.Dao.LabelAndBlogDao;
 import com.back.weins.entity.*;
 import com.back.weins.repository.*;
 
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 
 @Repository
 public class BlogDaoImpl implements BlogDao {
@@ -50,102 +47,46 @@ public class BlogDaoImpl implements BlogDao {
         return user.getName();
     }
     private BlogMongo findBlog(Integer bid) {
-        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
-        return blogMongo;
-
+        return blogMongoRepository.findById(bid).orElse(null);
     }
-//    private List<JSONObject> findAllComments(Integer bid){
-//        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
-//        List<Integer> comments = blogMongo.getComments();
-//        List<JSONObject> list = new ArrayList<>();
-//        for(int i = 0; i < comments.size(); ++i){
-//            JSONObject jsonObject = new JSONObject();
-//
-//            Comment comment = commentRepository.findById(comments.get(i)).orElse(null);
-//            assert comment != null;
-//
-//            if(comment.getIs_del() == 1)
-//                continue;
-//
-//            User user1 = userRepository.findById(comment.getUid()).orElse(null);
-//            User user2 = userRepository.findById(comment.getTo_uid()).orElse(null);
-//            UserMongo userMongo1 = userMongoRepository.findById(comment.getUid()).orElse(null);
-//            UserMongo userMongo2 = userMongoRepository.findById(comment.getTo_uid()).orElse(null);
-//
-//            jsonObject.put("cid", comment.getCid());
-//            jsonObject.put("uid", comment.getUid());
-//            jsonObject.put("username", user1.getName());
-//            jsonObject.put("to_uid", comment.getTo_uid());
-//            jsonObject.put("to_username", user2.getName());
-//            jsonObject.put("content", comment.getContent());
-//            jsonObject.put("post_time", comment.getPost_time());
-//            jsonObject.put("avatar", userMongo1.getAvatar());
-//            jsonObject.put("to_avatar", userMongo2.getAvatar());
-//            list.add(jsonObject);
-//        }
-//        return list;
-//    }
-    public List<List<JSONObject>> findAllComments(Integer bid){
-        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
-        List<Integer> comments = blogMongo.getComments();
-        List<List<JSONObject>> list = new ArrayList<>();
 
-        for(int i = 0; i < comments.size(); ++i){
-            List<JSONObject> little_list = new ArrayList<>();
-            JSONObject jsonObject = new JSONObject();
-            Comment comment = commentRepository.findById(comments.get(i)).orElse(null);
+    private JSONObject implComment(Comment comment) {
+        JSONObject jsonObject = new JSONObject();
 
-            if(comment == null) continue;
-            if(comment.getIs_del() == 1) continue;
-            if(comment.getTo_cid() != -1) continue;
+        User user1 = userRepository.findById(comment.getUid()).orElse(null);
+        User user2 = userRepository.findById(comment.getTo_uid()).orElse(null);
+        UserMongo userMongo1 = userMongoRepository.findById(comment.getUid()).orElse(null);
+        UserMongo userMongo2 = userMongoRepository.findById(comment.getTo_uid()).orElse(null);
 
+        assert user1 != null;
+        assert user2 != null;
+        assert userMongo1 != null;
+        assert userMongo2 != null;
 
-            User user1 = userRepository.findById(comment.getUid()).orElse(null);
-            User user2 = userRepository.findById(comment.getTo_uid()).orElse(null);
-            UserMongo userMongo1 = userMongoRepository.findById(comment.getUid()).orElse(null);
-            UserMongo userMongo2 = userMongoRepository.findById(comment.getTo_uid()).orElse(null);
-            jsonObject.put("cid", comment.getCid());
-            jsonObject.put("uid", comment.getUid());
-            jsonObject.put("username", user1.getName());
-            jsonObject.put("to_uid", comment.getTo_uid());
-            jsonObject.put("to_username", user2.getName());
-            jsonObject.put("content", comment.getContent());
-            jsonObject.put("post_time", comment.getPost_time());
-            jsonObject.put("avatar", userMongo1.getAvatar());
-            jsonObject.put("to_avatar", userMongo2.getAvatar());
-            //这个是评论说说的评论
-            little_list.add(jsonObject);
+        jsonObject.put("cid", comment.getCid());
+        jsonObject.put("uid", comment.getUid());
+        jsonObject.put("username", user1.getName());
+        jsonObject.put("to_uid", comment.getTo_uid());
+        jsonObject.put("to_username", user2.getName());
+        jsonObject.put("content", comment.getContent());
+        jsonObject.put("post_time", comment.getPost_time());
+        jsonObject.put("avatar", userMongo1.getAvatar());
+        jsonObject.put("to_avatar", userMongo2.getAvatar());
+        jsonObject.put("to_cid", comment.getTo_cid());
 
-            for(int j = 0; j < comments.size(); ++j) {
-                if(j == i) continue;
-                JSONObject jsonObject1 = new JSONObject();
-                Comment comment1 = commentRepository.findById(comments.get(j)).orElse(null);
-                //System.out.print("到达第一个节点");
-                if(comment1.getIs_del() == 1) continue;
-                //System.out.print("到达第er个节点");
+        return jsonObject;
+    }
 
-                //System.out.print("到达第san个节点");
+    public List<JSONObject> findAllComments(Integer bid){
 
-                User user3 = userRepository.findById(comment1.getUid()).orElse(null);
-                User user4 = userRepository.findById(comment1.getTo_uid()).orElse(null);
-                UserMongo userMongo3 = userMongoRepository.findById(comment1.getUid()).orElse(null);
-                UserMongo userMongo4 = userMongoRepository.findById(comment1.getTo_uid()).orElse(null);
-                jsonObject1.put("cid", comment1.getCid());
-                jsonObject1.put("uid", comment1.getUid());
-                jsonObject1.put("username", user3.getName());
-                jsonObject1.put("to_uid", comment1.getTo_uid());
-                jsonObject1.put("to_username", user4.getName());
-                jsonObject1.put("content", comment1.getContent());
-                jsonObject1.put("post_time", comment1.getPost_time());
-                jsonObject1.put("avatar", userMongo3.getAvatar());
-                jsonObject1.put("to_avatar", userMongo4.getAvatar());
+        List<Comment> comments = commentRepository.findByBid(bid);
+        List<JSONObject> res = new ArrayList<>();
 
-                little_list.add(jsonObject1);
-            }
-
-            list.add(little_list);
+        for (Comment comment : comments) {
+            res.add(implComment(comment));
         }
-        return list;
+
+        return res;
     }
 
     private String findReblogUsername(Integer uid){
