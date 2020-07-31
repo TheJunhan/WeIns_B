@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 
 @Repository
 public class BlogDaoImpl implements BlogDao {
@@ -47,28 +47,51 @@ public class BlogDaoImpl implements BlogDao {
         return user.getName();
     }
     private BlogMongo findBlog(Integer bid) {
-        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
-        return blogMongo;
+        return blogMongoRepository.findById(bid).orElse(null);
+    }
 
+    private JSONObject implComment(Comment comment) {
+        JSONObject jsonObject = new JSONObject();
+
+        User user1 = userRepository.findById(comment.getUid()).orElse(null);
+        User user2 = userRepository.findById(comment.getTo_uid()).orElse(null);
+        UserMongo userMongo1 = userMongoRepository.findById(comment.getUid()).orElse(null);
+        UserMongo userMongo2 = userMongoRepository.findById(comment.getTo_uid()).orElse(null);
+
+        assert user1 != null;
+        assert user2 != null;
+        assert userMongo1 != null;
+        assert userMongo2 != null;
+
+        jsonObject.put("cid", comment.getCid());
+        jsonObject.put("uid", comment.getUid());
+        jsonObject.put("bid", comment.getBid());
+        jsonObject.put("username", user1.getName());
+        jsonObject.put("to_uid", comment.getTo_uid());
+        jsonObject.put("to_username", user2.getName());
+        jsonObject.put("content", comment.getContent());
+        jsonObject.put("post_time", comment.getPost_time());
+        jsonObject.put("avatar", userMongo1.getAvatar());
+        jsonObject.put("to_avatar", userMongo2.getAvatar());
+        jsonObject.put("to_cid", comment.getTo_cid());
+        jsonObject.put("root_cid", comment.getRoot_cid());
+
+        return jsonObject;
     }
-    private List<JSONObject> findAllComments(Integer bid){
-        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
-        List<Integer> comments = blogMongo.getComments();
-        List<JSONObject> list = new ArrayList<>();
-        for(int i = 0; i < comments.size(); ++i){
-            JSONObject jsonObject = new JSONObject();
-            Comment comment = commentRepository.findById(comments.get(i)).orElse(null);
+
+    public List<JSONObject> findAllComments(Integer bid){
+
+        List<Comment> comments = commentRepository.findByBid(bid);
+        List<JSONObject> res = new ArrayList<>();
+
+        for (Comment comment : comments) {
             if(comment.getIs_del() == 1) continue;
-            jsonObject.put("cid", comment.getCid());
-            jsonObject.put("uid", comment.getUid());
-            jsonObject.put("username", comment.getUsername());
-            jsonObject.put("to_uid", comment.getTo_uid());
-            jsonObject.put("to_username", comment.getTo_username());
-            jsonObject.put("content", comment.getContent());
-            list.add(jsonObject);
+            res.add(implComment(comment));
         }
-        return list;
+
+        return res;
     }
+
     private String findReblogUsername(Integer uid){
         User user = userRepository.findById(uid).orElse(null);
         return user.getName();
@@ -146,6 +169,7 @@ public class BlogDaoImpl implements BlogDao {
             tmp.put("userAvatar", findAvatar(blogs.get(i).getUid()));
             tmp.put("userName", findUsername(blogs.get(i).getUid()));
             tmp.put("comments", findAllComments(blogs.get(i).getId()));
+
             res.add(tmp);
         }
         return res;
@@ -205,13 +229,13 @@ public class BlogDaoImpl implements BlogDao {
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
-        //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
+
         UserMongo tmp = userMongoRepository.findById(uid).orElse(null);
 
         List<Integer> following = tmp.getFollowings();
         for(int i = 0; i < blogs.size(); ++i){
             if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){
-                if(blogs.get(i).getUid() != uid) continue;
+                if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;
             }
             else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){
                 if(!following.contains(blogs.get(i).getUid()) && blogs.get(i).getUid() != uid) continue;
@@ -312,7 +336,20 @@ public class BlogDaoImpl implements BlogDao {
         if(!comments.contains(cid) && type != 8 && type != 1) return false;
         Comment comment = commentRepository.findById(cid).orElse(null);
         comment.setIs_del(1);
-        commentRepository.save(comment);
+        commentRepository.saveAndFlush(comment);
+        List<Comment> comments1 = commentRepository.findByBid(comment.getBid());
+        Integer number = 1;
+        for(Comment comment1 : comments1) {
+            if(comment1.getTo_cid()==cid || comment1.getRoot_cid() == cid) {
+                comment1.setIs_del(1);
+                commentRepository.saveAndFlush(comment1);
+                number = number + 1;
+            }
+        }
+        Blog blog = blogRepository.findById(comment.getBid()).orElse(null);
+        blog.setCom_number(blog.getCom_number() - number);
+        blogRepository.saveAndFlush(blog);
+
         return true;
     }
 
@@ -478,8 +515,8 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-    public boolean setComment(Integer uid, String username, Integer to_uid,
-                              String to_username, Integer bid, String content) {
+    public boolean setComment(Integer uid, Integer to_uid,
+                               Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -490,7 +527,7 @@ public class BlogDaoImpl implements BlogDao {
         if(blogMongo == null) return false;
         List<Integer> comments = blogMongo.getComments();
 //        Comment tmp = new Comment(uid, username, to_uid, to_username, content);
-        Comment tmp = new Comment(uid, username, to_uid, to_username, content);
+        Comment tmp = new Comment(uid, to_uid, bid, content, post_time, to_cid, root_cid);
         commentRepository.save(tmp);
         comments.add(tmp.getCid());
 
@@ -509,4 +546,60 @@ public class BlogDaoImpl implements BlogDao {
         userMongoRepository.save(userMongo);
         return true;
     }
+
+    @Override
+    public boolean changeBlog(Integer uid, Integer bid, String content, Integer type) {
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        if(blog == null) return false;
+        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
+        if(blogMongo == null) return false;
+        User user = userRepository.findById(uid).orElse(null);
+        if(user == null) return false;
+        Integer user_type = user.getType();
+
+        //判断是否可以修改、去除不可修改情况
+        if(!blog.getUid().equals(uid) && !blogMongo.getContent().equals(content)) return false;
+        if(!blog.getUid().equals(uid) && user_type != 4 && user_type != 2 && user_type != 1 && user_type != 8) return false;
+
+        blog.setType(type);
+        blogRepository.saveAndFlush(blog);
+        blogMongo.setContent(content);
+        blogMongoRepository.deleteById(bid);
+        blogMongoRepository.save(blogMongo);
+        return true;
+    }
+
+    @Override
+    public JSONObject getSingleBlog(Integer bid) {
+        JSONObject jsonObject = new JSONObject();
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
+
+        jsonObject.put("blog", blog);
+        jsonObject.put("blogMongo", blogMongo);
+        UserMongo userMongo = userMongoRepository.findById(blog.getUid()).orElse(null);
+        jsonObject.put("userAvatar", userMongo.getAvatar());
+        User user = userRepository.findById(blog.getUid()).orElse(null);
+        jsonObject.put("userName", user.getName());
+        jsonObject.put("commetns", findAllComments(bid));
+
+        //转发
+        if (blog.getReblog_id() != -1) {
+            Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);
+            if (blogtmp.getIs_del() == 1) {
+                jsonObject.put("reblog", "del");
+                jsonObject.put("reblogMongo", "del");
+                jsonObject.put("reblogUserName", "del");
+            }
+            jsonObject.put("reblog", blogtmp);
+            jsonObject.put("reblogMongo", blogMongoRepository.findById(blog.getReblog_id()));
+            jsonObject.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
+        } else {
+            jsonObject.put("reblog", "null");
+            jsonObject.put("reblogMongo", "null");
+            jsonObject.put("reblogUserName", "null");
+        }
+        return jsonObject;
+    }
+
 }

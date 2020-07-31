@@ -3,6 +3,7 @@ package com.back.weins.services;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public interface BlogService {
@@ -23,5 +24,10 @@ public interface BlogService {
 
     boolean removeBlog(Integer uid, Integer bid, Integer type);
 
-    boolean setComment(Integer uid, String username, Integer to_uid, String to_username, Integer bid, String content);
+    boolean setComment(Integer uid, Integer to_uid, Integer bid, String content, String post_time, Integer to_cid, Integer root_cid);
+
+    boolean changeBlog(Integer uid, Integer bid, String content, Integer type);
+
+    JSONObject getSingleBlog(Integer bid);
+
 }

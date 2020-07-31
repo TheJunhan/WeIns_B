@@ -2,7 +2,10 @@ package com.back.weins.Controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.back.weins.Dao.BlogDao;
+import com.back.weins.DaoImpl.BlogDaoImpl;
 import com.back.weins.Utils.RequestUtils.BlogUtil;
+import com.back.weins.Utils.RequestUtils.ChangeUtil;
 import com.back.weins.Utils.RequestUtils.CommentUtils;
 import com.back.weins.Utils.RequestUtils.ReblogUtil;
 import com.back.weins.services.BlogService;
@@ -22,19 +25,15 @@ public class BlogController {
     @Autowired
     BlogService blogService;
 
-
-
+    @Autowired
+    BlogDaoImpl blogDao;
 
     @GetMapping(value="/setLabel")
-//    @PreAuthorize("hasRole('from_website')")
     public void setLabel(@RequestParam("label") String label) {
         blogService.setLabel(label);
     }
 
-
-
     @PostMapping("/setBlog")
-//    @PreAuthorize("hasRole('from_website')")
     public Integer setBlog(@RequestBody BlogUtil blogUtil) {
         System.out.println(blogUtil);
         return blogService.setBlog(blogUtil.getUid(), blogUtil.getType(), blogUtil.getContent(),
@@ -48,63 +47,67 @@ public class BlogController {
     }
 
     @GetMapping("/getBlogsByLabel")
-//    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getBlogsByLabel(@RequestParam("lid") Integer lid, @RequestParam("uid") Integer uid){
         return blogService.getBlogsByLabel(lid, uid);
     }
 
     @GetMapping("/getBlogsLogined")
-//    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getBlogsLogined(@RequestParam("uid") Integer uid){
         return blogService.getBlogsLogined(uid);
     }
 
     @GetMapping("/getBlogsById")
-//    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getBlogsById(@RequestParam("uid") Integer uid, @RequestParam("to_see_uid") Integer to_see_uid) {
         return blogService.getBlogsById(uid, to_see_uid);
     }
 
     @GetMapping("/like")
-//    @PreAuthorize("hasRole('from_website')")
     public boolean setLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.setLike(uid, bid);
     }
 
     @GetMapping("/collect")
-//    @PreAuthorize("hasRole('from_website')")
     public boolean setCollect(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("flag") boolean flag){
         return blogService.setCollect(uid, bid, flag);
     }
 
     @GetMapping("/removeLike")
-//    @PreAuthorize("hasRole('from_website')")
     public boolean removeLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
         return blogService.removeLike(uid, bid);
     }
 
     @PostMapping("/setReblog")
-//    @PreAuthorize("hasRole('from_website')")
     public boolean setReblog(@RequestBody ReblogUtil reblogUtil){
         System.out.print(reblogUtil);
         return blogService.setReblog(reblogUtil.getUid(), reblogUtil.getBid(), reblogUtil.getType(), reblogUtil.getContent(), reblogUtil.getPost_day());
     }
 
     @GetMapping("/removeBlog")
-//    @PreAuthorize("hasRole('from_website')")
     public boolean removeBlog(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("type") Integer type){
         return blogService.removeBlog(uid, bid, type);
     }
 
     @PostMapping("/setComment")
-//    @PreAuthorize("hasRole('from_website')")
     public boolean setComment(@RequestBody CommentUtils commentUtils){
-        return blogService.setComment(commentUtils.getUid(), commentUtils.getUsername(), commentUtils.getTo_uid(), commentUtils.getTo_username(), commentUtils.getBid(), commentUtils.getContent());
+        return blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid(), commentUtils.getRoot_cid());
     }
-    @GetMapping("/removeComment")
-//    @PreAuthorize("hasRole('from_website')")
+    @PostMapping("/removeComment")
     public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){
         return blogService.removeComment(uid, cid, type);
     }
 
+    @PostMapping("/changeBlog")
+    public boolean changeBlog(@RequestBody ChangeUtil changeUtil) {
+        return blogService.changeBlog(changeUtil.getUid(), changeUtil.getBid(), changeUtil.getContent(), changeUtil.getType());
+    }
+
+    @GetMapping("/getSingleBlog")
+    public JSONObject getSingleBlog(@RequestParam("bid") Integer bid) {
+        return blogService.getSingleBlog(bid);
+    }
+
+    @GetMapping("/test")
+    public List<JSONObject> test(@RequestParam("bid") Integer bid) {
+        return blogDao.findAllComments(bid);
+    }
 }
