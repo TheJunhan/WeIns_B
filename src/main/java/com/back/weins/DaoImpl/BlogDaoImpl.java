@@ -85,6 +85,7 @@ public class BlogDaoImpl implements BlogDao {
         List<JSONObject> res = new ArrayList<>();
 
         for (Comment comment : comments) {
+            if(comment.getIs_del() == 1) continue;
             res.add(implComment(comment));
         }
 
@@ -335,7 +336,20 @@ public class BlogDaoImpl implements BlogDao {
         if(!comments.contains(cid) && type != 8 && type != 1) return false;
         Comment comment = commentRepository.findById(cid).orElse(null);
         comment.setIs_del(1);
-        commentRepository.save(comment);
+        commentRepository.saveAndFlush(comment);
+        List<Comment> comments1 = commentRepository.findByBid(comment.getBid());
+        Integer number = 1;
+        for(Comment comment1 : comments1) {
+            if(comment1.getTo_cid()==cid || comment1.getRoot_cid() == cid) {
+                comment1.setIs_del(1);
+                commentRepository.saveAndFlush(comment1);
+                number = number + 1;
+            }
+        }
+        Blog blog = blogRepository.findById(comment.getBid()).orElse(null);
+        blog.setCom_number(blog.getCom_number() - number);
+        blogRepository.saveAndFlush(blog);
+
         return true;
     }
 
