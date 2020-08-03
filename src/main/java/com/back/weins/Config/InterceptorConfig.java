@@ -9,19 +9,36 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Resource;
+
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 //
-//    @Bean
-//    public SessionValidateInterceptor sessionValidateInterceptor(){
-//        return new SessionValidateInterceptor();
+    @Bean
+    public SessionValidateInterceptor sessionValidateInterceptor(){
+        return new SessionValidateInterceptor();
+    }
+//    @Resource
+//    SessionValidateInterceptor sessionValidateInterceptor;
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//
+//        registry.addInterceptor(sessionValidateInterceptor()).addPathPatterns("/**");
+//
 //    }
 //
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry){
-//        registry.addInterceptor(sessionValidateInterceptor()).addPathPatterns("/**")
-//                .excludePathPatterns("/login").excludePathPatterns("/register").addPathPatterns("/addCart");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry){
+        registry.addInterceptor(sessionValidateInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/user/login")
+                .excludePathPatterns("/user/register")
+                .excludePathPatterns("/blog/getPublicBlogs")
+        .excludePathPatterns("/blog/getBlogsLogined")
+//                .excludePathPatterns("/user/getAll")
+        ;
+    }
 //
 //    private CorsConfiguration buildConfig() {
 //        CorsConfiguration corsConfiguration = new CorsConfiguration();
