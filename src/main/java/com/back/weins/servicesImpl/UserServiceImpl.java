@@ -1,5 +1,6 @@
 package com.back.weins.servicesImpl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Constant.Constant;
 import com.back.weins.DaoImpl.UserDaoImpl;
 import com.back.weins.Utils.JwtTokenUtil;
@@ -138,7 +139,11 @@ public class UserServiceImpl implements UserService {
         else if (!Objects.equals(user1.getPassword(), password)) {
             return userMask(-2);
         }
-        String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user1), Constant.JWT_TTL);
+        User user2 = new User();
+        user2.setPhone(user1.getPhone());
+        user2.setPassword(user1.getPassword());
+        user2.setId(user1.getId());
+        String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user2), Constant.JWT_TTL);
         user1.setPassword(jwt);
         return user1;
     }
