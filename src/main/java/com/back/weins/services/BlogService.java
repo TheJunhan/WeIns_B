@@ -11,6 +11,7 @@ public interface BlogService {
     Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
                            String imag, String label);
     List<JSONObject> getPublicBlog();
+    List<JSONObject> getPublicBlog_page(Integer index, Integer num);
     List<JSONObject> getBlogsByLabel(Integer lid, Integer uid);
     List<JSONObject> getBlogsLogined(Integer uid);
     List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid);

@@ -61,6 +61,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
+        return blogDao.getPublicBlog_page(index, num);
+    }
+
+    @Override
     public List<JSONObject> getBlogsByLabel(Integer lid, Integer uid) {
         return blogDao.getBlogsByLabel(lid, uid);
     }

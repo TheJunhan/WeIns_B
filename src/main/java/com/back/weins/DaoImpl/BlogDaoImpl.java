@@ -97,6 +97,8 @@ public class BlogDaoImpl implements BlogDao {
         return user.getName();
     }
 
+
+
     @Override
     public JSONObject testBlog(Integer bid) {
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -172,6 +174,59 @@ public class BlogDaoImpl implements BlogDao {
 
             res.add(tmp);
         }
+        return res;
+    }
+
+    @Override
+    public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
+        List<JSONObject> res = new ArrayList<JSONObject>();
+        Integer tool = 0;
+
+        while(true) {
+            List<Blog> blogs = blogRepository.findPage(index + tool * num, num);
+            if(blogs == null) break;
+            //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
+            boolean tool1 = false;
+            for(int i = 0; i < blogs.size(); ++i) {
+                if(blogs.get(i).getType()!=3 && blogs.get(i).getType()!=7) continue;
+                if(blogs.get(i).getIs_del() == 1) continue;
+                JSONObject tmp = new JSONObject();
+                tmp.put("blog", blogs.get(i));
+                //tmp.put("blogMongo", blogMongos.get(i));
+                tmp.put("blogMongo", findBlog(blogs.get(i).getId()));
+
+                if(blogs.get(i).getReblog_id() != -1) {
+                    Blog blogtmp = blogRepository.findById(blogs.get(i).getReblog_id()).orElse(null);
+                    if(blogtmp.getIs_del() == 1) {
+                        tmp.put("reblog", "del");
+                        tmp.put("reblogMongo", "del");
+                        tmp.put("reblogUserName", "del");
+                    }
+                    tmp.put("reblog", blogtmp);
+                    tmp.put("reblogMongo", blogMongoRepository.findById(blogs.get(i).getReblog_id()));
+                    tmp.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
+                }
+                else {
+                    tmp.put("reblog", "null");
+                    tmp.put("reblogMongo", "null");
+                    tmp.put("reblogUserName", "null");
+                }
+
+                tmp.put("userAvatar", findAvatar(blogs.get(i).getUid()));
+                tmp.put("userName", findUsername(blogs.get(i).getUid()));
+                tmp.put("comments", findAllComments(blogs.get(i).getId()));
+
+                res.add(tmp);
+                if(res.size() >= num) {
+                    tool1 = true;
+                }
+            }
+            if(tool1) break;
+            tool++;
+        }
+        JSONObject next_index = new JSONObject();
+        next_index.put("next_index", index+res.size());
+        res.add(next_index);
         return res;
     }
 

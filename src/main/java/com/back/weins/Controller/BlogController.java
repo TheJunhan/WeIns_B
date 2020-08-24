@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -44,6 +45,11 @@ public class BlogController {
 //    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getPublicBlogs(){
         return blogService.getPublicBlog();
+    }
+
+    @GetMapping("/page/getPublicBlogs")
+    public List<JSONObject> getPublicBlogs_page(@RequestParam("index") Integer index, @RequestParam("num") Integer num) {
+        return blogService.getPublicBlog_page(index, num);
     }
 
     @GetMapping("/getBlogsByLabel")
@@ -109,5 +115,10 @@ public class BlogController {
     @GetMapping("/test")
     public List<JSONObject> test(@RequestParam("bid") Integer bid) {
         return blogDao.findAllComments(bid);
+    }
+
+    @GetMapping("/page/recommend")
+    public List<JSONObject> recommend(@RequestParam("uid") Integer uid, @RequestParam("index") Integer index, @RequestParam("num") Integer num) {
+        return blogService.recommend(uid, index, num);
     }
 }

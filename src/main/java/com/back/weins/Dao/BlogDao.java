@@ -12,7 +12,7 @@ public interface BlogDao {
     Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, List<String> imag,
                     List<Label> label);
     List<JSONObject> getPublicBlog();
-
+    List<JSONObject> getPublicBlog_page(Integer index, Integer num);
     List<JSONObject> getBlogsByLabel(Integer lib, Integer uid);
 
     List<JSONObject> getBlogsLogined(Integer uid);
