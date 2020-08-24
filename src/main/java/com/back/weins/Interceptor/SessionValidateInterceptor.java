@@ -34,23 +34,24 @@ public class SessionValidateInterceptor extends HandlerInterceptorAdapter {
 //        }
 //        System.out.println("Success");
 //        System.out.println("前置成功");
+        return true;
 
 
 
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        String token = request.getHeader("token");
-        System.out.println(token);
-        if(token==null) return false;
-        String res = token.replace(" ", "");
-        Claims claims = jwtTokenUtil.parseJWT(res);
-
-        String subject = claims.getSubject();
-
-        JSONObject jsonObject = JSON.parseObject(subject);
-        User user = JSON.toJavaObject(jsonObject, User.class);
-        System.out.println(user);
-        return user.getId() >= 0;
+//        response.setHeader("Access-Control-Allow-Origin", "*");
+//        String token = request.getHeader("token");
+//        System.out.println(token);
+//        if(token==null) return false;
+//        String res = token.replace(" ", "");
+//        Claims claims = jwtTokenUtil.parseJWT(res);
+//
+//        String subject = claims.getSubject();
+//
+//        JSONObject jsonObject = JSON.parseObject(subject);
+//        User user = JSON.toJavaObject(jsonObject, User.class);
+//        System.out.println(user);
+//        return user.getId() >= 0;
 //        return true;
     }
 
