@@ -116,4 +116,9 @@ public class BlogController {
     public List<JSONObject> test(@RequestParam("bid") Integer bid) {
         return blogDao.findAllComments(bid);
     }
+
+    @GetMapping("/page/recommend")
+    public List<JSONObject> recommend(@RequestParam("uid") Integer uid, @RequestParam("index") Integer index, @RequestParam("num") Integer num) {
+        return blogService.recommend(uid, index, num);
+    }
 }

@@ -34,10 +34,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/user/register")
-                .excludePathPatterns("/blog/getPublicBlogs")
-        .excludePathPatterns("/blog/getBlogsLogined")
-//                .excludePathPatterns("/user/getAll")
+                .excludePathPatterns("og/getPublicBlogs")
+                .excludePathPatterns("og/getBlogsLogined")
+                .excludePathPatterns("/user/getAll")
+                .excludePathPatterns("/user/getPlainOne")
+                .excludePathPatterns("og/getBlogsById")
         ;
+
     }
 //
 //    private CorsConfiguration buildConfig() {
