@@ -6,6 +6,8 @@ import com.back.weins.repository.LabelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class LabelDaoImpl implements LabelDao {
 
@@ -78,5 +80,15 @@ public class LabelDaoImpl implements LabelDao {
             label.setFlag(1);
             save(label);
         }
+    }
+
+    @Override
+    public List<Label> getLabels() {
+        return labelRepository.findAll();
+    }
+
+    @Override
+    public List<Label> findLabels(String lab) {
+        return labelRepository.findPuzzy('%' + lab + '%');
     }
 }

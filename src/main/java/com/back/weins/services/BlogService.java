@@ -2,6 +2,7 @@ package com.back.weins.services;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.back.weins.entity.Label;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public interface BlogService {
     void setLabel(String label);
     Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
-                           String imag, String label);
+                    String imag, String label);
     List<JSONObject> getPublicBlog();
     List<JSONObject> getPublicBlog_page(Integer index, Integer num);
     List<JSONObject> getBlogsByLabel(Integer lid, Integer uid);
@@ -31,4 +32,7 @@ public interface BlogService {
 
     JSONObject getSingleBlog(Integer bid);
 
+    List<Label> getLabels();
+
+    List<Label> findLabels(String lab);
 }
