@@ -8,6 +8,7 @@ import com.back.weins.Utils.RequestUtils.BlogUtil;
 import com.back.weins.Utils.RequestUtils.ChangeUtil;
 import com.back.weins.Utils.RequestUtils.CommentUtils;
 import com.back.weins.Utils.RequestUtils.ReblogUtil;
+import com.back.weins.entity.Label;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,6 +33,16 @@ public class BlogController {
     @GetMapping(value="/setLabel")
     public void setLabel(@RequestParam("label") String label) {
         blogService.setLabel(label);
+    }
+
+    @GetMapping(value="/getLabels")
+    public List<Label> getLabels() {
+        return blogService.getLabels();
+    }
+
+    @GetMapping(value = "/findFuzzyLabels")
+    public List<Label> findLabels(@RequestParam("lab") String lab) {
+        return blogService.findLabels(lab);
     }
 
     @PostMapping("/setBlog")
@@ -119,6 +130,6 @@ public class BlogController {
 
     @GetMapping("/page/recommend")
     public List<JSONObject> recommend(@RequestParam("uid") Integer uid, @RequestParam("index") Integer index, @RequestParam("num") Integer num) {
-        return blogService.recommend(uid, index, num);
+        return null;
     }
 }

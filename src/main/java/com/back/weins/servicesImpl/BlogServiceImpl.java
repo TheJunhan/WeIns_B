@@ -125,5 +125,15 @@ public class BlogServiceImpl implements BlogService {
         return blogDao.getSingleBlog(bid);
     }
 
+    @Override
+    public List<Label> getLabels() {
+        return labelDao.getLabels();
+    }
+
+    @Override
+    public List<Label> findLabels(String lab) {
+        return labelDao.findLabels(lab);
+    }
+
 
 }

@@ -10,6 +10,8 @@ public interface UserService {
 
     User getByPhone(String phone);
 
+    List<User> getByFuzzyName(String name);
+
     List<User> getAll();
 
     String save(User user);

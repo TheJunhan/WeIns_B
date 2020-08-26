@@ -27,6 +27,16 @@ public class UserController {
         return userService.getByID(id);
     }
 
+    @GetMapping("/getByName")
+    public User getByName(@RequestParam("name") String name) {
+        return userService.getByName(name);
+    }
+
+    @GetMapping("/getByFuzzyName")
+    public List<User> getByFuzzyName(@RequestParam("name") String name) {
+        return userService.getByFuzzyName(name);
+    }
+
     @GetMapping("/getPlainOne")
     public User getPlainOne(@RequestParam("id") Integer id) {
         User user = userService.getByID(id);

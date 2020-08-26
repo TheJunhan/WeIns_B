@@ -24,6 +24,13 @@ public class UserDaoImpl implements UserDao{
     }
 
     @Override
+    public List<User> getByFuzzyName(String name) {
+        List<User> tmp = userRepository.getByFuzzyName('%'+name+'%');
+
+        return (tmp==null)?null:implUsers(tmp);
+    }
+
+    @Override
     public User getOne(Integer id) {
         User user = userRepository.getOne(id);
 

@@ -2,6 +2,8 @@ package com.back.weins.Dao;
 
 import com.back.weins.entity.Label;
 
+import java.util.List;
+
 public interface LabelDao {
     void setLabel(String label);
 
@@ -16,4 +18,8 @@ public interface LabelDao {
     void deleteById(Integer id);
 
     void deleteByContent(String content);
+
+    List<Label> getLabels();
+
+    List<Label> findLabels(String lab);
 }
