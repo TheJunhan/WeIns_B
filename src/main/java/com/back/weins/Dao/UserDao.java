@@ -5,6 +5,8 @@ import com.back.weins.entity.User;
 import java.util.List;
 
 public interface UserDao {
+    List<User> getByFuzzyName(String name);
+
     User getOne(Integer id);
 
     User getByName(String name);

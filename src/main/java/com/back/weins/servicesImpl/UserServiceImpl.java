@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getByFuzzyName(String name) {
+        return userDao.getByFuzzyName(name);
+    }
+
+    @Override
     public User getByPhone(String phone) {
         return userDao.getByPhone(phone);
     }
