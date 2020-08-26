@@ -40,7 +40,7 @@ public class BlogController {
         return blogService.getLabels();
     }
 
-    @GetMapping(value = "/findLabels")
+    @GetMapping(value = "/findFuzzyLabels")
     public List<Label> findLabels(@RequestParam("lab") String lab) {
         return blogService.findLabels(lab);
     }
