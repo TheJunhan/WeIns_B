@@ -35,4 +35,6 @@ public interface BlogService {
     List<Label> getLabels();
 
     List<Label> findLabels(String lab);
+
+    List<JSONObject> recommend(Integer uid, Integer index, Integer num);
 }

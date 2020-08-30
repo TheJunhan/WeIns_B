@@ -130,6 +130,6 @@ public class BlogController {
 
     @GetMapping("/page/recommend")
     public List<JSONObject> recommend(@RequestParam("uid") Integer uid, @RequestParam("index") Integer index, @RequestParam("num") Integer num) {
-        return null;
+        return blogService.recommend(uid, index, num);
     }
 }
