@@ -1,5 +1,6 @@
 package com.back.weins.DaoImpl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Dao.BlogDao;
 import com.back.weins.Dao.LabelAndBlogDao;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Repository
@@ -181,13 +183,14 @@ public class BlogDaoImpl implements BlogDao {
     public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         Integer tool = 0;
-
+        Integer counter = 0;
         while(true) {
             List<Blog> blogs = blogRepository.findPage(index + tool * num, num);
             if(blogs == null) break;
             //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
             boolean tool1 = false;
             for(int i = 0; i < blogs.size(); ++i) {
+                counter++;
                 if(blogs.get(i).getType()!=3 && blogs.get(i).getType()!=7) continue;
                 if(blogs.get(i).getIs_del() == 1) continue;
                 JSONObject tmp = new JSONObject();
@@ -225,7 +228,7 @@ public class BlogDaoImpl implements BlogDao {
             tool++;
         }
         JSONObject next_index = new JSONObject();
-        next_index.put("next_index", index+res.size());
+        next_index.put("next_index", index+counter);
         res.add(next_index);
         return res;
     }
@@ -284,6 +287,7 @@ public class BlogDaoImpl implements BlogDao {
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
+
 
         UserMongo tmp = userMongoRepository.findById(uid).orElse(null);
 
@@ -656,5 +660,109 @@ public class BlogDaoImpl implements BlogDao {
         }
         return jsonObject;
     }
+
+    @Override
+    public List<JSONObject> recomment(Integer uid, Integer index, Integer num) {
+        List<JSONObject> rec_res = new ArrayList<>();
+
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        assert userMongo != null;
+        Map<Label, Integer> interest = userMongo.getInterests();
+        List<Map.Entry<Label, Integer>> list_interest = new ArrayList<>(interest.entrySet());
+        List<Integer> followings = userMongo.getFollowings();
+        /**
+        * 对Mongo用户的操作, 最喜欢的三个&关注的人
+        **/
+        //冒泡排序，得到最喜欢的前三个
+        for(int i = 0; i < 3; ++i) {
+            for(int j = list_interest.size() -1; j > 0; --j) {
+                if(list_interest.get(j).getValue() > list_interest.get(j - 1).getValue()) {
+                    Map.Entry<Label, Integer> tmp = list_interest.get(j);
+                    list_interest.set(j, list_interest.get(j - 1));
+                    list_interest.set(j - 1, tmp);
+                }
+            }
+        }
+        //赋值给most_interest
+        List<Label> most_interest = new ArrayList<Label>();
+        for(int i = 0; i < 3 && i < list_interest.size(); ++i) {
+            most_interest.add(list_interest.get(i).getKey());
+        }
+
+        /**
+         * 开始挑选推荐，
+         * 目前是用最简单的推荐，即前三个喜欢的标签必定会被推荐和关注的人必会被推荐
+         * **/
+        Integer tool = 0;
+        Integer counter = 0;
+
+        while(true)
+        {
+            List<Blog> blogs = blogRepository.findPage(index + num * tool, num);
+            if(blogs == null) break;
+            tool++;
+            for(int i = 0; i < blogs.size(); ++i)
+            {
+                counter++;
+                //是否是关注的人
+                Blog tmp = blogs.get(i);
+                if(!followings.contains(tmp.getUid())) continue;
+                //是否是最喜欢
+                BlogMongo blogMongo = blogMongoRepository.findById(tmp.getUid()).orElse(null);
+                //assert blogMongo != null;
+                List<Label> labels_tmp = blogMongo.getLabels();
+                int intere_num = 0;
+                for(int j = 0; j < 3; ++j) {
+                    if(labels_tmp.contains(most_interest.get(i))) intere_num++;
+                }
+                if(intere_num == 0) continue;
+
+                //推荐
+                //检查权限
+                if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){
+                    if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;
+                }
+                else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){
+                    if(!followings.contains(blogs.get(i).getUid()) && blogs.get(i).getUid() != uid) continue;
+                }
+                //生成结果
+                JSONObject jsonObject = new JSONObject(create_json(blogs.get(i)));
+                rec_res.add(jsonObject);
+                if(rec_res.size() == num) break;
+            }
+        }
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("next_index", index + counter);
+        rec_res.add(jsonObject1);
+        return rec_res;
+    }
+
+    JSONObject create_json(Blog blog) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("blog", blog);
+
+        jsonObject.put("blogMongo", findBlog(blog.getId()));
+        if(blog.getReblog_id() != -1) {
+            Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);
+            if(blogtmp.getIs_del() == 1) {
+                jsonObject.put("reblog", "del");
+                jsonObject.put("reblogMongo", "del");
+                jsonObject.put("reblogUserName", "del");
+            }
+            jsonObject.put("reblog", blogtmp);
+            jsonObject.put("reblogMongo", blogMongoRepository.findById(blog.getReblog_id()));
+            jsonObject.put("reblogUserName", findReblogUsername(blogtmp.getUid()));
+        }
+        else {
+            jsonObject.put("reblog", "null");
+            jsonObject.put("reblogMongo", "null");
+            jsonObject.put("reblogUserName", "null");
+        }
+        jsonObject.put("userAvatar", findAvatar(blog.getUid()));
+        jsonObject.put("userName", findUsername(blog.getUid()));
+        jsonObject.put("comments", findAllComments(blog.getId()));
+        return jsonObject;
+    }
+
 
 }

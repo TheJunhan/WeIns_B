@@ -135,5 +135,11 @@ public class BlogServiceImpl implements BlogService {
         return labelDao.findLabels(lab);
     }
 
+    @Override
+    public List<JSONObject> recommend(Integer uid, Integer index, Integer num) {
+
+        return blogDao.recomment(uid, index, num);
+    }
+
 
 }
