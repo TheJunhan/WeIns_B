@@ -2,7 +2,6 @@ package com.back.weins.Controller;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.back.weins.Dao.BlogDao;
 import com.back.weins.DaoImpl.BlogDaoImpl;
 import com.back.weins.Utils.RequestUtils.BlogUtil;
 import com.back.weins.Utils.RequestUtils.ChangeUtil;
@@ -11,12 +10,8 @@ import com.back.weins.Utils.RequestUtils.ReblogUtil;
 import com.back.weins.entity.Label;
 import com.back.weins.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -26,7 +21,6 @@ public class BlogController {
 
     @Autowired
     BlogService blogService;
-
     @Autowired
     BlogDaoImpl blogDao;
 
@@ -53,7 +47,6 @@ public class BlogController {
     }
 
     @GetMapping("/getPublicBlogs")
-//    @PreAuthorize("hasRole('from_website')")
     public List<JSONObject> getPublicBlogs(){
         return blogService.getPublicBlog();
     }
@@ -108,6 +101,7 @@ public class BlogController {
     public boolean setComment(@RequestBody CommentUtils commentUtils){
         return blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid(), commentUtils.getRoot_cid());
     }
+
     @PostMapping("/removeComment")
     public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){
         return blogService.removeComment(uid, cid, type);
