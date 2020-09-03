@@ -1,5 +1,6 @@
 package com.back.weins.services;
 
+import com.back.weins.Utils.RequestUtils.RegisterUtil;
 import com.back.weins.entity.User;
 import java.util.List;
 
@@ -16,11 +17,11 @@ public interface UserService {
 
     String save(User user);
 
-    String update(User user);
+    String update(RegisterUtil registerUtil);
 
     void delete(Integer id);
 
-    String register(User user);
+    String register(RegisterUtil registerUtil);
 
     User login(String phone, String password);
 

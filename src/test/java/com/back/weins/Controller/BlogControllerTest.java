@@ -74,19 +74,19 @@ public class BlogControllerTest {
 //        userController.follow(1, 2, 1);
 //        userController.follow(3, 1, 1);
 //        userController.follow(3, 2, 1);
-        User user = new User();
-        user.setName("徐珺涵");
-        user.setPhone("15044341612");
-        user.setBirthday("1911-03-14");
-        user.setPassword("111111");
-        user.setReg_time("2020-07-21 14:00:00");
-        user.setSex(0);
-        user.setType(0);
-
-        UserMongo userMongo = new UserMongo();
-        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
-        user.setUserMongo(userMongo);
-        userController.register(user);
+//        User user = new User();
+//        user.setName("徐珺涵");
+//        user.setPhone("15044341612");
+//        user.setBirthday("1911-03-14");
+//        user.setPassword("111111");
+//        user.setReg_time("2020-07-21 14:00:00");
+//        user.setSex(0);
+//        user.setType(0);
+//
+//        UserMongo userMongo = new UserMongo();
+//        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
+//        user.setUserMongo(userMongo);
+//        userController.register(user);
 //        System.out.print((blogController.getBlogsLogined(3)).size());
     }
 //
