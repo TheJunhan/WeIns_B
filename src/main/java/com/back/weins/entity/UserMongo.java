@@ -50,7 +50,7 @@ public class UserMongo {
     List<Integer> comments = new ArrayList<Integer>();
 
     @Field("interests")
-    Map<Label, Integer> interests = new HashMap<Label, Integer>();
+    Map<Integer, Integer> interests = new HashMap<Integer, Integer>();
 
     public UserMongo() {
         this.follower_num = 0;

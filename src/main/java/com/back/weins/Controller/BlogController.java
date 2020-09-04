@@ -126,4 +126,9 @@ public class BlogController {
     public List<JSONObject> recommend(@RequestParam("uid") Integer uid, @RequestParam("index") Integer index, @RequestParam("num") Integer num) {
         return blogService.recommend(uid, index, num);
     }
+
+    @GetMapping("/page/recommendNotLogin")
+    public List<JSONObject> recommend_notLogin(@RequestParam("index") Integer index, @RequestParam("num") Integer num) {
+        return blogService.recommend_notLogin(index, num);
+    }
 }

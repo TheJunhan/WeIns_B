@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -126,6 +124,12 @@ public class UserServiceImpl implements UserService {
         user.setBirthday(registerUtil.getBirthday());
 
         UserMongo mongo = new UserMongo();
+        Map<Integer, Integer> tmp = new HashMap<>();
+
+        for(Integer i = 0; i < registerUtil.getInterests().size(); ++i) {
+            tmp.put(registerUtil.getInterests().get(i), 5);
+        }
+        mongo.setInterests(tmp);
         mongo.setAvatar(registerUtil.getAvatar());
         user.setUserMongo(mongo);
 

@@ -37,4 +37,6 @@ public interface BlogService {
     List<Label> findLabels(String lab);
 
     List<JSONObject> recommend(Integer uid, Integer index, Integer num);
+
+    List<JSONObject> recommend_notLogin(Integer index, Integer num);
 }
