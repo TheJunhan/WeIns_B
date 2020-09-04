@@ -34,4 +34,6 @@ public interface BlogDao {
     JSONObject getSingleBlog(Integer bid);
 
     List<JSONObject> recomment(Integer uid, Integer index, Integer num);
+
+    List<JSONObject> recommend_notLogin(Integer index, Integer num);
 }

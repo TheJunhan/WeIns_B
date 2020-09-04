@@ -141,5 +141,10 @@ public class BlogServiceImpl implements BlogService {
         return blogDao.recomment(uid, index, num);
     }
 
+    @Override
+    public List<JSONObject> recommend_notLogin(Integer index, Integer num) {
+        return blogDao.recommend_notLogin(index, num);
+    }
+
 
 }
