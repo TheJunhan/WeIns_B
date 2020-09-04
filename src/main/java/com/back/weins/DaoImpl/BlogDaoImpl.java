@@ -293,6 +293,45 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    public List<JSONObject> getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num) {
+        List<JSONObject> res = new ArrayList<>();
+        List<Integer> label_blog = labelAndBlogRepository.findByLid(lid);
+        User user = userRepository.findById(uid).orElse(null);
+        if(user == null) return null;
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return null;
+        List<Integer> followings = userMongo.getFollowings();
+
+        //record用来寻找起始点，counter记录本次终点
+        int counter = 0, record = 0;
+        if(label_blog == null) return null;
+        while(label_blog.get(record) < index) record++;
+        for(int i = record; i < label_blog.size(); ++i) {
+            counter = label_blog.get(i);
+            Blog blog = blogRepository.findById(counter).orElse(null);
+            //判断是否应该返回给用户
+            boolean flag = false;
+            if(blog.getType() == 7 || blog.getType() == 3) flag = true;
+            else if(blog.getType() == 4 || blog.getType() == 0) {
+                if(blog.getUid() == uid) flag = true;
+            }
+            else if(blog.getType() == 5 || blog.getType() == 1){
+                if(followings.contains(blog.getUid())) flag = true;
+                else if(blog.getUid() == uid) flag = true;
+            }
+            if(!flag) continue;
+            if(blog.getIs_del() == 1) continue;
+            //开始返回
+            res.add(create_json(blog));
+            if(res.size() >= num) break;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("next_index", counter);
+        res.add(jsonObject);
+        return res;
+    }
+
+    @Override
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
@@ -335,6 +374,38 @@ public class BlogDaoImpl implements BlogDao {
             jsonObject.put("comments", findAllComments(blogs.get(i).getId()));
             res.add(jsonObject);
         }
+        return res;
+    }
+
+    @Override
+    public List<JSONObject> getBlogsLogined_page(Integer uid, Integer index, Integer num) {
+        List<JSONObject> res = new ArrayList<>();
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return null;
+        List<Integer> followings = userMongo.getFollowings();
+        Integer counter = 0;
+        while(true) {
+            List<Blog> blogs = blogRepository.findPage(index, num);
+            if(blogs == null) break;
+            for(int i = 0; i < blogs.size(); ++i) {
+                counter++;
+                //判断是否能返回
+                if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){
+                    if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;
+                }
+                else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){
+                    if(!followings.contains(blogs.get(i).getUid()) && blogs.get(i).getUid() != uid) continue;
+
+                }
+                //能
+                res.add(create_json(blogs.get(i)));
+                if(res.size() >= num) break;
+            }
+            if(res.size() >= num) break;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("next_index", index + counter);
+        res.add(jsonObject);
         return res;
     }
 

@@ -71,8 +71,18 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public List<JSONObject> getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num) {
+        return blogDao.getBlogsByLabel_page(lid, uid, index, num);
+    }
+
+    @Override
     public List<JSONObject> getBlogsLogined(Integer uid) {
         return blogDao.getBlogsLogined(uid);
+    }
+
+    @Override
+    public List<JSONObject> getBlogsLogined_page(Integer uid, Integer index, Integer num) {
+        return blogDao.getBlogsLogined_page(uid, index, num);
     }
 
     @Override

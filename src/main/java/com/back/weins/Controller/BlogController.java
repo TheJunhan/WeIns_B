@@ -56,6 +56,14 @@ public class BlogController {
         return blogService.getPublicBlog_page(index, num);
     }
 
+    @GetMapping("/page/getBlogsByLabel")
+    public List<JSONObject> getBlogsByLabel_page(@RequestParam("lid") Integer lid,
+                                                 @RequestParam("uid") Integer uid,
+                                                 @RequestParam("index") Integer index,
+                                                 @RequestParam("num") Integer num) {
+        return blogService.getBlogsByLabel_page(lid, uid, index, num);
+    }
+
     @GetMapping("/getBlogsByLabel")
     public List<JSONObject> getBlogsByLabel(@RequestParam("lid") Integer lid, @RequestParam("uid") Integer uid){
         return blogService.getBlogsByLabel(lid, uid);
@@ -64,6 +72,13 @@ public class BlogController {
     @GetMapping("/getBlogsLogined")
     public List<JSONObject> getBlogsLogined(@RequestParam("uid") Integer uid){
         return blogService.getBlogsLogined(uid);
+    }
+
+    @GetMapping("/page/getBlogsLogined")
+    public List<JSONObject> getBLogsLogined_page(@RequestParam("uid") Integer uid,
+                                                 @RequestParam("index") Integer index,
+                                                 @RequestParam("num") Integer num) {
+        return blogService.getBlogsLogined_page(uid, index, num);
     }
 
     @GetMapping("/getBlogsById")

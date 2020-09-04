@@ -14,7 +14,9 @@ public interface BlogService {
     List<JSONObject> getPublicBlog();
     List<JSONObject> getPublicBlog_page(Integer index, Integer num);
     List<JSONObject> getBlogsByLabel(Integer lid, Integer uid);
+    List<JSONObject> getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num);
     List<JSONObject> getBlogsLogined(Integer uid);
+    List<JSONObject> getBlogsLogined_page(Integer uid, Integer index, Integer num);
     List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid);
     boolean removeComment(Integer uid, Integer cid, Integer type);
     boolean setLike(Integer uid, Integer bid);
