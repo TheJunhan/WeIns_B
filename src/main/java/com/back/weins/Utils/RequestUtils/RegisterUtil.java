@@ -3,6 +3,9 @@ package com.back.weins.Utils.RequestUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class RegisterUtil {
@@ -13,4 +16,5 @@ public class RegisterUtil {
     String birthday;
     String avatar;
     Integer sex;
+    List<Integer> interests = new ArrayList<>();
 }
