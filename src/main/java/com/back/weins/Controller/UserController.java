@@ -3,6 +3,7 @@ package com.back.weins.Controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Utils.JwtTokenUtil;
+import com.back.weins.Utils.RequestUtils.RegisterUtil;
 import com.back.weins.entity.User;
 import com.back.weins.servicesImpl.UserServiceImpl;
 import io.jsonwebtoken.Claims;
@@ -49,9 +50,9 @@ public class UserController {
         return userService.getAll();
     }
 
-    @PostMapping("/reg")
-    public String register(@RequestBody User user) {
-        return userService.register(user);
+    @PostMapping("/register")
+    public String register(@RequestBody RegisterUtil registerUtil) {
+        return userService.register(registerUtil);
     }
 
     @PostMapping("/login")
@@ -74,17 +75,15 @@ public class UserController {
     }
 
     @PostMapping("/update")
-    public String update(@RequestBody User user) {
-        return userService.update(user);
+    public String update(@RequestBody RegisterUtil registerUtil) {
+        return userService.update(registerUtil);
     }
 
     @PostMapping("/follow")
     public String follow(@RequestParam("sub") Integer sub, @RequestParam("obj") Integer obj,
                     @RequestParam("flag") Integer flag) {
-
-        if (Objects.equals(sub, obj)) {
+        if (Objects.equals(sub, obj))
             return "self";
-        }
 
         // 1 means follow and -1 means un follow
         if (flag == 1 || flag == -1) {
@@ -110,19 +109,13 @@ public class UserController {
 
     @RequestMapping("/parsejwt")
     public void parseJwt(@RequestParam("token") String token) throws Exception {
-        //String jwt = request.getParameter("token");
         if(token == null) return ;
 
         String res = token.replace(" ", "");
         Claims claims = jwtTokenUtil.parseJWT(res);
-
         String subject = claims.getSubject();
-
         JSONObject jsonObject = JSON.parseObject(subject);
-
         User user = JSON.toJavaObject(jsonObject, User.class);
-
         System.out.print(user);
-
     }
 }

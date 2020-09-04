@@ -14,5 +14,4 @@ public class BlogUtil {
     private String imag;
     private String label;
     private String username;
-
 }

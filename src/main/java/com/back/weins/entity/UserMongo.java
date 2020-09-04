@@ -6,7 +6,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.persistence.Id;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Document(collection="user")
@@ -46,6 +48,9 @@ public class UserMongo {
 
     @Field("comments")
     List<Integer> comments = new ArrayList<Integer>();
+
+    @Field("interests")
+    Map<Label, Integer> interests = new HashMap<Label, Integer>();
 
     public UserMongo() {
         this.follower_num = 0;

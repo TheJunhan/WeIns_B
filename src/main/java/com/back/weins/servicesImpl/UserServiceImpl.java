@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Constant.Constant;
 import com.back.weins.DaoImpl.UserDaoImpl;
 import com.back.weins.Utils.JwtTokenUtil;
+import com.back.weins.Utils.RequestUtils.RegisterUtil;
 import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
@@ -57,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String save(User user){
+        System.out.println(user);
         if (userDao.getByName(user.getName()) != null)
             return "error";
         userDao.save(user);
@@ -64,43 +66,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String update(User user){
-        User res = userDao.getOne(user.getId());
-        if (!Objects.equals(user.getName(), res.getName())) {
-            if (userDao.getByName(user.getName()) != null)
+    public String update(RegisterUtil registerUtil){
+        User res = userDao.getOne(registerUtil.getId());
+        if (!Objects.equals(registerUtil.getName(), res.getName())) {
+            if (userDao.getByName(registerUtil.getName()) != null)
                 return "error";
         }
 
-        if (!Objects.equals(user.getPhone(), res.getPhone())) {
-            if (userDao.getByPhone(user.getPhone()) != null) {
+        if (!Objects.equals(registerUtil.getPhone(), res.getPhone())) {
+            if (userDao.getByPhone(registerUtil.getPhone()) != null) {
                 return "errorPhone";
             }
         }
 
-        if (user.getName() != null)
-            res.setName(user.getName());
+        if (registerUtil.getName() != null)
+            res.setName(registerUtil.getName());
 
-        if (user.getPhone() != null)
-            res.setPhone(user.getPhone());
+        if (registerUtil.getPhone() != null)
+            res.setPhone(registerUtil.getPhone());
 
-        if (user.getPassword() != null)
-            res.setPassword(user.getPassword());
+        if (registerUtil.getPassword() != null)
+            res.setPassword(registerUtil.getPassword());
 
-        if (user.getType() != null)
-            res.setType(user.getType());
+        if (registerUtil.getBirthday() != null)
+            res.setBirthday(registerUtil.getBirthday());
 
-        if (user.getBirthday() != null)
-            res.setBirthday(user.getBirthday());
+        if (registerUtil.getSex() != null)
+            res.setSex(registerUtil.getSex());
 
-        if (user.getSex() != null)
-            res.setSex(user.getSex());
-
-        if (user.getUserMongo() != null) {
-            if (user.getUserMongo().getAvatar() != null) {
-                UserMongo userMongo = res.getUserMongo();
-                userMongo.setAvatar(user.getUserMongo().getAvatar());
-                res.setUserMongo(userMongo);
-            }
+        if (registerUtil.getAvatar() != null) {
+            UserMongo userMongo = res.getUserMongo();
+            userMongo.setAvatar(registerUtil.getAvatar());
+            res.setUserMongo(userMongo);
         }
 
         userDao.update(res);
@@ -113,15 +110,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String register(User user) {
-        if (userDao.getByPhone(user.getPhone()) != null) {
+    public String register(RegisterUtil registerUtil) {
+        if (userDao.getByPhone(registerUtil.getPhone()) != null) {
             return "phone error";
         }
 
-        if (userDao.getByName(user.getName()) != null) {
+        if (userDao.getByName(registerUtil.getName()) != null) {
             return "name error";
         }
 
+        User user = new User();
+        user.setName(registerUtil.getName());
+        user.setPassword(registerUtil.getPassword());
+        user.setPhone(registerUtil.getPhone());
+        user.setBirthday(registerUtil.getBirthday());
+
+        UserMongo mongo = new UserMongo();
+        mongo.setAvatar(registerUtil.getAvatar());
+        user.setUserMongo(mongo);
+
+        user.setSex(-1);
+        user.setType(0);
         Date reg_time = new Date();
         user.setReg_time(format.format(reg_time));
         userDao.save(user);
@@ -152,27 +161,6 @@ public class UserServiceImpl implements UserService {
         user1.setPassword(jwt);
         return user1;
     }
-
-//    @Override
-//    public User login(String phone, String password) {
-//
-//        User user1 = userDao.getByPhone(phone);
-//
-//        if (user1 == null) {
-//
-//            return userMask(-1);
-//
-//        }
-//        else if (!Objects.equals(user1.getPassword(), password)) {
-//
-//            return userMask(-2);
-//        }
-//        user1.setPassword(null);
-//
-//        return user1;
-//    }
-
-
 
     @Override
     public void follow_relation(Integer sub, Integer obj, Integer flag) {

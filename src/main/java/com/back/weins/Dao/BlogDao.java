@@ -32,4 +32,6 @@ public interface BlogDao {
     boolean changeBlog(Integer uid, Integer bid, String content, Integer type);
 
     JSONObject getSingleBlog(Integer bid);
+
+    List<JSONObject> recomment(Integer uid, Integer index, Integer num);
 }

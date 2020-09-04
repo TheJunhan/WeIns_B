@@ -7,7 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class CommentUtils {
     Integer uid;
-
     Integer to_uid;
     String post_time;
     Integer bid;
