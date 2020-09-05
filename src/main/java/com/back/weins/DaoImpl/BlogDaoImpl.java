@@ -776,14 +776,17 @@ public class BlogDaoImpl implements BlogDao {
         for(int i = 0; i < list_interest.size(); ++i) {
             Label labeltmp = labelRepository.findById(list_interest.get(i).getKey()).orElse(null);
             assert labeltmp != null;
-            if(labeltmp.getFlag() == 1) list_interest.remove(i);
-            i--;
+            if(labeltmp.getFlag() == 1) {
+                list_interest.remove(i);
+                i--;
+            }
         }
         List<Integer> followings = userMongo.getFollowings();
 
         /**
         * 对Mongo用户的操作, 最喜欢的三个&关注的人
         **/
+        //System.out.println(list_interest);
         //冒泡排序，得到最喜欢的前三个
         for(int i = 0; i < 3; ++i) {
             for(int j = list_interest.size() -1; j > 0; --j) {
@@ -794,6 +797,7 @@ public class BlogDaoImpl implements BlogDao {
                 }
             }
         }
+
         //赋值给most_interest
         List<Integer> most_interest = new ArrayList<>();
         for(int i = 0; i < 3 && i < list_interest.size(); ++i) {
@@ -809,24 +813,40 @@ public class BlogDaoImpl implements BlogDao {
 
         while(true)
         {
+
             List<Blog> blogs = blogRepository.findPage(index + num * tool, num);
-            if(blogs == null) break;
+
+
+            if(blogs.size() == 0) break;
             tool++;
+            //System.out.println(tool);
             for(int i = 0; i < blogs.size(); ++i)
             {
+                boolean judge = false;
                 counter++;
                 //是否是关注的人
                 Blog tmp = blogs.get(i);
-                if(!followings.contains(tmp.getUid())) continue;
-                //是否是最喜欢
+                if(followings.contains(tmp.getUid())) judge = true;
+                //是否是喜欢的标签
                 BlogMongo blogMongo = blogMongoRepository.findById(tmp.getUid()).orElse(null);
-                //assert blogMongo != null;
+                assert blogMongo != null;
                 List<Label> labels_tmp = blogMongo.getLabels();
-                int intere_num = 0;
-                for(int j = 0; j < 3; ++j) {
-                    if(labels_tmp.contains(most_interest.get(i))) intere_num++;
+                List<Integer> labels_id_tmp = new ArrayList<>();
+                //将labellist转换为labelid
+                for(int j = 0; j < labels_tmp.size(); ++j) {
+                    labels_id_tmp.add(labels_tmp.get(j).getId());
                 }
-                if(intere_num == 0) continue;
+                System.out.println(labels_id_tmp);
+
+                for(int j = 0; j < 3; ++j) {
+                    if(labels_id_tmp.contains(most_interest.get(i))) {
+                        judge = true;
+                        break;
+                    }
+                }
+                //judge=true说明该博客要么是关注的人、要么是喜欢的标签
+                if(!judge) continue;
+
 
                 //推荐
                 //检查权限
@@ -839,8 +859,9 @@ public class BlogDaoImpl implements BlogDao {
                 //生成结果
                 JSONObject jsonObject = new JSONObject(create_json(blogs.get(i)));
                 rec_res.add(jsonObject);
-                if(rec_res.size() == num) break;
+                if(rec_res.size() >= num) break;
             }
+            if(rec_res.size() >= num) break;
         }
         JSONObject jsonObject1 = new JSONObject();
         jsonObject1.put("next_index", index + counter);
@@ -883,8 +904,10 @@ public class BlogDaoImpl implements BlogDao {
 
         while(true) {
             //拿到一页
-            List<Blog> blogList = blogRepository.findPage(index, num);
-            if(blogList == null) break;
+            List<Blog> blogList = blogRepository.findPage(index + num * tool, num);
+            assert blogList != null;
+            if(blogList.size() == 0) break;
+            tool++;
             boolean flag = false;
             for(int  i = 0; i < blogList.size(); ++i) {
                 counter++;
