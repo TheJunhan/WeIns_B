@@ -12,8 +12,6 @@ public interface LabelDao {
 
     String save(Label label);
 
-    String update(Label label);
-
     void deleteById(Integer id);
 
     void deleteByContent(String content);

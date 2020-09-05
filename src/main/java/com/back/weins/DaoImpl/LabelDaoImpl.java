@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public class LabelDaoImpl implements LabelDao {
 
-
     @Autowired
     private LabelRepository labelRepository;
 
@@ -40,7 +39,7 @@ public class LabelDaoImpl implements LabelDao {
                     labelRepository.save(label1);
                 }
                 else {
-                    return "exits";
+                    return "existed";
                 }
             }
 
@@ -52,34 +51,37 @@ public class LabelDaoImpl implements LabelDao {
 
         // update
         else {
-            labelRepository.save(label);
-            return "update";
-        }
-    }
+            System.out.println("update");
+            Label label1 = labelRepository.findByContent(label.getContent());
 
-    @Override
-    public String update(Label label) {
-        return save(label);
+            if (label1 != null)
+                return "existed";
+
+            else {
+                labelRepository.save(label);
+                return "update";
+            }
+        }
     }
 
     @Override
     public void deleteById(Integer id) {
         Label label = labelRepository.getOne(id);
 
-        if (label.getFlag() == 1)
+        if (label == null || label.getFlag() == 1)
             return;
 
         label.setFlag(1);
-        save(label);
+        labelRepository.save(label);
     }
 
     @Override
     public void deleteByContent(String content) {
         Label label = labelRepository.findByContent(content);
 
-        if (label != null && label.getFlag() == 1) {
+        if (label != null && label.getFlag() == 0) {
             label.setFlag(1);
-            save(label);
+            labelRepository.save(label);
         }
     }
 
