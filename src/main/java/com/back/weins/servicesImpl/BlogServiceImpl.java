@@ -2,9 +2,6 @@ package com.back.weins.servicesImpl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.back.weins.Dao.BlogDao;
-import com.back.weins.Dao.LabelAndBlogDao;
-import com.back.weins.Dao.LabelDao;
 import com.back.weins.DaoImpl.BlogDaoImpl;
 import com.back.weins.DaoImpl.LabelDaoImpl;
 import com.back.weins.DaoImpl.UserDaoImpl;
@@ -31,9 +28,10 @@ public class BlogServiceImpl implements BlogService {
     private UserDaoImpl userDao;
 
     @Override
-    public void setLabel(String label) {
-        System.out.print("运行在service成功！");
-        labelDao.setLabel(label);
+    public String setLabel(String label) {
+        Label label1 = new Label();
+        label1.setContent(label);
+        return labelDao.save(label1);
     }
 
     @Override
@@ -71,8 +69,18 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public List<JSONObject> getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num) {
+        return blogDao.getBlogsByLabel_page(lid, uid, index, num);
+    }
+
+    @Override
     public List<JSONObject> getBlogsLogined(Integer uid) {
         return blogDao.getBlogsLogined(uid);
+    }
+
+    @Override
+    public List<JSONObject> getBlogsLogined_page(Integer uid, Integer index, Integer num) {
+        return blogDao.getBlogsLogined_page(uid, index, num);
     }
 
     @Override

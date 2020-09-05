@@ -17,33 +17,33 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class UserDaoImplTest {
-//    @Autowired
-//    private UserDaoImpl userDao;
-//
-//    @BeforeEach
-//    public void start() {
-//        System.out.println("test start");
-//    }
-//
-//    @AfterEach
-//    public void end() {
-//        System.out.println("test end");
-//    }
-//
-//    @Test
-//    public void getAll() {
-//        List<User> users = userDao.getAll();
-//        assertEquals(users.get(0).getName(), "徐珺涵");
-//        assertEquals(users.get(1).getUserMongo().getAvatar(),
-//                "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
-//    }
-//
-//    @Test
-//    public void findById() {
-//        assertEquals(userDao.getOne(1).getName(), "徐珺涵");
-//        assertEquals(userDao.getOne(1).getUserMongo().getAvatar(),
-//                "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
-//    }
+    @Autowired
+    private UserDaoImpl userDao;
+
+    @BeforeEach
+    public void start() {
+        System.out.println("test start");
+    }
+
+    @AfterEach
+    public void end() {
+        System.out.println("test end");
+    }
+
+    @Test
+    public void getAll() {
+        List<User> users = userDao.getAll();
+        assertEquals(users.get(0).getName(), "徐珺涵");
+        assertEquals(users.get(1).getUserMongo().getAvatar(),
+                "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
+    }
+
+    @Test
+    public void findById() {
+        assertEquals(userDao.getOne(1).getName(), "徐珺涵");
+        assertEquals(userDao.getOne(1).getUserMongo().getAvatar(),
+                "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
+    }
 //
 //    @Test
 //    public void findByName() {

@@ -79,12 +79,6 @@ public class JwtTokenUtil {
 
     //    fjaodjflajfja
 
-
-
-
-
-
-
     static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public static SecretKey generalKey(){
