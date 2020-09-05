@@ -62,17 +62,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String update(RegisterUtil registerUtil){
-        User res = userDao.getOne(registerUtil.getId());
+    public String update(RegisterUtil registerUtil, List<User> Test){
+        Boolean flag = (Test != null);
+
+        User res = flag ? Test.get(0) : userDao.getOne(registerUtil.getId());
+
         if (!Objects.equals(registerUtil.getName(), res.getName())) {
-            if (userDao.getByName(registerUtil.getName()) != null)
+            User NameRes = flag ? Test.get(1) : userDao.getByName(registerUtil.getName());
+
+            if (NameRes != null)
                 return "error";
+//            if (userDao.getByName(registerUtil.getName()) != null)
+//                return "error";
         }
 
         if (!Objects.equals(registerUtil.getPhone(), res.getPhone())) {
-            if (userDao.getByPhone(registerUtil.getPhone()) != null) {
+            User PhoneRes = flag ? Test.get(2) : userDao.getByPhone(registerUtil.getPhone());
+
+            if (PhoneRes != null)
                 return "errorPhone";
-            }
+//            if (userDao.getByPhone(registerUtil.getPhone()) != null)
+//                return "errorPhone";
         }
 
         if (registerUtil.getName() != null)

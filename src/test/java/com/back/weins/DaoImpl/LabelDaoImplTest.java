@@ -115,10 +115,4 @@ class LabelDaoImplTest {
         when(labelRepository.findByContent("科技")).thenReturn(label1);
         assertEquals(label1, labelDao.getByContent("科技"));
     }
-
-    @DisplayName("删除测试")
-    @Test
-    private void delete() {
-
-    }
 }

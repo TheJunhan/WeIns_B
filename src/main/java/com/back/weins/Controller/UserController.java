@@ -125,7 +125,7 @@ public class UserController {
     public String update(@RequestBody RegisterUtil registerUtil) {
         Logger LOG = LoggerFactory.getLogger(UserController.class);
         LOG.info("user: "+registerUtil.getPhone()+" update message");
-        return userService.update(registerUtil);
+        return userService.update(registerUtil, null);
     }
 
     @PostMapping("/follow")
