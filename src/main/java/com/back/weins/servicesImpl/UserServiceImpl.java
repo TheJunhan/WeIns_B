@@ -9,6 +9,7 @@ import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +111,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value="users", key = "#registerUtil.phone")
     public String register(RegisterUtil registerUtil) {
         if (userDao.getByPhone(registerUtil.getPhone()) != null) {
             return "phone error";
@@ -151,6 +153,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value="users", key = "#phone")
     public User login(String phone, String password){
         Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
 

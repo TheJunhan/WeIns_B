@@ -8,6 +8,8 @@ import com.back.weins.entity.*;
 import com.back.weins.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -122,6 +124,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
                            List<String> imag, List<Label> lab) {
         System.out.print(imag);
@@ -149,7 +152,9 @@ public class BlogDaoImpl implements BlogDao {
         return blog.getId();
     }
 
+    //do not use
     @Override
+
     public List<JSONObject> getPublicBlog() {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
@@ -189,6 +194,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         Integer tool = 0;
@@ -242,6 +248,7 @@ public class BlogDaoImpl implements BlogDao {
         return res;
     }
 
+    //do not use
     @Override
     public List<JSONObject> getBlogsByLabel(Integer lid, Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
@@ -331,6 +338,7 @@ public class BlogDaoImpl implements BlogDao {
         return res;
     }
 
+    //do not use
     @Override
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
@@ -409,9 +417,11 @@ public class BlogDaoImpl implements BlogDao {
         return res;
     }
 
-    @Override
-    public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
 
+    @Override
+
+    public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
+        System.out.println("执行了");
         UserMongo userMongo = userMongoRepository.findById(to_see_uid).orElse(null);
         if(userMongo == null) return null;
         User user = userRepository.findById(to_see_uid).orElse(null);
@@ -433,8 +443,12 @@ public class BlogDaoImpl implements BlogDao {
             if(blog.getType() == 0 || blog.getType() == 4)
                 if(uid != to_see_uid && integer != 1 && integer != 2 && integer != 4 && integer != 8) continue;
             if(blog.getType() == 1 || blog.getType() == 5)
-                if(!fans.contains(uid)) continue;
-
+                if(!fans.contains(uid) &&
+                        uid != to_see_uid &&
+                        integer != 1 &&
+                        integer != 2 &&
+                        integer != 4 &&
+                        integer != 8) continue;
 
             JSONObject jsonObject = new JSONObject();
 
@@ -467,7 +481,6 @@ public class BlogDaoImpl implements BlogDao {
         return jsonObjects;
     }
 
-
     @Override
     public boolean removeComment(Integer uid, Integer cid, Integer type) {
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
@@ -493,6 +506,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean setLike(Integer uid, Integer bid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -525,6 +539,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean setCollect(Integer uid, Integer bid, boolean flag) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
@@ -576,6 +591,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean removeLike(Integer uid, Integer bid) {
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         if(blogMongo == null) return false;
@@ -610,6 +626,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day) {
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         if(userMongo == null) return false;
@@ -658,6 +675,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean removeBlog(Integer uid, Integer bid, Integer type) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -676,6 +694,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean setComment(Integer uid, Integer to_uid,
                                Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
 
@@ -709,6 +728,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public boolean changeBlog(Integer uid, Integer bid, String content, Integer type) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -731,6 +751,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public JSONObject getSingleBlog(Integer bid) {
         JSONObject jsonObject = new JSONObject();
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -838,7 +859,7 @@ public class BlogDaoImpl implements BlogDao {
                 }
                 System.out.println(labels_id_tmp);
 
-                for(int j = 0; j < 3; ++j) {
+                for(int j = 0; j < 3 && j < most_interest.size(); ++j) {
                     if(labels_id_tmp.contains(most_interest.get(i))) {
                         judge = true;
                         break;
@@ -898,6 +919,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public List<JSONObject> recommend_notLogin(Integer index, Integer num) {
         List<JSONObject> rec_res = new ArrayList<>();
         Integer counter = 0, tool = 0;
