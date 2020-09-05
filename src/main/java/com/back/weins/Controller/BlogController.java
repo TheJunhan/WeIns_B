@@ -1,6 +1,5 @@
 package com.back.weins.Controller;
 
-
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.DaoImpl.BlogDaoImpl;
 import com.back.weins.Utils.RequestUtils.BlogUtil;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/blog")
 public class BlogController {
@@ -25,8 +23,8 @@ public class BlogController {
     BlogDaoImpl blogDao;
 
     @GetMapping(value="/setLabel")
-    public void setLabel(@RequestParam("label") String label) {
-        blogService.setLabel(label);
+    public String setLabel(@RequestParam("label") String label) {
+        return blogService.setLabel(label);
     }
 
     @GetMapping(value="/getLabels")

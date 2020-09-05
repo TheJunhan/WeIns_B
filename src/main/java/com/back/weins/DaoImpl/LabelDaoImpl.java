@@ -16,14 +16,6 @@ public class LabelDaoImpl implements LabelDao {
     private LabelRepository labelRepository;
 
     @Override
-    public void setLabel(String label) {
-        System.out.print("运行在dao成功！");
-        Label label1 = new Label();
-        label1.setContent(label);
-        labelRepository.save(label1);
-    }
-
-    @Override
     public Label getById(Integer id) {
         return labelRepository.getOne(id);
     }
@@ -34,7 +26,7 @@ public class LabelDaoImpl implements LabelDao {
     }
 
     @Override
-    public void save(Label label) {
+    public String save(Label label) {
 
         // insert new
         if (label.getId() == null) {
@@ -42,30 +34,39 @@ public class LabelDaoImpl implements LabelDao {
             Label label1 = labelRepository.findByContent(label.getContent());
 
             // exists and deleted, set non-deleted
-            if (label1 != null && label1.getFlag() == 1) {
-                label1.setFlag(0);
-                labelRepository.save(label1);
-                System.out.println("exits");
+            if (label1 != null) {
+                if (label1.getFlag() == 1) {
+                    label1.setFlag(0);
+                    labelRepository.save(label1);
+                }
+                else {
+                    return "exits";
+                }
             }
+
+            else
+                labelRepository.save(label);
+
+            return "success";
         }
 
         // update
         else {
             labelRepository.save(label);
-            System.out.println("update");
+            return "update";
         }
     }
 
     @Override
-    public void update(Label label) {
-        save(label);
+    public String update(Label label) {
+        return save(label);
     }
 
     @Override
     public void deleteById(Integer id) {
         Label label = labelRepository.getOne(id);
 
-        if (label.getFlag() == 0)
+        if (label.getFlag() == 1)
             return;
 
         label.setFlag(1);

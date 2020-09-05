@@ -5,15 +5,14 @@ import com.back.weins.entity.Label;
 import java.util.List;
 
 public interface LabelDao {
-    void setLabel(String label);
 
     Label getById(Integer id);
 
     Label getByContent(String content);
 
-    void save(Label label);
+    String save(Label label);
 
-    void update(Label label);
+    String update(Label label);
 
     void deleteById(Integer id);
 
