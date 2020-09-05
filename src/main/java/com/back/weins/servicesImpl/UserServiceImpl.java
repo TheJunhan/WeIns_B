@@ -10,8 +10,6 @@ import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,9 +17,6 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-
-//    private final JwtTokenUtil jwtTokenUtil= new JwtTokenUtil();
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -152,8 +147,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String phone, String password){
-//        Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
-
         User user1 = userDao.getByPhone(phone);
         if (user1 == null) {
             return userMask(-1);
@@ -168,7 +161,6 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user2), Constant.JWT_TTL);
         user1.setPassword(jwt);
 
-//        LOG.info("user: "+phone+" login successfully pwd: "+password);
         return user1;
     }
 
