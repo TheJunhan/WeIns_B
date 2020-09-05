@@ -1,36 +1,154 @@
 package com.back.weins.servicesImpl;
 
+import com.back.weins.Dao.UserDao;
+import com.back.weins.DaoImpl.UserDaoImpl;
+import com.back.weins.Utils.RequestUtils.RegisterUtil;
 import com.back.weins.WeinsApplicationTests;
 import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
+import com.back.weins.services.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class UserServiceImplTest extends WeinsApplicationTests {
-//    @Autowired
-//    private UserServiceImpl userService;
-//
-//    @BeforeEach
-//    public void start() {
-//        System.out.println("test start");
-//    }
-//
-//    @AfterEach
-//    public void end() {
-//        System.out.println("test end");
-//    }
+    @Test
+    public void contextLoads() {}
+
+    @MockBean
+    private UserDaoImpl userDao;
+
+    @Autowired
+    private UserService userService;
+
+    @BeforeEach
+    public void setUp() {
+        System.out.println("set up");
+    }
+
+    @AfterEach
+    public void tearDown() {
+        System.out.println("tear down");
+    }
+
+    private final String avatar = "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg";
+
+    private User getUser(Integer id, String name, String pass, String phone, Integer sex, Integer type) {
+        User user = new User();
+        if (id >= 0) user.setId(id);
+
+        user.setName(name);
+        user.setPassword(pass);
+        user.setPhone(phone);
+        user.setSex(sex);
+        user.setType(type);
+        user.setBirthday("2000-01-01");
+        user.setReg_time("2020-09-01 08:00:00");
+
+        UserMongo userMongo = new UserMongo();
+        userMongo.setAvatar(avatar);
+
+        user.setUserMongo(userMongo);
+        return user;
+    }
+
+    private List<User> getUsers() {
+        List<User> users = new ArrayList<User>();
+
+        for (int i = 0; i < 10; i++)
+            users.add(getUser(i, "臧斌宇" + Integer.toString(i), "111111", "1111111111" + Integer.toString(i), -1, 1));
+
+        return users;
+    }
+
+    @Test
+    public void save() {
+        for (User user : getUsers()) {
+            userService.save(user);
+        }
+
+        List<User> users = new ArrayList<User>();
+        when(userDao.getAll()).thenReturn(users);
+        assertEquals(users, userService.getAll());
+
+        when(userDao.getByFuzzyName("臧")).thenReturn(users);
+        assertEquals(users, userService.getByFuzzyName("臧"));
+
+        User expect = new User();
+        when(userDao.getOne(1)).thenReturn(expect);
+        assertEquals(expect, userService.getByID(1));
+
+        when(userDao.getByName("臧斌宇1")).thenReturn(expect);
+        assertEquals(expect, userService.getByName("臧斌宇1"));
+
+        when(userDao.getByPhone("11111111110")).thenReturn(expect);
+        assertEquals(expect, userService.getByPhone("11111111110"));
+    }
+
+    @Test
+    public void update() {
+
+        List<User> users = getUsers();
+        User user = users.get(0);
+        User user1 = users.get(1);
+        List<Integer> interests = new ArrayList<Integer>();
+        interests.add(1);
+        interests.add(2);
+        interests.add(3);
+
+        RegisterUtil registerUtil = new RegisterUtil(user.getId(),
+                user1.getName(),
+                user.getPassword(),
+                user1.getPhone(),
+                user.getBirthday(),
+                user.getUserMongo().getAvatar(),
+                user.getSex(),
+                interests);
+
+        String updateRes = "";
+
+        List<User> TestUtil1 = new ArrayList<User>();
+        TestUtil1.add(user); // find by id, the same
+        TestUtil1.add(user1); // find by name
+        TestUtil1.add(user1); // find by phone
+
+        when(userService.update(any(), any())).thenReturn(updateRes);
+        assertEquals("error", userService.update(registerUtil, TestUtil1));
+
+
+        List<User> TestUtil2 = new ArrayList<User>();
+        TestUtil1.add(user); // find by id, the same
+        TestUtil1.add(null); // find by name
+        TestUtil1.add(user1); // find by phone
+
+        registerUtil.setName("臧斌宇99");
+        when(userService.update(registerUtil, TestUtil2)).thenReturn(updateRes);
+        assertEquals("errorPhone", userService.update(registerUtil, TestUtil2));
+
+
+        List<User> TestUtil3 = new ArrayList<User>();
+        TestUtil1.add(user); // find by id, the same
+        TestUtil1.add(null); // find by name
+        TestUtil1.add(null); // find by phone
+
+        registerUtil.setPhone("11111111199");
+        when(userService.update(registerUtil, TestUtil3)).thenReturn(updateRes);
+        assertEquals("success", userService.update(registerUtil, TestUtil3));
+    }
 
 //    @Test
 //    public void getByID() {

@@ -824,7 +824,7 @@ public class BlogDaoImpl implements BlogDao {
         for(int i = 0; i < 3 && i < list_interest.size(); ++i) {
             most_interest.add(list_interest.get(i).getKey());
         }
-
+//        System.out.println(most_interest);
         /**
          * 开始挑选推荐，
          * 目前是用最简单的推荐，即前三个喜欢的标签必定会被推荐和关注的人必会被推荐
@@ -849,18 +849,19 @@ public class BlogDaoImpl implements BlogDao {
                 Blog tmp = blogs.get(i);
                 if(followings.contains(tmp.getUid())) judge = true;
                 //是否是喜欢的标签
-                BlogMongo blogMongo = blogMongoRepository.findById(tmp.getUid()).orElse(null);
+                BlogMongo blogMongo = blogMongoRepository.findById(tmp.getId()).orElse(null);
                 assert blogMongo != null;
+
                 List<Label> labels_tmp = blogMongo.getLabels();
                 List<Integer> labels_id_tmp = new ArrayList<>();
                 //将labellist转换为labelid
-                for(int j = 0; j < labels_tmp.size(); ++j) {
+                for(int j = 0; j < labels_tmp.size(); ++j)
                     labels_id_tmp.add(labels_tmp.get(j).getId());
-                }
-                System.out.println(labels_id_tmp);
+
+//                System.out.println(labels_id_tmp);
 
                 for(int j = 0; j < 3 && j < most_interest.size(); ++j) {
-                    if(labels_id_tmp.contains(most_interest.get(i))) {
+                    if(labels_id_tmp.contains(most_interest.get(j))) {
                         judge = true;
                         break;
                     }

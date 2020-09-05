@@ -11,8 +11,6 @@ import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,9 +18,6 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-
-//    private final JwtTokenUtil jwtTokenUtil= new JwtTokenUtil();
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -67,17 +62,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String update(RegisterUtil registerUtil){
-        User res = userDao.getOne(registerUtil.getId());
+    public String update(RegisterUtil registerUtil, List<User> Test){
+        Boolean flag = (Test != null);
+
+        User res = flag ? Test.get(0) : userDao.getOne(registerUtil.getId());
+
         if (!Objects.equals(registerUtil.getName(), res.getName())) {
-            if (userDao.getByName(registerUtil.getName()) != null)
+            User NameRes = flag ? Test.get(1) : userDao.getByName(registerUtil.getName());
+
+            if (NameRes != null)
                 return "error";
+//            if (userDao.getByName(registerUtil.getName()) != null)
+//                return "error";
         }
 
         if (!Objects.equals(registerUtil.getPhone(), res.getPhone())) {
-            if (userDao.getByPhone(registerUtil.getPhone()) != null) {
+            User PhoneRes = flag ? Test.get(2) : userDao.getByPhone(registerUtil.getPhone());
+
+            if (PhoneRes != null)
                 return "errorPhone";
-            }
+//            if (userDao.getByPhone(registerUtil.getPhone()) != null)
+//                return "errorPhone";
         }
 
         if (registerUtil.getName() != null)
@@ -155,8 +160,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value="users", key = "#phone")
     public User login(String phone, String password){
-        Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
-
         User user1 = userDao.getByPhone(phone);
         if (user1 == null) {
             return userMask(-1);
@@ -171,7 +174,6 @@ public class UserServiceImpl implements UserService {
         String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user2), Constant.JWT_TTL);
         user1.setPassword(jwt);
 
-        LOG.info("user: "+phone+" login successfully pwd: "+password);
         return user1;
     }
 
