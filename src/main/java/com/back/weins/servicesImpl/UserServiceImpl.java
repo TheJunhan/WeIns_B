@@ -9,6 +9,7 @@ import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -105,6 +106,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value="users", key = "#registerUtil.phone")
     public String register(RegisterUtil registerUtil) {
         if (userDao.getByPhone(registerUtil.getPhone()) != null) {
             return "phone error";
@@ -146,6 +148,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value="users", key = "#phone")
     public User login(String phone, String password){
         User user1 = userDao.getByPhone(phone);
         if (user1 == null) {

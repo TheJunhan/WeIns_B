@@ -38,7 +38,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/blog/getBlogsLogined")
                 .excludePathPatterns("/user/getAll")
                 .excludePathPatterns("/user/getPlainOne")
-                .excludePathPatterns("/blog/getBlogsById");
+                .excludePathPatterns("/blog/getBlogsById")
+                .excludePathPatterns("/blog/page/recommend")
+                .excludePathPatterns("/blog/getLabels")
+        ;
     }
 //
 //    private CorsConfiguration buildConfig() {
