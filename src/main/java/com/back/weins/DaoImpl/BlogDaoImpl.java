@@ -154,7 +154,7 @@ public class BlogDaoImpl implements BlogDao {
 
     //do not use
     @Override
-
+    @Cacheable(value="blogs")
     public List<JSONObject> getPublicBlog() {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
@@ -194,7 +194,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @Cacheable(value="blogs_page")
     public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         Integer tool = 0;
@@ -237,6 +237,7 @@ public class BlogDaoImpl implements BlogDao {
                 res.add(tmp);
                 if(res.size() >= num) {
                     tool1 = true;
+                    break;
                 }
             }
             if(tool1) break;
@@ -419,7 +420,7 @@ public class BlogDaoImpl implements BlogDao {
 
 
     @Override
-
+    @Cacheable(value="blogs")
     public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
         System.out.println("执行了");
         UserMongo userMongo = userMongoRepository.findById(to_see_uid).orElse(null);
@@ -482,6 +483,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean removeComment(Integer uid, Integer cid, Integer type) {
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         List<Integer> comments = userMongo.getComments();
@@ -506,7 +508,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setLike(Integer uid, Integer bid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -539,7 +541,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setCollect(Integer uid, Integer bid, boolean flag) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
@@ -591,7 +593,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean removeLike(Integer uid, Integer bid) {
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         if(blogMongo == null) return false;
@@ -626,7 +628,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day) {
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         if(userMongo == null) return false;
@@ -675,7 +677,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean removeBlog(Integer uid, Integer bid, Integer type) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -694,9 +696,9 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setComment(Integer uid, Integer to_uid,
-                               Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
+                              Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -728,7 +730,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean changeBlog(Integer uid, Integer bid, String content, Integer type) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -751,7 +753,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @Cacheable("blogs")
     public JSONObject getSingleBlog(Integer bid) {
         JSONObject jsonObject = new JSONObject();
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -805,8 +807,8 @@ public class BlogDaoImpl implements BlogDao {
         List<Integer> followings = userMongo.getFollowings();
 
         /**
-        * 对Mongo用户的操作, 最喜欢的三个&关注的人
-        **/
+         * 对Mongo用户的操作, 最喜欢的三个&关注的人
+         **/
         //System.out.println(list_interest);
         //冒泡排序，得到最喜欢的前三个
         for(int i = 0; i < 3; ++i) {
@@ -920,7 +922,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-
+    @Cacheable("blogs")
     public List<JSONObject> recommend_notLogin(Integer index, Integer num) {
         List<JSONObject> rec_res = new ArrayList<>();
         Integer counter = 0, tool = 0;
