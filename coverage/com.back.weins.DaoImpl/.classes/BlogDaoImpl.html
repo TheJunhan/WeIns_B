@@ -1,0 +1,1053 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BlogDaoImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.back.weins.DaoImpl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BlogDaoImpl (com.back.weins.DaoImpl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BlogDaoImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    13.3%
+  </span>
+  <span class="absValue">
+    (4/ 30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4%
+  </span>
+  <span class="absValue">
+    (24/ 596)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$201211f2</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$2c2d2b39</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$78d19c98</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$78d19c98$$FastClassBySpringCGLIB$$c29426e4</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$9a8dcabc</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$d464887f</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$dafdabbe</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$EnhancerBySpringCGLIB$$dafdabbe$$FastClassBySpringCGLIB$$845317ac</td>
+  </tr>
+  <tr>
+    <td class="name">BlogDaoImpl$$FastClassBySpringCGLIB$$66938aac</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    13.3%
+  </span>
+  <span class="absValue">
+    (4/ 30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4%
+  </span>
+  <span class="absValue">
+    (24/ 596)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.back.weins.DaoImpl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.alibaba.fastjson.JSON;
+<i>4</i>&nbsp;import com.alibaba.fastjson.JSONObject;
+<i>5</i>&nbsp;import com.back.weins.Dao.BlogDao;
+<i>6</i>&nbsp;import com.back.weins.Dao.LabelAndBlogDao;
+<i>7</i>&nbsp;import com.back.weins.entity.*;
+<i>8</i>&nbsp;import com.back.weins.repository.*;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>11</i>&nbsp;import org.springframework.stereotype.Repository;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import java.util.ArrayList;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.Map;
+<i>16</i>&nbsp;import java.util.Objects;
+<i>17</i>&nbsp;
+<b class="fc"><i>18</i>&nbsp;@Repository</b>
+<b class="fc"><i>19</i>&nbsp;public class BlogDaoImpl implements BlogDao {</b>
+<i>20</i>&nbsp;    @Autowired
+<i>21</i>&nbsp;    BlogRepository blogRepository;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    @Autowired
+<i>24</i>&nbsp;    BlogMongoRepository blogMongoRepository;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    @Autowired
+<i>27</i>&nbsp;    LabelAndBlogDao labelAndBlogDao;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Autowired
+<i>30</i>&nbsp;    LabelAndBlogRepository labelAndBlogRepository;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Autowired
+<i>33</i>&nbsp;    UserMongoRepository userMongoRepository;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Autowired
+<i>36</i>&nbsp;    CommentRepository commentRepository;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @Autowired
+<i>39</i>&nbsp;    UserRepository userRepository;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    @Autowired
+<i>42</i>&nbsp;    LabelRepository labelRepository;
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    private String findAvatar(Integer uid) {
+<b class="nc"><i>45</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>46</i>&nbsp;        if(userMongo==null) return &quot;default&quot;;</b>
+<b class="nc"><i>47</i>&nbsp;        return userMongo.getAvatar();</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;    private String findUsername(Integer uid) {
+<b class="nc"><i>50</i>&nbsp;        User user = userRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>51</i>&nbsp;        if(user == null) return &quot;该用户不存在&quot;;</b>
+<b class="nc"><i>52</i>&nbsp;        return user.getName();</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;    private BlogMongo findBlog(Integer bid) {
+<b class="nc"><i>55</i>&nbsp;        return blogMongoRepository.findById(bid).orElse(null);</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    private JSONObject implComment(Comment comment) {
+<b class="nc"><i>59</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<i>60</i>&nbsp;
+<b class="nc"><i>61</i>&nbsp;        User user1 = userRepository.findById(comment.getUid()).orElse(null);</b>
+<b class="nc"><i>62</i>&nbsp;        User user2 = userRepository.findById(comment.getTo_uid()).orElse(null);</b>
+<b class="nc"><i>63</i>&nbsp;        UserMongo userMongo1 = userMongoRepository.findById(comment.getUid()).orElse(null);</b>
+<b class="nc"><i>64</i>&nbsp;        UserMongo userMongo2 = userMongoRepository.findById(comment.getTo_uid()).orElse(null);</b>
+<i>65</i>&nbsp;
+<b class="nc"><i>66</i>&nbsp;        assert user1 != null;</b>
+<b class="nc"><i>67</i>&nbsp;        assert user2 != null;</b>
+<b class="nc"><i>68</i>&nbsp;        assert userMongo1 != null;</b>
+<b class="nc"><i>69</i>&nbsp;        assert userMongo2 != null;</b>
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;        jsonObject.put(&quot;cid&quot;, comment.getCid());</b>
+<b class="nc"><i>72</i>&nbsp;        jsonObject.put(&quot;uid&quot;, comment.getUid());</b>
+<b class="nc"><i>73</i>&nbsp;        jsonObject.put(&quot;bid&quot;, comment.getBid());</b>
+<b class="nc"><i>74</i>&nbsp;        jsonObject.put(&quot;username&quot;, user1.getName());</b>
+<b class="nc"><i>75</i>&nbsp;        jsonObject.put(&quot;to_uid&quot;, comment.getTo_uid());</b>
+<b class="nc"><i>76</i>&nbsp;        jsonObject.put(&quot;to_username&quot;, user2.getName());</b>
+<b class="nc"><i>77</i>&nbsp;        jsonObject.put(&quot;content&quot;, comment.getContent());</b>
+<b class="nc"><i>78</i>&nbsp;        jsonObject.put(&quot;post_time&quot;, comment.getPost_time());</b>
+<b class="nc"><i>79</i>&nbsp;        jsonObject.put(&quot;avatar&quot;, userMongo1.getAvatar());</b>
+<b class="nc"><i>80</i>&nbsp;        jsonObject.put(&quot;to_avatar&quot;, userMongo2.getAvatar());</b>
+<b class="nc"><i>81</i>&nbsp;        jsonObject.put(&quot;to_cid&quot;, comment.getTo_cid());</b>
+<b class="nc"><i>82</i>&nbsp;        jsonObject.put(&quot;root_cid&quot;, comment.getRoot_cid());</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        return jsonObject;</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public List&lt;JSONObject&gt; findAllComments(Integer bid){
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;        List&lt;Comment&gt; comments = commentRepository.findByBid(bid);</b>
+<b class="nc"><i>90</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;&gt;();</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        for (Comment comment : comments) {</b>
+<b class="nc"><i>93</i>&nbsp;            if(comment.getIs_del() == 1) continue;</b>
+<b class="nc"><i>94</i>&nbsp;            res.add(implComment(comment));</b>
+<b class="nc"><i>95</i>&nbsp;        }</b>
+<i>96</i>&nbsp;
+<b class="nc"><i>97</i>&nbsp;        return res;</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    private String findReblogUsername(Integer uid){
+<b class="nc"><i>101</i>&nbsp;        User user = userRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>102</i>&nbsp;        return user.getName();</b>
+<i>103</i>&nbsp;    }
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    private Map&lt;Integer, Integer&gt; setInterestMap(Map&lt;Integer, Integer&gt; map, List&lt;Label&gt; labels, Integer weight) {
+<b class="nc"><i>106</i>&nbsp;        for (Label label : labels) {</b>
+<b class="nc"><i>107</i>&nbsp;            Integer id = label.getId();</b>
+<b class="nc"><i>108</i>&nbsp;            if (map.putIfAbsent(id, weight) != null) map.replace(id, map.get(id) + weight);</b>
+<b class="nc"><i>109</i>&nbsp;        }</b>
+<b class="nc"><i>110</i>&nbsp;        return map;</b>
+<i>111</i>&nbsp;    }
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    @Override
+<i>114</i>&nbsp;    public JSONObject testBlog(Integer bid) {
+<b class="nc"><i>115</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>116</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);</b>
+<i>117</i>&nbsp;
+<b class="nc"><i>118</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>119</i>&nbsp;        jsonObject.put(&quot;blog&quot;, blog);</b>
+<b class="nc"><i>120</i>&nbsp;        jsonObject.put(&quot;blogMongo&quot;, blogMongo);</b>
+<b class="nc"><i>121</i>&nbsp;        return jsonObject;</b>
+<i>122</i>&nbsp;    }
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;    @Override
+<i>125</i>&nbsp;    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
+<i>126</i>&nbsp;                           List&lt;String&gt; imag, List&lt;Label&gt; lab) {
+<b class="fc"><i>127</i>&nbsp;        System.out.print(imag);</b>
+<b class="fc"><i>128</i>&nbsp;        System.out.print(lab);</b>
+<i>129</i>&nbsp;
+<b class="fc"><i>130</i>&nbsp;        Blog blog = new Blog();</b>
+<b class="fc"><i>131</i>&nbsp;        blog.setUid(uid);</b>
+<b class="fc"><i>132</i>&nbsp;        blog.setType(type);</b>
+<b class="fc"><i>133</i>&nbsp;        blog.setPost_day(post_day);</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;
+<b class="fc"><i>136</i>&nbsp;        blogRepository.save(blog);</b>
+<b class="fc"><i>137</i>&nbsp;        BlogMongo blogMongo = new BlogMongo();</b>
+<b class="fc"><i>138</i>&nbsp;        blogMongo.setContent(content);</b>
+<b class="fc"><i>139</i>&nbsp;        blogMongo.setId(blog.getId());</b>
+<b class="fc"><i>140</i>&nbsp;        blogMongo.setImages(imag);</b>
+<b class="fc"><i>141</i>&nbsp;        blogMongo.setVideo(video);</b>
+<b class="fc"><i>142</i>&nbsp;        blogMongo.setLabels(lab);</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;        // blogMongo.setUseravatar(useravatar);
+<b class="fc"><i>145</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<b class="fc"><i>146</i>&nbsp;        for (Label label : lab) {</b>
+<b class="fc"><i>147</i>&nbsp;            labelAndBlogDao.setLAB(label.getId(), blog.getId());</b>
+<b class="fc"><i>148</i>&nbsp;        }</b>
+<b class="fc"><i>149</i>&nbsp;        return blog.getId();</b>
+<i>150</i>&nbsp;    }
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;    @Override
+<i>153</i>&nbsp;    public List&lt;JSONObject&gt; getPublicBlog() {
+<b class="fc"><i>154</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;JSONObject&gt;();</b>
+<b class="fc"><i>155</i>&nbsp;        List&lt;Blog&gt; blogs = blogRepository.findAll();</b>
+<i>156</i>&nbsp;        //List&lt;BlogMongo&gt; blogMongos = blogMongoRepository.findAll();
+<b class="fc"><i>157</i>&nbsp;        for(int i = 0; i &lt; blogs.size(); ++i) {</b>
+<b class="fc"><i>158</i>&nbsp;            if(blogs.get(i).getType()!=3 &amp;&amp; blogs.get(i).getType()!=7) continue;</b>
+<b class="nc"><i>159</i>&nbsp;            if(blogs.get(i).getIs_del() == 1) continue;</b>
+<b class="nc"><i>160</i>&nbsp;            JSONObject tmp = new JSONObject();</b>
+<b class="nc"><i>161</i>&nbsp;            tmp.put(&quot;blog&quot;, blogs.get(i));</b>
+<i>162</i>&nbsp;            //tmp.put(&quot;blogMongo&quot;, blogMongos.get(i));
+<b class="nc"><i>163</i>&nbsp;            tmp.put(&quot;blogMongo&quot;, findBlog(blogs.get(i).getId()));</b>
+<i>164</i>&nbsp;
+<b class="nc"><i>165</i>&nbsp;            if(blogs.get(i).getReblog_id() != -1) {</b>
+<b class="nc"><i>166</i>&nbsp;                Blog blogtmp = blogRepository.findById(blogs.get(i).getReblog_id()).orElse(null);</b>
+<b class="nc"><i>167</i>&nbsp;                if(blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>168</i>&nbsp;                    tmp.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>169</i>&nbsp;                    tmp.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>170</i>&nbsp;                    tmp.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>171</i>&nbsp;                }
+<b class="nc"><i>172</i>&nbsp;                tmp.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>173</i>&nbsp;                tmp.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blogs.get(i).getReblog_id()));</b>
+<b class="nc"><i>174</i>&nbsp;                tmp.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>175</i>&nbsp;            }</b>
+<i>176</i>&nbsp;            else {
+<b class="nc"><i>177</i>&nbsp;                tmp.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>178</i>&nbsp;                tmp.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>179</i>&nbsp;                tmp.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>180</i>&nbsp;            }
+<i>181</i>&nbsp;
+<b class="nc"><i>182</i>&nbsp;            tmp.put(&quot;userAvatar&quot;, findAvatar(blogs.get(i).getUid()));</b>
+<b class="nc"><i>183</i>&nbsp;            tmp.put(&quot;userName&quot;, findUsername(blogs.get(i).getUid()));</b>
+<b class="nc"><i>184</i>&nbsp;            tmp.put(&quot;comments&quot;, findAllComments(blogs.get(i).getId()));</b>
+<i>185</i>&nbsp;
+<b class="nc"><i>186</i>&nbsp;            res.add(tmp);</b>
+<i>187</i>&nbsp;        }
+<b class="nc"><i>188</i>&nbsp;        return res;</b>
+<i>189</i>&nbsp;    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;    @Override
+<i>192</i>&nbsp;    public List&lt;JSONObject&gt; getPublicBlog_page(Integer index, Integer num) {
+<b class="nc"><i>193</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;JSONObject&gt;();</b>
+<b class="nc"><i>194</i>&nbsp;        Integer tool = 0;</b>
+<b class="nc"><i>195</i>&nbsp;        Integer counter = 0;</b>
+<i>196</i>&nbsp;        while(true) {
+<b class="nc"><i>197</i>&nbsp;            List&lt;Blog&gt; blogs = blogRepository.findPage(index + tool * num, num);</b>
+<b class="nc"><i>198</i>&nbsp;            if(blogs == null) break;</b>
+<i>199</i>&nbsp;            //List&lt;BlogMongo&gt; blogMongos = blogMongoRepository.findAll();
+<b class="nc"><i>200</i>&nbsp;            boolean tool1 = false;</b>
+<b class="nc"><i>201</i>&nbsp;            for(int i = 0; i &lt; blogs.size(); ++i) {</b>
+<b class="nc"><i>202</i>&nbsp;                counter++;</b>
+<b class="nc"><i>203</i>&nbsp;                if(blogs.get(i).getType()!=3 &amp;&amp; blogs.get(i).getType()!=7) continue;</b>
+<b class="nc"><i>204</i>&nbsp;                if(blogs.get(i).getIs_del() == 1) continue;</b>
+<b class="nc"><i>205</i>&nbsp;                JSONObject tmp = new JSONObject();</b>
+<b class="nc"><i>206</i>&nbsp;                tmp.put(&quot;blog&quot;, blogs.get(i));</b>
+<i>207</i>&nbsp;                //tmp.put(&quot;blogMongo&quot;, blogMongos.get(i));
+<b class="nc"><i>208</i>&nbsp;                tmp.put(&quot;blogMongo&quot;, findBlog(blogs.get(i).getId()));</b>
+<i>209</i>&nbsp;
+<b class="nc"><i>210</i>&nbsp;                if(blogs.get(i).getReblog_id() != -1) {</b>
+<b class="nc"><i>211</i>&nbsp;                    Blog blogtmp = blogRepository.findById(blogs.get(i).getReblog_id()).orElse(null);</b>
+<b class="nc"><i>212</i>&nbsp;                    if(blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>213</i>&nbsp;                        tmp.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>214</i>&nbsp;                        tmp.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>215</i>&nbsp;                        tmp.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>216</i>&nbsp;                    }
+<b class="nc"><i>217</i>&nbsp;                    tmp.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>218</i>&nbsp;                    tmp.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blogs.get(i).getReblog_id()));</b>
+<b class="nc"><i>219</i>&nbsp;                    tmp.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>220</i>&nbsp;                }</b>
+<i>221</i>&nbsp;                else {
+<b class="nc"><i>222</i>&nbsp;                    tmp.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>223</i>&nbsp;                    tmp.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>224</i>&nbsp;                    tmp.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>225</i>&nbsp;                }
+<i>226</i>&nbsp;
+<b class="nc"><i>227</i>&nbsp;                tmp.put(&quot;userAvatar&quot;, findAvatar(blogs.get(i).getUid()));</b>
+<b class="nc"><i>228</i>&nbsp;                tmp.put(&quot;userName&quot;, findUsername(blogs.get(i).getUid()));</b>
+<b class="nc"><i>229</i>&nbsp;                tmp.put(&quot;comments&quot;, findAllComments(blogs.get(i).getId()));</b>
+<i>230</i>&nbsp;
+<b class="nc"><i>231</i>&nbsp;                res.add(tmp);</b>
+<b class="nc"><i>232</i>&nbsp;                if(res.size() &gt;= num) {</b>
+<b class="nc"><i>233</i>&nbsp;                    tool1 = true;</b>
+<i>234</i>&nbsp;                }
+<i>235</i>&nbsp;            }
+<b class="nc"><i>236</i>&nbsp;            if(tool1) break;</b>
+<b class="nc"><i>237</i>&nbsp;            tool++;</b>
+<b class="nc"><i>238</i>&nbsp;        }</b>
+<b class="nc"><i>239</i>&nbsp;        JSONObject next_index = new JSONObject();</b>
+<b class="nc"><i>240</i>&nbsp;        next_index.put(&quot;next_index&quot;, index+counter);</b>
+<b class="nc"><i>241</i>&nbsp;        res.add(next_index);</b>
+<b class="nc"><i>242</i>&nbsp;        return res;</b>
+<i>243</i>&nbsp;    }
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    @Override
+<i>246</i>&nbsp;    public List&lt;JSONObject&gt; getBlogsByLabel(Integer lid, Integer uid) {
+<b class="nc"><i>247</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;JSONObject&gt;();</b>
+<b class="nc"><i>248</i>&nbsp;        List&lt;Integer&gt; lab = labelAndBlogRepository.findByLid(lid);</b>
+<b class="nc"><i>249</i>&nbsp;        UserMongo tmp = userMongoRepository.findById(uid).orElse(null);</b>
+<i>250</i>&nbsp;
+<b class="nc"><i>251</i>&nbsp;        List&lt;Integer&gt; following = tmp.getFollowings();</b>
+<b class="nc"><i>252</i>&nbsp;        for(int i = 0; i &lt; lab.size(); ++i) {</b>
+<b class="nc"><i>253</i>&nbsp;            Blog blog = blogRepository.findById(lab.get(i)).orElse(null);</b>
+<b class="nc"><i>254</i>&nbsp;            boolean flag = false;</b>
+<b class="nc"><i>255</i>&nbsp;            if(blog.getType() == 7 || blog.getType() == 3) flag = true;</b>
+<b class="nc"><i>256</i>&nbsp;            else if(blog.getType() == 4 || blog.getType() == 0) {</b>
+<b class="nc"><i>257</i>&nbsp;                if(blog.getUid() == uid) flag = true;</b>
+<i>258</i>&nbsp;            }
+<b class="nc"><i>259</i>&nbsp;            else if(blog.getType() == 5 || blog.getType() == 1){</b>
+<b class="nc"><i>260</i>&nbsp;                if(following.contains(blog.getUid())) flag = true;</b>
+<b class="nc"><i>261</i>&nbsp;                else if(blog.getUid() == uid) flag = true;</b>
+<i>262</i>&nbsp;            }
+<b class="nc"><i>263</i>&nbsp;            if(!flag) continue;</b>
+<b class="nc"><i>264</i>&nbsp;            if(blog.getIs_del() == 1) continue;</b>
+<b class="nc"><i>265</i>&nbsp;            JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>266</i>&nbsp;            jsonObject.put(&quot;blog&quot;, blog);</b>
+<b class="nc"><i>267</i>&nbsp;            BlogMongo blogMongo = blogMongoRepository.findById(lab.get(i)).orElse(null);</b>
+<b class="nc"><i>268</i>&nbsp;            jsonObject.put(&quot;blogMongo&quot;, blogMongo);</b>
+<b class="nc"><i>269</i>&nbsp;            if(blog.getReblog_id() != -1) {</b>
+<b class="nc"><i>270</i>&nbsp;                Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);</b>
+<b class="nc"><i>271</i>&nbsp;                if(blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>272</i>&nbsp;                    jsonObject.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>273</i>&nbsp;                    jsonObject.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>274</i>&nbsp;                    jsonObject.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>275</i>&nbsp;
+<i>276</i>&nbsp;                }
+<b class="nc"><i>277</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>278</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blog.getReblog_id()));</b>
+<b class="nc"><i>279</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>280</i>&nbsp;            }</b>
+<i>281</i>&nbsp;            else {
+<b class="nc"><i>282</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>283</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>284</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>285</i>&nbsp;            }
+<b class="nc"><i>286</i>&nbsp;            jsonObject.put(&quot;userAvatar&quot;, findAvatar(blog.getUid()));</b>
+<b class="nc"><i>287</i>&nbsp;            jsonObject.put(&quot;userName&quot;, findUsername(blog.getUid()));</b>
+<b class="nc"><i>288</i>&nbsp;            jsonObject.put(&quot;comments&quot;, findAllComments(blog.getId()));</b>
+<b class="nc"><i>289</i>&nbsp;            res.add(jsonObject);</b>
+<i>290</i>&nbsp;        }
+<i>291</i>&nbsp;
+<b class="nc"><i>292</i>&nbsp;        return res;</b>
+<i>293</i>&nbsp;    }
+<i>294</i>&nbsp;
+<i>295</i>&nbsp;    @Override
+<i>296</i>&nbsp;    public List&lt;JSONObject&gt; getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num) {
+<b class="nc"><i>297</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>298</i>&nbsp;        List&lt;Integer&gt; label_blog = labelAndBlogRepository.findByLid(lid);</b>
+<b class="nc"><i>299</i>&nbsp;        User user = userRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>300</i>&nbsp;        if(user == null) return null;</b>
+<b class="nc"><i>301</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>302</i>&nbsp;        if(userMongo == null) return null;</b>
+<b class="nc"><i>303</i>&nbsp;        List&lt;Integer&gt; followings = userMongo.getFollowings();</b>
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;        //record用来寻找起始点，counter记录本次终点
+<b class="nc"><i>306</i>&nbsp;        int counter = 0, record = 0;</b>
+<b class="nc"><i>307</i>&nbsp;        if(label_blog == null) return null;</b>
+<b class="nc"><i>308</i>&nbsp;        while(label_blog.get(record) &lt; index) record++;</b>
+<b class="nc"><i>309</i>&nbsp;        for(int i = record; i &lt; label_blog.size(); ++i) {</b>
+<b class="nc"><i>310</i>&nbsp;            counter = label_blog.get(i);</b>
+<b class="nc"><i>311</i>&nbsp;            Blog blog = blogRepository.findById(counter).orElse(null);</b>
+<i>312</i>&nbsp;            //判断是否应该返回给用户
+<b class="nc"><i>313</i>&nbsp;            boolean flag = false;</b>
+<b class="nc"><i>314</i>&nbsp;            if(blog.getType() == 7 || blog.getType() == 3) flag = true;</b>
+<b class="nc"><i>315</i>&nbsp;            else if(blog.getType() == 4 || blog.getType() == 0) {</b>
+<b class="nc"><i>316</i>&nbsp;                if(blog.getUid() == uid) flag = true;</b>
+<i>317</i>&nbsp;            }
+<b class="nc"><i>318</i>&nbsp;            else if(blog.getType() == 5 || blog.getType() == 1){</b>
+<b class="nc"><i>319</i>&nbsp;                if(followings.contains(blog.getUid())) flag = true;</b>
+<b class="nc"><i>320</i>&nbsp;                else if(blog.getUid() == uid) flag = true;</b>
+<i>321</i>&nbsp;            }
+<b class="nc"><i>322</i>&nbsp;            if(!flag) continue;</b>
+<b class="nc"><i>323</i>&nbsp;            if(blog.getIs_del() == 1) continue;</b>
+<i>324</i>&nbsp;            //开始返回
+<b class="nc"><i>325</i>&nbsp;            res.add(create_json(blog));</b>
+<b class="nc"><i>326</i>&nbsp;            if(res.size() &gt;= num) break;</b>
+<i>327</i>&nbsp;        }
+<b class="nc"><i>328</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>329</i>&nbsp;        jsonObject.put(&quot;next_index&quot;, counter);</b>
+<b class="nc"><i>330</i>&nbsp;        res.add(jsonObject);</b>
+<b class="nc"><i>331</i>&nbsp;        return res;</b>
+<i>332</i>&nbsp;    }
+<i>333</i>&nbsp;
+<i>334</i>&nbsp;    @Override
+<i>335</i>&nbsp;    public List&lt;JSONObject&gt; getBlogsLogined(Integer uid) {
+<b class="nc"><i>336</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;JSONObject&gt;();</b>
+<b class="nc"><i>337</i>&nbsp;        List&lt;Blog&gt; blogs = blogRepository.findAll();</b>
+<i>338</i>&nbsp;
+<i>339</i>&nbsp;
+<b class="nc"><i>340</i>&nbsp;        UserMongo tmp = userMongoRepository.findById(uid).orElse(null);</b>
+<i>341</i>&nbsp;
+<b class="nc"><i>342</i>&nbsp;        List&lt;Integer&gt; following = tmp.getFollowings();</b>
+<b class="nc"><i>343</i>&nbsp;        for(int i = 0; i &lt; blogs.size(); ++i){</b>
+<b class="nc"><i>344</i>&nbsp;            if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){</b>
+<b class="nc"><i>345</i>&nbsp;                if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;</b>
+<i>346</i>&nbsp;            }
+<b class="nc"><i>347</i>&nbsp;            else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){</b>
+<b class="nc"><i>348</i>&nbsp;                if(!following.contains(blogs.get(i).getUid()) &amp;&amp; blogs.get(i).getUid() != uid) continue;</b>
+<i>349</i>&nbsp;
+<i>350</i>&nbsp;            }
+<b class="nc"><i>351</i>&nbsp;            if(blogs.get(i).getIs_del() == 1) continue;</b>
+<b class="nc"><i>352</i>&nbsp;            JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>353</i>&nbsp;            jsonObject.put(&quot;blog&quot;, blogs.get(i));</b>
+<i>354</i>&nbsp;            //jsonObject.put(&quot;blogMongo&quot;, blogMongos.get(i));
+<b class="nc"><i>355</i>&nbsp;            jsonObject.put(&quot;blogMongo&quot;, findBlog(blogs.get(i).getId()));</b>
+<b class="nc"><i>356</i>&nbsp;            if(blogs.get(i).getReblog_id() != -1) {</b>
+<b class="nc"><i>357</i>&nbsp;                Blog blogtmp = blogRepository.findById(blogs.get(i).getReblog_id()).orElse(null);</b>
+<b class="nc"><i>358</i>&nbsp;                if(blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>359</i>&nbsp;                    jsonObject.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>360</i>&nbsp;                    jsonObject.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>361</i>&nbsp;                    jsonObject.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>362</i>&nbsp;                }
+<b class="nc"><i>363</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>364</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blogs.get(i).getReblog_id()));</b>
+<b class="nc"><i>365</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>366</i>&nbsp;            }</b>
+<i>367</i>&nbsp;            else {
+<b class="nc"><i>368</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>369</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>370</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>371</i>&nbsp;            }
+<b class="nc"><i>372</i>&nbsp;            jsonObject.put(&quot;userAvatar&quot;, findAvatar(blogs.get(i).getUid()));</b>
+<b class="nc"><i>373</i>&nbsp;            jsonObject.put(&quot;userName&quot;, findUsername(blogs.get(i).getUid()));</b>
+<b class="nc"><i>374</i>&nbsp;            jsonObject.put(&quot;comments&quot;, findAllComments(blogs.get(i).getId()));</b>
+<b class="nc"><i>375</i>&nbsp;            res.add(jsonObject);</b>
+<i>376</i>&nbsp;        }
+<b class="nc"><i>377</i>&nbsp;        return res;</b>
+<i>378</i>&nbsp;    }
+<i>379</i>&nbsp;
+<i>380</i>&nbsp;    @Override
+<i>381</i>&nbsp;    public List&lt;JSONObject&gt; getBlogsLogined_page(Integer uid, Integer index, Integer num) {
+<b class="nc"><i>382</i>&nbsp;        List&lt;JSONObject&gt; res = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>383</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>384</i>&nbsp;        if(userMongo == null) return null;</b>
+<b class="nc"><i>385</i>&nbsp;        List&lt;Integer&gt; followings = userMongo.getFollowings();</b>
+<b class="nc"><i>386</i>&nbsp;        Integer counter = 0;</b>
+<i>387</i>&nbsp;        while(true) {
+<b class="nc"><i>388</i>&nbsp;            List&lt;Blog&gt; blogs = blogRepository.findPage(index, num);</b>
+<b class="nc"><i>389</i>&nbsp;            if(blogs == null) break;</b>
+<b class="nc"><i>390</i>&nbsp;            for(int i = 0; i &lt; blogs.size(); ++i) {</b>
+<b class="nc"><i>391</i>&nbsp;                counter++;</b>
+<i>392</i>&nbsp;                //判断是否能返回
+<b class="nc"><i>393</i>&nbsp;                if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){</b>
+<b class="nc"><i>394</i>&nbsp;                    if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;</b>
+<i>395</i>&nbsp;                }
+<b class="nc"><i>396</i>&nbsp;                else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){</b>
+<b class="nc"><i>397</i>&nbsp;                    if(!followings.contains(blogs.get(i).getUid()) &amp;&amp; blogs.get(i).getUid() != uid) continue;</b>
+<i>398</i>&nbsp;
+<i>399</i>&nbsp;                }
+<i>400</i>&nbsp;                //能
+<b class="nc"><i>401</i>&nbsp;                res.add(create_json(blogs.get(i)));</b>
+<b class="nc"><i>402</i>&nbsp;                if(res.size() &gt;= num) break;</b>
+<i>403</i>&nbsp;            }
+<b class="nc"><i>404</i>&nbsp;            if(res.size() &gt;= num) break;</b>
+<b class="nc"><i>405</i>&nbsp;        }</b>
+<b class="nc"><i>406</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>407</i>&nbsp;        jsonObject.put(&quot;next_index&quot;, index + counter);</b>
+<b class="nc"><i>408</i>&nbsp;        res.add(jsonObject);</b>
+<b class="nc"><i>409</i>&nbsp;        return res;</b>
+<i>410</i>&nbsp;    }
+<i>411</i>&nbsp;
+<i>412</i>&nbsp;    @Override
+<i>413</i>&nbsp;    public List&lt;JSONObject&gt; getBlogsById(Integer uid, Integer to_see_uid) {
+<i>414</i>&nbsp;
+<b class="nc"><i>415</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(to_see_uid).orElse(null);</b>
+<b class="nc"><i>416</i>&nbsp;        if(userMongo == null) return null;</b>
+<b class="nc"><i>417</i>&nbsp;        User user = userRepository.findById(to_see_uid).orElse(null);</b>
+<b class="nc"><i>418</i>&nbsp;        if(user == null) return null;</b>
+<b class="nc"><i>419</i>&nbsp;        User user1 = userRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>420</i>&nbsp;        if(user1 == null) return null;</b>
+<b class="nc"><i>421</i>&nbsp;        UserMongo userMongo1 = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>422</i>&nbsp;        if(userMongo1 == null) return null;</b>
+<i>423</i>&nbsp;
+<b class="nc"><i>424</i>&nbsp;        List&lt;Integer&gt; blogs = userMongo.getBlogs();</b>
+<b class="nc"><i>425</i>&nbsp;        List&lt;Integer&gt; fans = userMongo1.getFollowings();</b>
+<b class="nc"><i>426</i>&nbsp;        List&lt;JSONObject&gt; jsonObjects = new ArrayList&lt;JSONObject&gt;();</b>
+<i>427</i>&nbsp;
+<b class="nc"><i>428</i>&nbsp;        for(int i = 0; i &lt; blogs.size(); ++i){</b>
+<b class="nc"><i>429</i>&nbsp;            Blog blog = blogRepository.findById(blogs.get(i)).orElse(null);</b>
+<b class="nc"><i>430</i>&nbsp;            if(blog.getIs_del()==1) continue;</b>
+<i>431</i>&nbsp;            //判断这条说说该不该给他看
+<b class="nc"><i>432</i>&nbsp;            Integer integer = user1.getType();</b>
+<b class="nc"><i>433</i>&nbsp;            if(blog.getType() == 0 || blog.getType() == 4)</b>
+<b class="nc"><i>434</i>&nbsp;                if(uid != to_see_uid &amp;&amp; integer != 1 &amp;&amp; integer != 2 &amp;&amp; integer != 4 &amp;&amp; integer != 8) continue;</b>
+<b class="nc"><i>435</i>&nbsp;            if(blog.getType() == 1 || blog.getType() == 5)</b>
+<b class="nc"><i>436</i>&nbsp;                if(!fans.contains(uid)) continue;</b>
+<i>437</i>&nbsp;
+<i>438</i>&nbsp;
+<b class="nc"><i>439</i>&nbsp;            JSONObject jsonObject = new JSONObject();</b>
+<i>440</i>&nbsp;
+<b class="nc"><i>441</i>&nbsp;            BlogMongo blogMongo = blogMongoRepository.findById(blogs.get(i)).orElse(null);</b>
+<i>442</i>&nbsp;
+<b class="nc"><i>443</i>&nbsp;            jsonObject.put(&quot;blog&quot;, blog);</b>
+<b class="nc"><i>444</i>&nbsp;            jsonObject.put(&quot;blogMongo&quot;, blogMongo);</b>
+<i>445</i>&nbsp;
+<b class="nc"><i>446</i>&nbsp;            if(blog.getReblog_id() != -1) {</b>
+<b class="nc"><i>447</i>&nbsp;                Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);</b>
+<b class="nc"><i>448</i>&nbsp;                if(blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>449</i>&nbsp;                    jsonObject.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>450</i>&nbsp;                    jsonObject.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>451</i>&nbsp;                    jsonObject.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>452</i>&nbsp;                }
+<b class="nc"><i>453</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>454</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blog.getReblog_id()));</b>
+<b class="nc"><i>455</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>456</i>&nbsp;            }</b>
+<i>457</i>&nbsp;            else {
+<b class="nc"><i>458</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>459</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>460</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>461</i>&nbsp;            }
+<b class="nc"><i>462</i>&nbsp;            jsonObject.put(&quot;userAvatar&quot;, userMongo.getAvatar());</b>
+<b class="nc"><i>463</i>&nbsp;            jsonObject.put(&quot;userName&quot;, user.getName());</b>
+<b class="nc"><i>464</i>&nbsp;            jsonObject.put(&quot;comments&quot;, findAllComments(blogs.get(i)));</b>
+<b class="nc"><i>465</i>&nbsp;            jsonObjects.add(jsonObject);</b>
+<i>466</i>&nbsp;        }
+<b class="nc"><i>467</i>&nbsp;        return jsonObjects;</b>
+<i>468</i>&nbsp;    }
+<i>469</i>&nbsp;
+<i>470</i>&nbsp;
+<i>471</i>&nbsp;    @Override
+<i>472</i>&nbsp;    public boolean removeComment(Integer uid, Integer cid, Integer type) {
+<b class="nc"><i>473</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>474</i>&nbsp;        List&lt;Integer&gt; comments = userMongo.getComments();</b>
+<b class="nc"><i>475</i>&nbsp;        if(!comments.contains(cid) &amp;&amp; type != 8 &amp;&amp; type != 1) return false;</b>
+<b class="nc"><i>476</i>&nbsp;        Comment comment = commentRepository.findById(cid).orElse(null);</b>
+<b class="nc"><i>477</i>&nbsp;        comment.setIs_del(1);</b>
+<b class="nc"><i>478</i>&nbsp;        commentRepository.saveAndFlush(comment);</b>
+<b class="nc"><i>479</i>&nbsp;        List&lt;Comment&gt; comments1 = commentRepository.findByBid(comment.getBid());</b>
+<b class="nc"><i>480</i>&nbsp;        Integer number = 1;</b>
+<b class="nc"><i>481</i>&nbsp;        for(Comment comment1 : comments1) {</b>
+<b class="nc"><i>482</i>&nbsp;            if(comment1.getTo_cid()==cid || comment1.getRoot_cid() == cid) {</b>
+<b class="nc"><i>483</i>&nbsp;                comment1.setIs_del(1);</b>
+<b class="nc"><i>484</i>&nbsp;                commentRepository.saveAndFlush(comment1);</b>
+<b class="nc"><i>485</i>&nbsp;                number = number + 1;</b>
+<i>486</i>&nbsp;            }
+<b class="nc"><i>487</i>&nbsp;        }</b>
+<b class="nc"><i>488</i>&nbsp;        Blog blog = blogRepository.findById(comment.getBid()).orElse(null);</b>
+<b class="nc"><i>489</i>&nbsp;        blog.setCom_number(blog.getCom_number() - number);</b>
+<b class="nc"><i>490</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<i>491</i>&nbsp;
+<b class="nc"><i>492</i>&nbsp;        return true;</b>
+<i>493</i>&nbsp;    }
+<i>494</i>&nbsp;
+<i>495</i>&nbsp;    @Override
+<i>496</i>&nbsp;    public boolean setLike(Integer uid, Integer bid) {
+<i>497</i>&nbsp;
+<b class="nc"><i>498</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>499</i>&nbsp;        if(blog == null) return false;</b>
+<b class="nc"><i>500</i>&nbsp;        blog.setLike(blog.getLike() + 1);</b>
+<b class="nc"><i>501</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(blog.getId()).orElse(null);</b>
+<i>502</i>&nbsp;        //assert blogMongo != null;
+<b class="nc"><i>503</i>&nbsp;        if(blogMongo == null) return false;</b>
+<b class="nc"><i>504</i>&nbsp;        List&lt;Integer&gt; list = blogMongo.getWho_like();</b>
+<i>505</i>&nbsp;        //获取label为了添加用户画像
+<b class="nc"><i>506</i>&nbsp;        List&lt;Label&gt; labels = blogMongo.getLabels();</b>
+<b class="nc"><i>507</i>&nbsp;        if(list.contains(uid)) return false;</b>
+<b class="nc"><i>508</i>&nbsp;        list.add(uid);</b>
+<b class="nc"><i>509</i>&nbsp;        blogMongo.setWho_like(list);</b>
+<b class="nc"><i>510</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<b class="nc"><i>511</i>&nbsp;        blogMongoRepository.deleteById(blog.getId());</b>
+<b class="nc"><i>512</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<i>513</i>&nbsp;        //对点赞者的操作
+<b class="nc"><i>514</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>515</i>&nbsp;        if(userMongo == null) return false;</b>
+<b class="nc"><i>516</i>&nbsp;        Map&lt;Integer, Integer&gt; map = userMongo.getInterests();</b>
+<i>517</i>&nbsp;        //改变画像
+<b class="nc"><i>518</i>&nbsp;        userMongo.setInterests(setInterestMap(map, labels, 1));</b>
+<b class="nc"><i>519</i>&nbsp;        List&lt;Integer&gt; setlike_blog = userMongo.getLike_blog();</b>
+<b class="nc"><i>520</i>&nbsp;        setlike_blog.add(bid);</b>
+<b class="nc"><i>521</i>&nbsp;        userMongo.setLike_blog(setlike_blog);</b>
+<b class="nc"><i>522</i>&nbsp;        userMongoRepository.deleteById(uid);</b>
+<b class="nc"><i>523</i>&nbsp;        userMongoRepository.save(userMongo);</b>
+<b class="nc"><i>524</i>&nbsp;        return true;</b>
+<i>525</i>&nbsp;    }
+<i>526</i>&nbsp;
+<i>527</i>&nbsp;    @Override
+<i>528</i>&nbsp;    public boolean setCollect(Integer uid, Integer bid, boolean flag) {
+<b class="nc"><i>529</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>530</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);</b>
+<i>531</i>&nbsp;        //添加收藏用户的收藏品
+<b class="nc"><i>532</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>533</i>&nbsp;        if(userMongo == null) return false;</b>
+<b class="nc"><i>534</i>&nbsp;        List&lt;Integer&gt; tmplist = userMongo.getCollect_blog();</b>
+<i>535</i>&nbsp;
+<b class="nc"><i>536</i>&nbsp;        if(flag) {</b>
+<b class="nc"><i>537</i>&nbsp;            if(tmplist.contains(bid)) return false;</b>
+<b class="nc"><i>538</i>&nbsp;            tmplist.add(bid);</b>
+<i>539</i>&nbsp;            //设置画像
+<b class="nc"><i>540</i>&nbsp;            Map&lt;Integer, Integer&gt; map = userMongo.getInterests();</b>
+<b class="nc"><i>541</i>&nbsp;            if(blogMongo == null) return false;</b>
+<b class="nc"><i>542</i>&nbsp;            List&lt;Label&gt; labels = blogMongo.getLabels();</b>
+<b class="nc"><i>543</i>&nbsp;            userMongo.setInterests(setInterestMap(map, labels, 2));</b>
+<b class="nc"><i>544</i>&nbsp;        }</b>
+<i>545</i>&nbsp;        else{
+<b class="nc"><i>546</i>&nbsp;            if(!tmplist.contains(bid)) return false;</b>
+<b class="nc"><i>547</i>&nbsp;            for(int i = 0; i &lt; tmplist.size(); ++i){</b>
+<b class="nc"><i>548</i>&nbsp;                if(tmplist.get(i).equals(bid)) {</b>
+<b class="nc"><i>549</i>&nbsp;                    tmplist.remove(i);</b>
+<b class="nc"><i>550</i>&nbsp;                    break;</b>
+<i>551</i>&nbsp;                }
+<i>552</i>&nbsp;            }
+<i>553</i>&nbsp;        }
+<b class="nc"><i>554</i>&nbsp;        userMongo.setCollect_blog(tmplist);</b>
+<b class="nc"><i>555</i>&nbsp;        userMongoRepository.deleteById(uid);</b>
+<b class="nc"><i>556</i>&nbsp;        userMongoRepository.save(userMongo);</b>
+<i>557</i>&nbsp;        //改变blog的收藏者
+<i>558</i>&nbsp;
+<b class="nc"><i>559</i>&nbsp;        List&lt;Integer&gt; who_collectList = blogMongo.getWho_collect();</b>
+<b class="nc"><i>560</i>&nbsp;        if(flag) {</b>
+<b class="nc"><i>561</i>&nbsp;            blog.setColl_number(blog.getColl_number() + 1);</b>
+<b class="nc"><i>562</i>&nbsp;            who_collectList.add(uid);</b>
+<b class="nc"><i>563</i>&nbsp;            blogMongo.setWho_collect(who_collectList);</b>
+<i>564</i>&nbsp;        }
+<i>565</i>&nbsp;        else {
+<b class="nc"><i>566</i>&nbsp;            blog.setColl_number(blog.getColl_number() - 1);</b>
+<b class="nc"><i>567</i>&nbsp;            for(int i = 0; i &lt; who_collectList.size(); ++i) if(who_collectList.get(i).equals(uid)) {</b>
+<b class="nc"><i>568</i>&nbsp;                who_collectList.remove(i);</b>
+<b class="nc"><i>569</i>&nbsp;                break;</b>
+<i>570</i>&nbsp;            }
+<i>571</i>&nbsp;        }
+<b class="nc"><i>572</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<b class="nc"><i>573</i>&nbsp;        blogMongoRepository.deleteById(bid);</b>
+<b class="nc"><i>574</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<b class="nc"><i>575</i>&nbsp;        return true;</b>
+<i>576</i>&nbsp;    }
+<i>577</i>&nbsp;
+<i>578</i>&nbsp;    @Override
+<i>579</i>&nbsp;    public boolean removeLike(Integer uid, Integer bid) {
+<b class="nc"><i>580</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>581</i>&nbsp;        if(blogMongo == null) return false;</b>
+<b class="nc"><i>582</i>&nbsp;        List&lt;Integer&gt; blogList = blogMongo.getWho_like();</b>
+<b class="nc"><i>583</i>&nbsp;        if(!blogList.contains(uid)) return false;</b>
+<b class="nc"><i>584</i>&nbsp;        for(int i = 0; i &lt; blogList.size(); ++i){</b>
+<b class="nc"><i>585</i>&nbsp;            if(blogList.get(i).equals(uid)) {</b>
+<b class="nc"><i>586</i>&nbsp;                blogList.remove(i);</b>
+<b class="nc"><i>587</i>&nbsp;                break;</b>
+<i>588</i>&nbsp;            }
+<i>589</i>&nbsp;        }
+<b class="nc"><i>590</i>&nbsp;        blogMongo.setWho_like(blogList);</b>
+<b class="nc"><i>591</i>&nbsp;        blogMongoRepository.deleteById(bid);</b>
+<b class="nc"><i>592</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<i>593</i>&nbsp;
+<b class="nc"><i>594</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>595</i>&nbsp;        if(blog == null) return false;</b>
+<b class="nc"><i>596</i>&nbsp;        blog.setLike(blog.getLike() - 1);</b>
+<b class="nc"><i>597</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<i>598</i>&nbsp;
+<b class="nc"><i>599</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>600</i>&nbsp;        if(userMongo == null) return false;</b>
+<b class="nc"><i>601</i>&nbsp;        List&lt;Integer&gt; likeBlogList = userMongo.getLike_blog();</b>
+<b class="nc"><i>602</i>&nbsp;        for(int i = 0; i &lt; likeBlogList.size(); ++i) if(likeBlogList.get(i).equals(bid)){</b>
+<b class="nc"><i>603</i>&nbsp;            blogList.remove(i);</b>
+<b class="nc"><i>604</i>&nbsp;            break;</b>
+<i>605</i>&nbsp;        }
+<b class="nc"><i>606</i>&nbsp;        userMongo.setLike_blog(blogList);</b>
+<b class="nc"><i>607</i>&nbsp;        userMongoRepository.deleteById(uid);</b>
+<b class="nc"><i>608</i>&nbsp;        userMongoRepository.save(userMongo);</b>
+<b class="nc"><i>609</i>&nbsp;        return true;</b>
+<i>610</i>&nbsp;    }
+<i>611</i>&nbsp;
+<i>612</i>&nbsp;    @Override
+<i>613</i>&nbsp;    public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day) {
+<b class="nc"><i>614</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>615</i>&nbsp;        if(userMongo == null) return false;</b>
+<b class="nc"><i>616</i>&nbsp;        Blog blog = new Blog();</b>
+<i>617</i>&nbsp;        //增加转发数、判断是否是转发
+<b class="nc"><i>618</i>&nbsp;        Blog judgeblog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>619</i>&nbsp;        if(judgeblog == null) return false;</b>
+<b class="nc"><i>620</i>&nbsp;        judgeblog.setReblog(judgeblog.getReblog() + 1);</b>
+<b class="nc"><i>621</i>&nbsp;        blogRepository.saveAndFlush(judgeblog);</b>
+<b class="nc"><i>622</i>&nbsp;        if(judgeblog.getReblog_id() == -1) blog.setReblog_id(bid);</b>
+<b class="nc"><i>623</i>&nbsp;        else blog.setReblog_id(judgeblog.getReblog_id());</b>
+<b class="nc"><i>624</i>&nbsp;        blog.setUid(uid);</b>
+<b class="nc"><i>625</i>&nbsp;        blog.setPost_day(post_day);</b>
+<b class="nc"><i>626</i>&nbsp;        blog.setType(type);</b>
+<b class="nc"><i>627</i>&nbsp;        blogRepository.save(blog);</b>
+<i>628</i>&nbsp;        //System.out.print(blog);
+<b class="nc"><i>629</i>&nbsp;        BlogMongo blogMongo = new BlogMongo();</b>
+<b class="nc"><i>630</i>&nbsp;        blogMongo.setId(blog.getId());</b>
+<b class="nc"><i>631</i>&nbsp;        blogMongo.setContent(content);</b>
+<i>632</i>&nbsp;        //System.out.print(blogMongo);
+<b class="nc"><i>633</i>&nbsp;        BlogMongo tmp = blogMongoRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>634</i>&nbsp;        blogMongo.setLabels(tmp.getLabels());</b>
+<b class="nc"><i>635</i>&nbsp;        List&lt;Integer&gt; list = tmp.getWho_reblog();</b>
+<b class="nc"><i>636</i>&nbsp;        list.add(uid);</b>
+<b class="nc"><i>637</i>&nbsp;        blogMongoRepository.deleteById(bid);</b>
+<b class="nc"><i>638</i>&nbsp;        blogMongoRepository.save(tmp);</b>
+<b class="nc"><i>639</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<i>640</i>&nbsp;
+<i>641</i>&nbsp;        //对转发者的操作
+<i>642</i>&nbsp;        //User user = userRepository.findById(uid).orElse(null);
+<b class="nc"><i>643</i>&nbsp;        List&lt;Label&gt; labels = blogMongo.getLabels();</b>
+<b class="nc"><i>644</i>&nbsp;        Map&lt;Integer, Integer&gt; map = userMongo.getInterests();</b>
+<b class="nc"><i>645</i>&nbsp;        List&lt;Integer&gt; userBlogs = userMongo.getBlogs();</b>
+<b class="nc"><i>646</i>&nbsp;        Integer blog_num = userMongo.getBlog_num();</b>
+<i>647</i>&nbsp;        //画像
+<b class="nc"><i>648</i>&nbsp;        userMongo.setInterests(setInterestMap(map, labels, 2));</b>
+<b class="nc"><i>649</i>&nbsp;        userBlogs.add(blog.getId());</b>
+<i>650</i>&nbsp;        //博客
+<b class="nc"><i>651</i>&nbsp;        userMongo.setBlogs(userBlogs);</b>
+<i>652</i>&nbsp;        //博客数
+<b class="nc"><i>653</i>&nbsp;        userMongo.setBlog_num(userMongo.getBlog_num() + 1);</b>
+<b class="nc"><i>654</i>&nbsp;        userMongoRepository.deleteById(userMongo.getId());</b>
+<b class="nc"><i>655</i>&nbsp;        userMongoRepository.save(userMongo);</b>
+<i>656</i>&nbsp;
+<b class="nc"><i>657</i>&nbsp;        return true;</b>
+<i>658</i>&nbsp;    }
+<i>659</i>&nbsp;
+<i>660</i>&nbsp;    @Override
+<i>661</i>&nbsp;    public boolean removeBlog(Integer uid, Integer bid, Integer type) {
+<b class="nc"><i>662</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>663</i>&nbsp;        if(blog == null) return false;</b>
+<b class="nc"><i>664</i>&nbsp;        if(!blog.getUid().equals(uid) &amp;&amp; type != 2 &amp;&amp; type != 8) return false;</b>
+<i>665</i>&nbsp;        //BlogMongo blogMongo = blogMongoRepository.findById(blog.getId()).orElse(null);
+<i>666</i>&nbsp;
+<b class="nc"><i>667</i>&nbsp;        blog.setIs_del(1);</b>
+<b class="nc"><i>668</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<b class="nc"><i>669</i>&nbsp;        Integer tmp = blog.getUid();</b>
+<b class="nc"><i>670</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(tmp).orElse(null);</b>
+<b class="nc"><i>671</i>&nbsp;        userMongo.setBlog_num(userMongo.getBlog_num() - 1);</b>
+<b class="nc"><i>672</i>&nbsp;        userMongoRepository.deleteById(tmp);</b>
+<b class="nc"><i>673</i>&nbsp;        userMongoRepository.save(userMongo);</b>
+<i>674</i>&nbsp;
+<b class="nc"><i>675</i>&nbsp;        return true;</b>
+<i>676</i>&nbsp;    }
+<i>677</i>&nbsp;
+<i>678</i>&nbsp;    @Override
+<i>679</i>&nbsp;    public boolean setComment(Integer uid, Integer to_uid,
+<i>680</i>&nbsp;                               Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
+<i>681</i>&nbsp;
+<b class="nc"><i>682</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>683</i>&nbsp;        if(blog == null) return false;</b>
+<b class="nc"><i>684</i>&nbsp;        blog.setCom_number(blog.getCom_number() + 1);</b>
+<b class="nc"><i>685</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<i>686</i>&nbsp;
+<b class="nc"><i>687</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>688</i>&nbsp;        if(blogMongo == null) return false;</b>
+<b class="nc"><i>689</i>&nbsp;        List&lt;Integer&gt; comments = blogMongo.getComments();</b>
+<i>690</i>&nbsp;//        Comment tmp = new Comment(uid, username, to_uid, to_username, content);
+<b class="nc"><i>691</i>&nbsp;        Comment tmp = new Comment(uid, to_uid, bid, content, post_time, to_cid, root_cid);</b>
+<b class="nc"><i>692</i>&nbsp;        commentRepository.save(tmp);</b>
+<b class="nc"><i>693</i>&nbsp;        comments.add(tmp.getCid());</b>
+<i>694</i>&nbsp;
+<b class="nc"><i>695</i>&nbsp;        blogMongo.setComments(comments);</b>
+<b class="nc"><i>696</i>&nbsp;        blogMongoRepository.deleteById(bid);</b>
+<b class="nc"><i>697</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<i>698</i>&nbsp;
+<b class="nc"><i>699</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>700</i>&nbsp;        if(userMongo == null) return false;</b>
+<b class="nc"><i>701</i>&nbsp;        List&lt;Integer&gt; list = userMongo.getComment_blog();</b>
+<b class="nc"><i>702</i>&nbsp;        list.add(bid);</b>
+<b class="nc"><i>703</i>&nbsp;        List&lt;Integer&gt; list1 = userMongo.getComments();</b>
+<b class="nc"><i>704</i>&nbsp;        list1.add(tmp.getCid());</b>
+<b class="nc"><i>705</i>&nbsp;        userMongo.setComment_blog(list);</b>
+<b class="nc"><i>706</i>&nbsp;        userMongoRepository.deleteById(uid);</b>
+<b class="nc"><i>707</i>&nbsp;        userMongoRepository.save(userMongo);</b>
+<b class="nc"><i>708</i>&nbsp;        return true;</b>
+<i>709</i>&nbsp;    }
+<i>710</i>&nbsp;
+<i>711</i>&nbsp;    @Override
+<i>712</i>&nbsp;    public boolean changeBlog(Integer uid, Integer bid, String content, Integer type) {
+<b class="nc"><i>713</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>714</i>&nbsp;        if(blog == null) return false;</b>
+<b class="nc"><i>715</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>716</i>&nbsp;        if(blogMongo == null) return false;</b>
+<b class="nc"><i>717</i>&nbsp;        User user = userRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>718</i>&nbsp;        if(user == null) return false;</b>
+<b class="nc"><i>719</i>&nbsp;        Integer user_type = user.getType();</b>
+<i>720</i>&nbsp;
+<i>721</i>&nbsp;        //判断是否可以修改、去除不可修改情况
+<b class="nc"><i>722</i>&nbsp;        if(!blog.getUid().equals(uid) &amp;&amp; !blogMongo.getContent().equals(content)) return false;</b>
+<b class="nc"><i>723</i>&nbsp;        if(!blog.getUid().equals(uid) &amp;&amp; user_type != 4 &amp;&amp; user_type != 2 &amp;&amp; user_type != 1 &amp;&amp; user_type != 8) return false;</b>
+<i>724</i>&nbsp;
+<b class="nc"><i>725</i>&nbsp;        blog.setType(type);</b>
+<b class="nc"><i>726</i>&nbsp;        blogRepository.saveAndFlush(blog);</b>
+<b class="nc"><i>727</i>&nbsp;        blogMongo.setContent(content);</b>
+<b class="nc"><i>728</i>&nbsp;        blogMongoRepository.deleteById(bid);</b>
+<b class="nc"><i>729</i>&nbsp;        blogMongoRepository.save(blogMongo);</b>
+<b class="nc"><i>730</i>&nbsp;        return true;</b>
+<i>731</i>&nbsp;    }
+<i>732</i>&nbsp;
+<i>733</i>&nbsp;    @Override
+<i>734</i>&nbsp;    public JSONObject getSingleBlog(Integer bid) {
+<b class="nc"><i>735</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>736</i>&nbsp;        Blog blog = blogRepository.findById(bid).orElse(null);</b>
+<b class="nc"><i>737</i>&nbsp;        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);</b>
+<i>738</i>&nbsp;
+<b class="nc"><i>739</i>&nbsp;        jsonObject.put(&quot;blog&quot;, blog);</b>
+<b class="nc"><i>740</i>&nbsp;        jsonObject.put(&quot;blogMongo&quot;, blogMongo);</b>
+<b class="nc"><i>741</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(blog.getUid()).orElse(null);</b>
+<b class="nc"><i>742</i>&nbsp;        jsonObject.put(&quot;userAvatar&quot;, userMongo.getAvatar());</b>
+<b class="nc"><i>743</i>&nbsp;        User user = userRepository.findById(blog.getUid()).orElse(null);</b>
+<b class="nc"><i>744</i>&nbsp;        jsonObject.put(&quot;userName&quot;, user.getName());</b>
+<b class="nc"><i>745</i>&nbsp;        jsonObject.put(&quot;commetns&quot;, findAllComments(bid));</b>
+<i>746</i>&nbsp;
+<i>747</i>&nbsp;        //转发
+<b class="nc"><i>748</i>&nbsp;        if (blog.getReblog_id() != -1) {</b>
+<b class="nc"><i>749</i>&nbsp;            Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);</b>
+<b class="nc"><i>750</i>&nbsp;            if (blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>751</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>752</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>753</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>754</i>&nbsp;            }
+<b class="nc"><i>755</i>&nbsp;            jsonObject.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>756</i>&nbsp;            jsonObject.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blog.getReblog_id()));</b>
+<b class="nc"><i>757</i>&nbsp;            jsonObject.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>758</i>&nbsp;        } else {</b>
+<b class="nc"><i>759</i>&nbsp;            jsonObject.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>760</i>&nbsp;            jsonObject.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>761</i>&nbsp;            jsonObject.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>762</i>&nbsp;        }
+<b class="nc"><i>763</i>&nbsp;        return jsonObject;</b>
+<i>764</i>&nbsp;    }
+<i>765</i>&nbsp;
+<i>766</i>&nbsp;    @Override
+<i>767</i>&nbsp;    public List&lt;JSONObject&gt; recomment(Integer uid, Integer index, Integer num) {
+<b class="nc"><i>768</i>&nbsp;        List&lt;JSONObject&gt; rec_res = new ArrayList&lt;&gt;();</b>
+<i>769</i>&nbsp;
+<b class="nc"><i>770</i>&nbsp;        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);</b>
+<b class="nc"><i>771</i>&nbsp;        assert userMongo != null;</b>
+<b class="nc"><i>772</i>&nbsp;        Map&lt;Integer, Integer&gt; interest = userMongo.getInterests();</b>
+<b class="nc"><i>773</i>&nbsp;        List&lt;Map.Entry&lt;Integer, Integer&gt;&gt; list_interest = new ArrayList&lt;&gt;(interest.entrySet());</b>
+<i>774</i>&nbsp;
+<i>775</i>&nbsp;        //去掉删除的标签
+<b class="nc"><i>776</i>&nbsp;        for(int i = 0; i &lt; list_interest.size(); ++i) {</b>
+<b class="nc"><i>777</i>&nbsp;            Label labeltmp = labelRepository.findById(list_interest.get(i).getKey()).orElse(null);</b>
+<b class="nc"><i>778</i>&nbsp;            assert labeltmp != null;</b>
+<b class="nc"><i>779</i>&nbsp;            if(labeltmp.getFlag() == 1) {</b>
+<b class="nc"><i>780</i>&nbsp;                list_interest.remove(i);</b>
+<b class="nc"><i>781</i>&nbsp;                i--;</b>
+<i>782</i>&nbsp;            }
+<i>783</i>&nbsp;        }
+<b class="nc"><i>784</i>&nbsp;        List&lt;Integer&gt; followings = userMongo.getFollowings();</b>
+<i>785</i>&nbsp;
+<i>786</i>&nbsp;        /**
+<i>787</i>&nbsp;        * 对Mongo用户的操作, 最喜欢的三个&amp;关注的人
+<i>788</i>&nbsp;        **/
+<i>789</i>&nbsp;        //System.out.println(list_interest);
+<i>790</i>&nbsp;        //冒泡排序，得到最喜欢的前三个
+<b class="nc"><i>791</i>&nbsp;        for(int i = 0; i &lt; 3; ++i) {</b>
+<b class="nc"><i>792</i>&nbsp;            for(int j = list_interest.size() -1; j &gt; 0; --j) {</b>
+<b class="nc"><i>793</i>&nbsp;                if(list_interest.get(j).getValue() &gt; list_interest.get(j - 1).getValue()) {</b>
+<b class="nc"><i>794</i>&nbsp;                    Map.Entry&lt;Integer, Integer&gt; tmp = list_interest.get(j);</b>
+<b class="nc"><i>795</i>&nbsp;                    list_interest.set(j, list_interest.get(j - 1));</b>
+<b class="nc"><i>796</i>&nbsp;                    list_interest.set(j - 1, tmp);</b>
+<i>797</i>&nbsp;                }
+<i>798</i>&nbsp;            }
+<i>799</i>&nbsp;        }
+<i>800</i>&nbsp;
+<i>801</i>&nbsp;        //赋值给most_interest
+<b class="nc"><i>802</i>&nbsp;        List&lt;Integer&gt; most_interest = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>803</i>&nbsp;        for(int i = 0; i &lt; 3 &amp;&amp; i &lt; list_interest.size(); ++i) {</b>
+<b class="nc"><i>804</i>&nbsp;            most_interest.add(list_interest.get(i).getKey());</b>
+<i>805</i>&nbsp;        }
+<i>806</i>&nbsp;
+<i>807</i>&nbsp;        /**
+<i>808</i>&nbsp;         * 开始挑选推荐，
+<i>809</i>&nbsp;         * 目前是用最简单的推荐，即前三个喜欢的标签必定会被推荐和关注的人必会被推荐
+<i>810</i>&nbsp;         * **/
+<b class="nc"><i>811</i>&nbsp;        Integer tool = 0;</b>
+<b class="nc"><i>812</i>&nbsp;        Integer counter = 0;</b>
+<i>813</i>&nbsp;
+<i>814</i>&nbsp;        while(true)
+<i>815</i>&nbsp;        {
+<i>816</i>&nbsp;
+<b class="nc"><i>817</i>&nbsp;            List&lt;Blog&gt; blogs = blogRepository.findPage(index + num * tool, num);</b>
+<i>818</i>&nbsp;
+<i>819</i>&nbsp;
+<b class="nc"><i>820</i>&nbsp;            if(blogs.size() == 0) break;</b>
+<b class="nc"><i>821</i>&nbsp;            tool++;</b>
+<i>822</i>&nbsp;            //System.out.println(tool);
+<b class="nc"><i>823</i>&nbsp;            for(int i = 0; i &lt; blogs.size(); ++i)</b>
+<i>824</i>&nbsp;            {
+<b class="nc"><i>825</i>&nbsp;                boolean judge = false;</b>
+<b class="nc"><i>826</i>&nbsp;                counter++;</b>
+<i>827</i>&nbsp;                //是否是关注的人
+<b class="nc"><i>828</i>&nbsp;                Blog tmp = blogs.get(i);</b>
+<b class="nc"><i>829</i>&nbsp;                if(followings.contains(tmp.getUid())) judge = true;</b>
+<i>830</i>&nbsp;                //是否是喜欢的标签
+<b class="nc"><i>831</i>&nbsp;                BlogMongo blogMongo = blogMongoRepository.findById(tmp.getUid()).orElse(null);</b>
+<b class="nc"><i>832</i>&nbsp;                assert blogMongo != null;</b>
+<b class="nc"><i>833</i>&nbsp;                List&lt;Label&gt; labels_tmp = blogMongo.getLabels();</b>
+<b class="nc"><i>834</i>&nbsp;                List&lt;Integer&gt; labels_id_tmp = new ArrayList&lt;&gt;();</b>
+<i>835</i>&nbsp;                //将labellist转换为labelid
+<b class="nc"><i>836</i>&nbsp;                for(int j = 0; j &lt; labels_tmp.size(); ++j) {</b>
+<b class="nc"><i>837</i>&nbsp;                    labels_id_tmp.add(labels_tmp.get(j).getId());</b>
+<i>838</i>&nbsp;                }
+<b class="nc"><i>839</i>&nbsp;                System.out.println(labels_id_tmp);</b>
+<i>840</i>&nbsp;
+<b class="nc"><i>841</i>&nbsp;                for(int j = 0; j &lt; 3; ++j) {</b>
+<b class="nc"><i>842</i>&nbsp;                    if(labels_id_tmp.contains(most_interest.get(i))) {</b>
+<b class="nc"><i>843</i>&nbsp;                        judge = true;</b>
+<b class="nc"><i>844</i>&nbsp;                        break;</b>
+<i>845</i>&nbsp;                    }
+<i>846</i>&nbsp;                }
+<i>847</i>&nbsp;                //judge=true说明该博客要么是关注的人、要么是喜欢的标签
+<b class="nc"><i>848</i>&nbsp;                if(!judge) continue;</b>
+<i>849</i>&nbsp;
+<i>850</i>&nbsp;
+<i>851</i>&nbsp;                //推荐
+<i>852</i>&nbsp;                //检查权限
+<b class="nc"><i>853</i>&nbsp;                if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){</b>
+<b class="nc"><i>854</i>&nbsp;                    if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;</b>
+<i>855</i>&nbsp;                }
+<b class="nc"><i>856</i>&nbsp;                else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){</b>
+<b class="nc"><i>857</i>&nbsp;                    if(!followings.contains(blogs.get(i).getUid()) &amp;&amp; blogs.get(i).getUid() != uid) continue;</b>
+<i>858</i>&nbsp;                }
+<i>859</i>&nbsp;                //生成结果
+<b class="nc"><i>860</i>&nbsp;                JSONObject jsonObject = new JSONObject(create_json(blogs.get(i)));</b>
+<b class="nc"><i>861</i>&nbsp;                rec_res.add(jsonObject);</b>
+<b class="nc"><i>862</i>&nbsp;                if(rec_res.size() &gt;= num) break;</b>
+<i>863</i>&nbsp;            }
+<b class="nc"><i>864</i>&nbsp;            if(rec_res.size() &gt;= num) break;</b>
+<b class="nc"><i>865</i>&nbsp;        }</b>
+<b class="nc"><i>866</i>&nbsp;        JSONObject jsonObject1 = new JSONObject();</b>
+<b class="nc"><i>867</i>&nbsp;        jsonObject1.put(&quot;next_index&quot;, index + counter);</b>
+<b class="nc"><i>868</i>&nbsp;        rec_res.add(jsonObject1);</b>
+<b class="nc"><i>869</i>&nbsp;        return rec_res;</b>
+<i>870</i>&nbsp;        //return null;
+<i>871</i>&nbsp;    }
+<i>872</i>&nbsp;
+<i>873</i>&nbsp;    JSONObject create_json(Blog blog) {
+<b class="nc"><i>874</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>875</i>&nbsp;        jsonObject.put(&quot;blog&quot;, blog);</b>
+<i>876</i>&nbsp;
+<b class="nc"><i>877</i>&nbsp;        jsonObject.put(&quot;blogMongo&quot;, findBlog(blog.getId()));</b>
+<b class="nc"><i>878</i>&nbsp;        if(blog.getReblog_id() != -1) {</b>
+<b class="nc"><i>879</i>&nbsp;            Blog blogtmp = blogRepository.findById(blog.getReblog_id()).orElse(null);</b>
+<b class="nc"><i>880</i>&nbsp;            if(blogtmp.getIs_del() == 1) {</b>
+<b class="nc"><i>881</i>&nbsp;                jsonObject.put(&quot;reblog&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>882</i>&nbsp;                jsonObject.put(&quot;reblogMongo&quot;, &quot;del&quot;);</b>
+<b class="nc"><i>883</i>&nbsp;                jsonObject.put(&quot;reblogUserName&quot;, &quot;del&quot;);</b>
+<i>884</i>&nbsp;            }
+<b class="nc"><i>885</i>&nbsp;            jsonObject.put(&quot;reblog&quot;, blogtmp);</b>
+<b class="nc"><i>886</i>&nbsp;            jsonObject.put(&quot;reblogMongo&quot;, blogMongoRepository.findById(blog.getReblog_id()));</b>
+<b class="nc"><i>887</i>&nbsp;            jsonObject.put(&quot;reblogUserName&quot;, findReblogUsername(blogtmp.getUid()));</b>
+<b class="nc"><i>888</i>&nbsp;        }</b>
+<i>889</i>&nbsp;        else {
+<b class="nc"><i>890</i>&nbsp;            jsonObject.put(&quot;reblog&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>891</i>&nbsp;            jsonObject.put(&quot;reblogMongo&quot;, &quot;null&quot;);</b>
+<b class="nc"><i>892</i>&nbsp;            jsonObject.put(&quot;reblogUserName&quot;, &quot;null&quot;);</b>
+<i>893</i>&nbsp;        }
+<b class="nc"><i>894</i>&nbsp;        jsonObject.put(&quot;userAvatar&quot;, findAvatar(blog.getUid()));</b>
+<b class="nc"><i>895</i>&nbsp;        jsonObject.put(&quot;userName&quot;, findUsername(blog.getUid()));</b>
+<b class="nc"><i>896</i>&nbsp;        jsonObject.put(&quot;comments&quot;, findAllComments(blog.getId()));</b>
+<b class="nc"><i>897</i>&nbsp;        return jsonObject;</b>
+<i>898</i>&nbsp;    }
+<i>899</i>&nbsp;
+<i>900</i>&nbsp;    @Override
+<i>901</i>&nbsp;    public List&lt;JSONObject&gt; recommend_notLogin(Integer index, Integer num) {
+<b class="nc"><i>902</i>&nbsp;        List&lt;JSONObject&gt; rec_res = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>903</i>&nbsp;        Integer counter = 0, tool = 0;</b>
+<i>904</i>&nbsp;
+<i>905</i>&nbsp;        while(true) {
+<i>906</i>&nbsp;            //拿到一页
+<b class="nc"><i>907</i>&nbsp;            List&lt;Blog&gt; blogList = blogRepository.findPage(index + num * tool, num);</b>
+<b class="nc"><i>908</i>&nbsp;            assert blogList != null;</b>
+<b class="nc"><i>909</i>&nbsp;            if(blogList.size() == 0) break;</b>
+<b class="nc"><i>910</i>&nbsp;            tool++;</b>
+<b class="nc"><i>911</i>&nbsp;            boolean flag = false;</b>
+<b class="nc"><i>912</i>&nbsp;            for(int  i = 0; i &lt; blogList.size(); ++i) {</b>
+<b class="nc"><i>913</i>&nbsp;                counter++;</b>
+<i>914</i>&nbsp;                //判断是否公开可见
+<b class="nc"><i>915</i>&nbsp;                if(blogList.get(i).getType() != 3 &amp;&amp; blogList.get(i).getType()!= 7) continue;</b>
+<i>916</i>&nbsp;                //判断是否热门，该推荐？
+<b class="nc"><i>917</i>&nbsp;                if(blogList.get(i).getLike() &gt;= 2 || blogList.get(i).getColl_number() &gt;= 1 || blogList.get(i).getReblog() &gt;= 1)</b>
+<i>918</i>&nbsp;                {
+<b class="nc"><i>919</i>&nbsp;                    rec_res.add(create_json(blogList.get(i)));</b>
+<b class="nc"><i>920</i>&nbsp;                    if(rec_res.size() &gt;= num) {</b>
+<b class="nc"><i>921</i>&nbsp;                        flag = true;</b>
+<b class="nc"><i>922</i>&nbsp;                        break;</b>
+<i>923</i>&nbsp;                    }
+<i>924</i>&nbsp;                }
+<i>925</i>&nbsp;            }
+<b class="nc"><i>926</i>&nbsp;            if(flag) break;</b>
+<b class="nc"><i>927</i>&nbsp;        }</b>
+<b class="nc"><i>928</i>&nbsp;        JSONObject jsonObject = new JSONObject();</b>
+<b class="nc"><i>929</i>&nbsp;        jsonObject.put(&quot;next_index&quot;, index + counter);</b>
+<b class="nc"><i>930</i>&nbsp;        rec_res.add(jsonObject);</b>
+<b class="nc"><i>931</i>&nbsp;        return rec_res;</b>
+<i>932</i>&nbsp;        //return null;
+<i>933</i>&nbsp;    }
+<i>934</i>&nbsp;
+<i>935</i>&nbsp;
+<i>936</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-09-05 17:36</div>
+</div>
+</body>
+</html>

@@ -8,6 +8,8 @@ import com.back.weins.entity.*;
 import com.back.weins.repository.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -37,6 +39,9 @@ public class BlogDaoImpl implements BlogDao {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    LabelRepository labelRepository;
 
     private String findAvatar(Integer uid) {
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
@@ -99,7 +104,13 @@ public class BlogDaoImpl implements BlogDao {
         return user.getName();
     }
 
-
+    private Map<Integer, Integer> setInterestMap(Map<Integer, Integer> map, List<Label> labels, Integer weight) {
+        for (Label label : labels) {
+            Integer id = label.getId();
+            if (map.putIfAbsent(id, weight) != null) map.replace(id, map.get(id) + weight);
+        }
+        return map;
+    }
 
     @Override
     public JSONObject testBlog(Integer bid) {
@@ -113,6 +124,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+
     public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
                            List<String> imag, List<Label> lab) {
         System.out.print(imag);
@@ -140,7 +152,9 @@ public class BlogDaoImpl implements BlogDao {
         return blog.getId();
     }
 
+    //do not use
     @Override
+    @Cacheable(value="blogs")
     public List<JSONObject> getPublicBlog() {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
@@ -180,6 +194,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @Cacheable(value="blogs_page")
     public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         Integer tool = 0;
@@ -222,6 +237,7 @@ public class BlogDaoImpl implements BlogDao {
                 res.add(tmp);
                 if(res.size() >= num) {
                     tool1 = true;
+                    break;
                 }
             }
             if(tool1) break;
@@ -233,6 +249,7 @@ public class BlogDaoImpl implements BlogDao {
         return res;
     }
 
+    //do not use
     @Override
     public List<JSONObject> getBlogsByLabel(Integer lid, Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
@@ -284,6 +301,46 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    public List<JSONObject> getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num) {
+        List<JSONObject> res = new ArrayList<>();
+        List<Integer> label_blog = labelAndBlogRepository.findByLid(lid);
+        User user = userRepository.findById(uid).orElse(null);
+        if(user == null) return null;
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return null;
+        List<Integer> followings = userMongo.getFollowings();
+
+        //record用来寻找起始点，counter记录本次终点
+        int counter = 0, record = 0;
+        if(label_blog == null) return null;
+        while(label_blog.get(record) < index) record++;
+        for(int i = record; i < label_blog.size(); ++i) {
+            counter = label_blog.get(i);
+            Blog blog = blogRepository.findById(counter).orElse(null);
+            //判断是否应该返回给用户
+            boolean flag = false;
+            if(blog.getType() == 7 || blog.getType() == 3) flag = true;
+            else if(blog.getType() == 4 || blog.getType() == 0) {
+                if(blog.getUid() == uid) flag = true;
+            }
+            else if(blog.getType() == 5 || blog.getType() == 1){
+                if(followings.contains(blog.getUid())) flag = true;
+                else if(blog.getUid() == uid) flag = true;
+            }
+            if(!flag) continue;
+            if(blog.getIs_del() == 1) continue;
+            //开始返回
+            res.add(create_json(blog));
+            if(res.size() >= num) break;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("next_index", counter);
+        res.add(jsonObject);
+        return res;
+    }
+
+    //do not use
+    @Override
     public List<JSONObject> getBlogsLogined(Integer uid) {
         List<JSONObject> res = new ArrayList<JSONObject>();
         List<Blog> blogs = blogRepository.findAll();
@@ -330,8 +387,42 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
-    public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
+    public List<JSONObject> getBlogsLogined_page(Integer uid, Integer index, Integer num) {
+        List<JSONObject> res = new ArrayList<>();
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return null;
+        List<Integer> followings = userMongo.getFollowings();
+        Integer counter = 0;
+        while(true) {
+            List<Blog> blogs = blogRepository.findPage(index, num);
+            if(blogs == null) break;
+            for(int i = 0; i < blogs.size(); ++i) {
+                counter++;
+                //判断是否能返回
+                if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){
+                    if(!Objects.equals(blogs.get(i).getUid(), uid)) continue;
+                }
+                else if(blogs.get(i).getType() == 1 || blogs.get(i).getType() == 5){
+                    if(!followings.contains(blogs.get(i).getUid()) && blogs.get(i).getUid() != uid) continue;
 
+                }
+                //能
+                res.add(create_json(blogs.get(i)));
+                if(res.size() >= num) break;
+            }
+            if(res.size() >= num) break;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("next_index", index + counter);
+        res.add(jsonObject);
+        return res;
+    }
+
+
+    @Override
+    @Cacheable(value="blogs")
+    public List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid) {
+        System.out.println("执行了");
         UserMongo userMongo = userMongoRepository.findById(to_see_uid).orElse(null);
         if(userMongo == null) return null;
         User user = userRepository.findById(to_see_uid).orElse(null);
@@ -353,8 +444,12 @@ public class BlogDaoImpl implements BlogDao {
             if(blog.getType() == 0 || blog.getType() == 4)
                 if(uid != to_see_uid && integer != 1 && integer != 2 && integer != 4 && integer != 8) continue;
             if(blog.getType() == 1 || blog.getType() == 5)
-                if(!fans.contains(uid)) continue;
-
+                if(!fans.contains(uid) &&
+                        uid != to_see_uid &&
+                        integer != 1 &&
+                        integer != 2 &&
+                        integer != 4 &&
+                        integer != 8) continue;
 
             JSONObject jsonObject = new JSONObject();
 
@@ -387,8 +482,8 @@ public class BlogDaoImpl implements BlogDao {
         return jsonObjects;
     }
 
-
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean removeComment(Integer uid, Integer cid, Integer type) {
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         List<Integer> comments = userMongo.getComments();
@@ -413,6 +508,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setLike(Integer uid, Integer bid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -422,14 +518,20 @@ public class BlogDaoImpl implements BlogDao {
         //assert blogMongo != null;
         if(blogMongo == null) return false;
         List<Integer> list = blogMongo.getWho_like();
+        //获取label为了添加用户画像
+        List<Label> labels = blogMongo.getLabels();
         if(list.contains(uid)) return false;
         list.add(uid);
         blogMongo.setWho_like(list);
         blogRepository.saveAndFlush(blog);
         blogMongoRepository.deleteById(blog.getId());
         blogMongoRepository.save(blogMongo);
+        //对点赞者的操作
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         if(userMongo == null) return false;
+        Map<Integer, Integer> map = userMongo.getInterests();
+        //改变画像
+        userMongo.setInterests(setInterestMap(map, labels, 1));
         List<Integer> setlike_blog = userMongo.getLike_blog();
         setlike_blog.add(bid);
         userMongo.setLike_blog(setlike_blog);
@@ -439,7 +541,10 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setCollect(Integer uid, Integer bid, boolean flag) {
+        Blog blog = blogRepository.findById(bid).orElse(null);
+        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         //添加收藏用户的收藏品
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         if(userMongo == null) return false;
@@ -448,7 +553,11 @@ public class BlogDaoImpl implements BlogDao {
         if(flag) {
             if(tmplist.contains(bid)) return false;
             tmplist.add(bid);
-
+            //设置画像
+            Map<Integer, Integer> map = userMongo.getInterests();
+            if(blogMongo == null) return false;
+            List<Label> labels = blogMongo.getLabels();
+            userMongo.setInterests(setInterestMap(map, labels, 2));
         }
         else{
             if(!tmplist.contains(bid)) return false;
@@ -463,8 +572,7 @@ public class BlogDaoImpl implements BlogDao {
         userMongoRepository.deleteById(uid);
         userMongoRepository.save(userMongo);
         //改变blog的收藏者
-        Blog blog = blogRepository.findById(bid).orElse(null);
-        BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
+
         List<Integer> who_collectList = blogMongo.getWho_collect();
         if(flag) {
             blog.setColl_number(blog.getColl_number() + 1);
@@ -485,6 +593,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean removeLike(Integer uid, Integer bid) {
         BlogMongo blogMongo = blogMongoRepository.findById(bid).orElse(null);
         if(blogMongo == null) return false;
@@ -519,9 +628,11 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setReblog(Integer uid, Integer bid, Integer type, String content, String post_day) {
+        UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
+        if(userMongo == null) return false;
         Blog blog = new Blog();
-
         //增加转发数、判断是否是转发
         Blog judgeblog = blogRepository.findById(bid).orElse(null);
         if(judgeblog == null) return false;
@@ -529,19 +640,14 @@ public class BlogDaoImpl implements BlogDao {
         blogRepository.saveAndFlush(judgeblog);
         if(judgeblog.getReblog_id() == -1) blog.setReblog_id(bid);
         else blog.setReblog_id(judgeblog.getReblog_id());
-
-
         blog.setUid(uid);
-
         blog.setPost_day(post_day);
         blog.setType(type);
         blogRepository.save(blog);
         //System.out.print(blog);
-
         BlogMongo blogMongo = new BlogMongo();
         blogMongo.setId(blog.getId());
         blogMongo.setContent(content);
-
         //System.out.print(blogMongo);
         BlogMongo tmp = blogMongoRepository.findById(bid).orElse(null);
         blogMongo.setLabels(tmp.getLabels());
@@ -549,13 +655,29 @@ public class BlogDaoImpl implements BlogDao {
         list.add(uid);
         blogMongoRepository.deleteById(bid);
         blogMongoRepository.save(tmp);
-
-
         blogMongoRepository.save(blogMongo);
+
+        //对转发者的操作
+        //User user = userRepository.findById(uid).orElse(null);
+        List<Label> labels = blogMongo.getLabels();
+        Map<Integer, Integer> map = userMongo.getInterests();
+        List<Integer> userBlogs = userMongo.getBlogs();
+        Integer blog_num = userMongo.getBlog_num();
+        //画像
+        userMongo.setInterests(setInterestMap(map, labels, 2));
+        userBlogs.add(blog.getId());
+        //博客
+        userMongo.setBlogs(userBlogs);
+        //博客数
+        userMongo.setBlog_num(userMongo.getBlog_num() + 1);
+        userMongoRepository.deleteById(userMongo.getId());
+        userMongoRepository.save(userMongo);
+
         return true;
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean removeBlog(Integer uid, Integer bid, Integer type) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -574,8 +696,9 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean setComment(Integer uid, Integer to_uid,
-                               Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
+                              Integer bid, String content, String post_time, Integer to_cid, Integer root_cid) {
 
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -607,6 +730,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @CacheEvict(value={"blogs", "blogs_page"})
     public boolean changeBlog(Integer uid, Integer bid, String content, Integer type) {
         Blog blog = blogRepository.findById(bid).orElse(null);
         if(blog == null) return false;
@@ -629,6 +753,7 @@ public class BlogDaoImpl implements BlogDao {
     }
 
     @Override
+    @Cacheable("blogs")
     public JSONObject getSingleBlog(Integer bid) {
         JSONObject jsonObject = new JSONObject();
         Blog blog = blogRepository.findById(bid).orElse(null);
@@ -667,28 +792,41 @@ public class BlogDaoImpl implements BlogDao {
 
         UserMongo userMongo = userMongoRepository.findById(uid).orElse(null);
         assert userMongo != null;
-        Map<Label, Integer> interest = userMongo.getInterests();
-        List<Map.Entry<Label, Integer>> list_interest = new ArrayList<>(interest.entrySet());
+        Map<Integer, Integer> interest = userMongo.getInterests();
+        List<Map.Entry<Integer, Integer>> list_interest = new ArrayList<>(interest.entrySet());
+
+        //去掉删除的标签
+        for(int i = 0; i < list_interest.size(); ++i) {
+            Label labeltmp = labelRepository.findById(list_interest.get(i).getKey()).orElse(null);
+            assert labeltmp != null;
+            if(labeltmp.getFlag() == 1) {
+                list_interest.remove(i);
+                i--;
+            }
+        }
         List<Integer> followings = userMongo.getFollowings();
+
         /**
-        * 对Mongo用户的操作, 最喜欢的三个&关注的人
-        **/
+         * 对Mongo用户的操作, 最喜欢的三个&关注的人
+         **/
+        //System.out.println(list_interest);
         //冒泡排序，得到最喜欢的前三个
         for(int i = 0; i < 3; ++i) {
             for(int j = list_interest.size() -1; j > 0; --j) {
                 if(list_interest.get(j).getValue() > list_interest.get(j - 1).getValue()) {
-                    Map.Entry<Label, Integer> tmp = list_interest.get(j);
+                    Map.Entry<Integer, Integer> tmp = list_interest.get(j);
                     list_interest.set(j, list_interest.get(j - 1));
                     list_interest.set(j - 1, tmp);
                 }
             }
         }
+
         //赋值给most_interest
-        List<Label> most_interest = new ArrayList<Label>();
+        List<Integer> most_interest = new ArrayList<>();
         for(int i = 0; i < 3 && i < list_interest.size(); ++i) {
             most_interest.add(list_interest.get(i).getKey());
         }
-
+//        System.out.println(most_interest);
         /**
          * 开始挑选推荐，
          * 目前是用最简单的推荐，即前三个喜欢的标签必定会被推荐和关注的人必会被推荐
@@ -698,24 +836,41 @@ public class BlogDaoImpl implements BlogDao {
 
         while(true)
         {
+
             List<Blog> blogs = blogRepository.findPage(index + num * tool, num);
-            if(blogs == null) break;
+
+
+            if(blogs.size() == 0) break;
             tool++;
+            //System.out.println(tool);
             for(int i = 0; i < blogs.size(); ++i)
             {
+                boolean judge = false;
                 counter++;
                 //是否是关注的人
                 Blog tmp = blogs.get(i);
-                if(!followings.contains(tmp.getUid())) continue;
-                //是否是最喜欢
-                BlogMongo blogMongo = blogMongoRepository.findById(tmp.getUid()).orElse(null);
-                //assert blogMongo != null;
+                if(followings.contains(tmp.getUid())) judge = true;
+                //是否是喜欢的标签
+                BlogMongo blogMongo = blogMongoRepository.findById(tmp.getId()).orElse(null);
+                assert blogMongo != null;
+
                 List<Label> labels_tmp = blogMongo.getLabels();
-                int intere_num = 0;
-                for(int j = 0; j < 3; ++j) {
-                    if(labels_tmp.contains(most_interest.get(i))) intere_num++;
+                List<Integer> labels_id_tmp = new ArrayList<>();
+                //将labellist转换为labelid
+                for(int j = 0; j < labels_tmp.size(); ++j)
+                    labels_id_tmp.add(labels_tmp.get(j).getId());
+
+//                System.out.println(labels_id_tmp);
+
+                for(int j = 0; j < 3 && j < most_interest.size(); ++j) {
+                    if(labels_id_tmp.contains(most_interest.get(j))) {
+                        judge = true;
+                        break;
+                    }
                 }
-                if(intere_num == 0) continue;
+                //judge=true说明该博客要么是关注的人、要么是喜欢的标签
+                if(!judge) continue;
+
 
                 //推荐
                 //检查权限
@@ -728,13 +883,15 @@ public class BlogDaoImpl implements BlogDao {
                 //生成结果
                 JSONObject jsonObject = new JSONObject(create_json(blogs.get(i)));
                 rec_res.add(jsonObject);
-                if(rec_res.size() == num) break;
+                if(rec_res.size() >= num) break;
             }
+            if(rec_res.size() >= num) break;
         }
         JSONObject jsonObject1 = new JSONObject();
         jsonObject1.put("next_index", index + counter);
         rec_res.add(jsonObject1);
         return rec_res;
+        //return null;
     }
 
     JSONObject create_json(Blog blog) {
@@ -762,6 +919,42 @@ public class BlogDaoImpl implements BlogDao {
         jsonObject.put("userName", findUsername(blog.getUid()));
         jsonObject.put("comments", findAllComments(blog.getId()));
         return jsonObject;
+    }
+
+    @Override
+    @Cacheable("blogs")
+    public List<JSONObject> recommend_notLogin(Integer index, Integer num) {
+        List<JSONObject> rec_res = new ArrayList<>();
+        Integer counter = 0, tool = 0;
+
+        while(true) {
+            //拿到一页
+            List<Blog> blogList = blogRepository.findPage(index + num * tool, num);
+            assert blogList != null;
+            if(blogList.size() == 0) break;
+            tool++;
+            boolean flag = false;
+            for(int  i = 0; i < blogList.size(); ++i) {
+                counter++;
+                //判断是否公开可见
+                if(blogList.get(i).getType() != 3 && blogList.get(i).getType()!= 7) continue;
+                //判断是否热门，该推荐？
+                if(blogList.get(i).getLike() >= 2 || blogList.get(i).getColl_number() >= 1 || blogList.get(i).getReblog() >= 1)
+                {
+                    rec_res.add(create_json(blogList.get(i)));
+                    if(rec_res.size() >= num) {
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            if(flag) break;
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("next_index", index + counter);
+        rec_res.add(jsonObject);
+        return rec_res;
+        //return null;
     }
 
 

@@ -9,19 +9,15 @@ import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-
-//    private final JwtTokenUtil jwtTokenUtil= new JwtTokenUtil();
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -66,17 +62,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String update(RegisterUtil registerUtil){
-        User res = userDao.getOne(registerUtil.getId());
+    public String update(RegisterUtil registerUtil, List<User> Test){
+        Boolean flag = (Test != null);
+
+        User res = flag ? Test.get(0) : userDao.getOne(registerUtil.getId());
+
         if (!Objects.equals(registerUtil.getName(), res.getName())) {
-            if (userDao.getByName(registerUtil.getName()) != null)
+            User NameRes = flag ? Test.get(1) : userDao.getByName(registerUtil.getName());
+
+            if (NameRes != null)
                 return "error";
+//            if (userDao.getByName(registerUtil.getName()) != null)
+//                return "error";
         }
 
         if (!Objects.equals(registerUtil.getPhone(), res.getPhone())) {
-            if (userDao.getByPhone(registerUtil.getPhone()) != null) {
+            User PhoneRes = flag ? Test.get(2) : userDao.getByPhone(registerUtil.getPhone());
+
+            if (PhoneRes != null)
                 return "errorPhone";
-            }
+//            if (userDao.getByPhone(registerUtil.getPhone()) != null)
+//                return "errorPhone";
         }
 
         if (registerUtil.getName() != null)
@@ -110,6 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value="users", key = "#registerUtil.phone")
     public String register(RegisterUtil registerUtil) {
         if (userDao.getByPhone(registerUtil.getPhone()) != null) {
             return "phone error";
@@ -126,6 +133,12 @@ public class UserServiceImpl implements UserService {
         user.setBirthday(registerUtil.getBirthday());
 
         UserMongo mongo = new UserMongo();
+        Map<Integer, Integer> tmp = new HashMap<>();
+
+        for(Integer i = 0; i < registerUtil.getInterests().size(); ++i) {
+            tmp.put(registerUtil.getInterests().get(i), 5);
+        }
+        mongo.setInterests(tmp);
         mongo.setAvatar(registerUtil.getAvatar());
         user.setUserMongo(mongo);
 
@@ -145,6 +158,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value="users", key = "#phone")
     public User login(String phone, String password){
         User user1 = userDao.getByPhone(phone);
         if (user1 == null) {
@@ -159,6 +173,7 @@ public class UserServiceImpl implements UserService {
         user2.setId(user1.getId());
         String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user2), Constant.JWT_TTL);
         user1.setPassword(jwt);
+
         return user1;
     }
 

@@ -17,7 +17,7 @@ public interface UserService {
 
     String save(User user);
 
-    String update(RegisterUtil registerUtil);
+    String update(RegisterUtil registerUtil, List<User> Test);
 
     void delete(Integer id);
 

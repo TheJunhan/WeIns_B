@@ -1,20 +1,20 @@
 package com.back.weins.services;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.weins.entity.Label;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 public interface BlogService {
-    void setLabel(String label);
+    String setLabel(String label);
     Integer setBlog(Integer uid, Integer type, String content, String post_day, String video,
                     String imag, String label);
     List<JSONObject> getPublicBlog();
     List<JSONObject> getPublicBlog_page(Integer index, Integer num);
     List<JSONObject> getBlogsByLabel(Integer lid, Integer uid);
+    List<JSONObject> getBlogsByLabel_page(Integer lid, Integer uid, Integer index, Integer num);
     List<JSONObject> getBlogsLogined(Integer uid);
+    List<JSONObject> getBlogsLogined_page(Integer uid, Integer index, Integer num);
     List<JSONObject> getBlogsById(Integer uid, Integer to_see_uid);
     boolean removeComment(Integer uid, Integer cid, Integer type);
     boolean setLike(Integer uid, Integer bid);
@@ -37,4 +37,6 @@ public interface BlogService {
     List<Label> findLabels(String lab);
 
     List<JSONObject> recommend(Integer uid, Integer index, Integer num);
+
+    List<JSONObject> recommend_notLogin(Integer index, Integer num);
 }
