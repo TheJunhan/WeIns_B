@@ -928,6 +928,8 @@ public class BlogDaoImpl implements BlogDao {
         Integer counter = 0, tool = 0;
 
         while(true) {
+            //每页至少推荐一个
+            Integer least = 0;
             //拿到一页
             List<Blog> blogList = blogRepository.findPage(index + num * tool, num);
             assert blogList != null;
@@ -939,8 +941,16 @@ public class BlogDaoImpl implements BlogDao {
                 //判断是否公开可见
                 if(blogList.get(i).getType() != 3 && blogList.get(i).getType()!= 7) continue;
                 //判断是否热门，该推荐？
-                if(blogList.get(i).getLike() >= 2 || blogList.get(i).getColl_number() >= 1 || blogList.get(i).getReblog() >= 1)
+                if(blogList.get(i).getLike() >= 1 || blogList.get(i).getColl_number() >= 1 || blogList.get(i).getReblog() >= 1)
                 {
+                    least++;
+                    rec_res.add(create_json(blogList.get(i)));
+                    if(rec_res.size() >= num) {
+                        flag = true;
+                        break;
+                    }
+                }
+                else if(i == blogList.size() - 1 && least == 0) {
                     rec_res.add(create_json(blogList.get(i)));
                     if(rec_res.size() >= num) {
                         flag = true;
