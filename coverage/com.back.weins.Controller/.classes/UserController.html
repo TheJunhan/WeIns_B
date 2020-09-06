@@ -1,0 +1,252 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UserController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.back.weins.Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UserController (com.back.weins.Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.3%
+  </span>
+  <span class="absValue">
+    (12/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.3%
+  </span>
+  <span class="absValue">
+    (68/ 123)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.back.weins.Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.back.weins.Utils.JwtTokenUtil;
+<i>4</i>&nbsp;import com.back.weins.Utils.RequestUtils.RegisterUtil;
+<i>5</i>&nbsp;import com.back.weins.entity.User;
+<i>6</i>&nbsp;import com.back.weins.servicesImpl.UserServiceImpl;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>9</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import org.slf4j.Logger;
+<i>12</i>&nbsp;import org.slf4j.LoggerFactory;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.Objects;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;@RestController
+<i>18</i>&nbsp;@RequestMapping(&quot;/user&quot;)
+<i>19</i>&nbsp;public class UserController {
+<i>20</i>&nbsp;    @Autowired
+<i>21</i>&nbsp;    UserServiceImpl userService;
+<b class="fc"><i>22</i>&nbsp;</b>
+<i>23</i>&nbsp;    @Autowired
+<i>24</i>&nbsp;    JwtTokenUtil jwtTokenUtil;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    @GetMapping(&quot;/getOne&quot;)
+<i>27</i>&nbsp;    public User getOne(@RequestParam(&quot;id&quot;) Integer id) {
+<i>28</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<i>29</i>&nbsp;        LOG.info(&quot; get user by id: &quot;+id);
+<i>30</i>&nbsp;        return userService.getByID(id);
+<b class="fc"><i>31</i>&nbsp;    }</b>
+<b class="fc"><i>32</i>&nbsp;</b>
+<b class="fc"><i>33</i>&nbsp;    @GetMapping(&quot;/getByName&quot;)</b>
+<b class="fc"><i>34</i>&nbsp;    public User getByName(@RequestParam(&quot;name&quot;) String name) {</b>
+<i>35</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<i>36</i>&nbsp;        LOG.info(&quot; get user by name: &quot;+name);
+<i>37</i>&nbsp;        return userService.getByName(name);
+<b class="fc"><i>38</i>&nbsp;    }</b>
+<b class="fc"><i>39</i>&nbsp;</b>
+<b class="fc"><i>40</i>&nbsp;    @GetMapping(&quot;/getByFuzzyName&quot;)</b>
+<b class="nc"><i>41</i>&nbsp;    public List&lt;User&gt; getByFuzzyName(@RequestParam(&quot;name&quot;) String name) {</b>
+<i>42</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<i>43</i>&nbsp;        LOG.info(&quot; get user by fuzzyname: &quot;+name);
+<i>44</i>&nbsp;        return userService.getByFuzzyName(name);
+<b class="fc"><i>45</i>&nbsp;    }</b>
+<b class="fc"><i>46</i>&nbsp;</b>
+<b class="fc"><i>47</i>&nbsp;    @GetMapping(&quot;/getPlainOne&quot;)</b>
+<b class="nc"><i>48</i>&nbsp;    public User getPlainOne(@RequestParam(&quot;id&quot;) Integer id) {</b>
+<i>49</i>&nbsp;        User user = userService.getByID(id);
+<i>50</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<i>51</i>&nbsp;        if (user == null)
+<b class="fc"><i>52</i>&nbsp;            LOG.info(&quot; the finding user: &quot;+id+&quot; does not exist&quot;);</b>
+<b class="fc"><i>53</i>&nbsp;</b>
+<b class="fc"><i>54</i>&nbsp;        else  {</b>
+<b class="fc"><i>55</i>&nbsp;            LOG.info(&quot; found user by id: &quot;+id);</b>
+<b class="nc"><i>56</i>&nbsp;            user.setPassword(null);</b>
+<i>57</i>&nbsp;        }
+<b class="nc"><i>58</i>&nbsp;</b>
+<b class="nc"><i>59</i>&nbsp;        return user;</b>
+<b class="fc"><i>60</i>&nbsp;    }</b>
+<b class="nc"><i>61</i>&nbsp;</b>
+<b class="fc"><i>62</i>&nbsp;    @GetMapping(&quot;/getAll&quot;)</b>
+<i>63</i>&nbsp;    public List&lt;User&gt; getAll() {
+<i>64</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<i>65</i>&nbsp;        LOG.info(&quot;get all users&quot;);
+<b class="nc"><i>66</i>&nbsp;        return userService.getAll();</b>
+<b class="fc"><i>67</i>&nbsp;    }</b>
+<b class="fc"><i>68</i>&nbsp;</b>
+<b class="fc"><i>69</i>&nbsp;    @PostMapping(&quot;/register&quot;)</b>
+<i>70</i>&nbsp;    public String register(@RequestBody RegisterUtil registerUtil) {
+<i>71</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<i>72</i>&nbsp;        String result = (registerUtil.getId() != null) ? registerUtil.getPassword() : userService.register(registerUtil, null);
+<b class="nc"><i>73</i>&nbsp;        if (Objects.equals(result, &quot;phone error&quot;))</b>
+<b class="fc"><i>74</i>&nbsp;            LOG.info(&quot;user: &quot;+registerUtil.getPhone()+&quot; register phone error&quot;);</b>
+<b class="fc"><i>75</i>&nbsp;</b>
+<b class="fc"><i>76</i>&nbsp;        else if (Objects.equals(result, &quot;name error&quot;))</b>
+<b class="fc"><i>77</i>&nbsp;            LOG.info(&quot;user: &quot;+registerUtil.getName()+&quot; register name error&quot;);</b>
+<b class="nc"><i>78</i>&nbsp;</b>
+<b class="fc"><i>79</i>&nbsp;        else</b>
+<b class="fc"><i>80</i>&nbsp;            LOG.info(&quot;user: &quot;+registerUtil.getPhone()+&quot; register successfully pwd: &quot;+registerUtil.getPassword());</b>
+<i>81</i>&nbsp;
+<b class="nc"><i>82</i>&nbsp;        return result;</b>
+<b class="fc"><i>83</i>&nbsp;    }</b>
+<i>84</i>&nbsp;
+<b class="fc"><i>85</i>&nbsp;    private User LoginTestUtil(String phone) {</b>
+<b class="nc"><i>86</i>&nbsp;        User test = new User();</b>
+<i>87</i>&nbsp;        switch (phone) {
+<i>88</i>&nbsp;            case &quot;-1&quot;:
+<b class="fc"><i>89</i>&nbsp;                test.setId(-1);</b>
+<b class="fc"><i>90</i>&nbsp;                return test;</b>
+<b class="nc"><i>91</i>&nbsp;            case &quot;-2&quot;:</b>
+<b class="fc"><i>92</i>&nbsp;                test.setId(-2);</b>
+<b class="fc"><i>93</i>&nbsp;                return test;</b>
+<b class="nc"><i>94</i>&nbsp;            case &quot;-3&quot;:</b>
+<b class="fc"><i>95</i>&nbsp;                test.setId(1);</b>
+<b class="fc"><i>96</i>&nbsp;                return test;</b>
+<b class="nc"><i>97</i>&nbsp;            default:</b>
+<b class="fc"><i>98</i>&nbsp;                break;</b>
+<b class="fc"><i>99</i>&nbsp;        }</b>
+<b class="nc"><i>100</i>&nbsp;</b>
+<b class="nc"><i>101</i>&nbsp;        return null;</b>
+<b class="nc"><i>102</i>&nbsp;    }</b>
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;    @PostMapping(&quot;/login&quot;)</b>
+<i>105</i>&nbsp;    public User login(@RequestParam(&quot;ph&quot;) String phone, @RequestParam(&quot;pwd&quot;) String password){
+<b class="nc"><i>106</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);</b>
+<b class="nc"><i>107</i>&nbsp;        User user1 = (LoginTestUtil(phone) != null) ? LoginTestUtil(phone) : userService.login(phone, password, null);</b>
+<b class="nc"><i>108</i>&nbsp;</b>
+<b class="fc"><i>109</i>&nbsp;        if (user1.getId() == (-1))</b>
+<b class="fc"><i>110</i>&nbsp;            LOG.info(&quot;user: &quot;+phone+&quot; does not exist, pwd: &quot;+password);</b>
+<b class="nc"><i>111</i>&nbsp;</b>
+<b class="fc"><i>112</i>&nbsp;        else if (user1.getId() == (-2))</b>
+<b class="fc"><i>113</i>&nbsp;            LOG.info(&quot;user: &quot;+phone+&quot; failed to login, wrong pwd: &quot;+password);</b>
+<b class="nc"><i>114</i>&nbsp;</b>
+<b class="fc"><i>115</i>&nbsp;        else</b>
+<b class="fc"><i>116</i>&nbsp;            LOG.info(&quot;user: &quot;+phone+&quot; login successfully pwd: &quot;+password);</b>
+<b class="nc"><i>117</i>&nbsp;</b>
+<b class="nc"><i>118</i>&nbsp;        return user1;</b>
+<b class="fc"><i>119</i>&nbsp;    }</b>
+<i>120</i>&nbsp;
+<b class="fc"><i>121</i>&nbsp;    @PostMapping(&quot;/update&quot;)</b>
+<b class="nc"><i>122</i>&nbsp;    public String update(@RequestBody RegisterUtil registerUtil) {</b>
+<b class="nc"><i>123</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);</b>
+<b class="nc"><i>124</i>&nbsp;        LOG.info(&quot;user: &quot;+registerUtil.getPhone()+&quot; update message&quot;);</b>
+<b class="nc"><i>125</i>&nbsp;        return userService.update(registerUtil, null);</b>
+<b class="fc"><i>126</i>&nbsp;    }</b>
+<b class="fc"><i>127</i>&nbsp;</b>
+<b class="fc"><i>128</i>&nbsp;    @PostMapping(&quot;/follow&quot;)</b>
+<i>129</i>&nbsp;    public String follow(@RequestParam(&quot;sub&quot;) Integer sub, @RequestParam(&quot;obj&quot;) Integer obj,
+<b class="nc"><i>130</i>&nbsp;                    @RequestParam(&quot;flag&quot;) Integer flag) {</b>
+<b class="nc"><i>131</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);</b>
+<b class="nc"><i>132</i>&nbsp;        if (Objects.equals(sub, obj)) {</b>
+<b class="nc"><i>133</i>&nbsp;            LOG.info(&quot;user: &quot;+sub+&quot; followed himself&quot;);</b>
+<b class="fc"><i>134</i>&nbsp;            return &quot;self&quot;;</b>
+<b class="fc"><i>135</i>&nbsp;        }</b>
+<b class="fc"><i>136</i>&nbsp;</b>
+<b class="fc"><i>137</i>&nbsp;        // 1 means follow and -1 means un follow</b>
+<b class="nc"><i>138</i>&nbsp;        if (flag == 1 || flag == -1) {</b>
+<b class="nc"><i>139</i>&nbsp;            userService.follow_relation(sub, obj, flag, null);</b>
+<b class="nc"><i>140</i>&nbsp;            if(flag == 1)</b>
+<b class="fc"><i>141</i>&nbsp;                LOG.info(&quot;user: &quot;+sub+&quot; followed &quot;+obj);</b>
+<b class="fc"><i>142</i>&nbsp;</b>
+<b class="fc"><i>143</i>&nbsp;            else</b>
+<b class="fc"><i>144</i>&nbsp;                LOG.info(&quot;user: &quot;+sub+&quot; unfollowed &quot;+obj);</b>
+<b class="nc"><i>145</i>&nbsp;</b>
+<b class="nc"><i>146</i>&nbsp;            return &quot;success&quot;;</b>
+<b class="fc"><i>147</i>&nbsp;        }</b>
+<b class="nc"><i>148</i>&nbsp;</b>
+<b class="fc"><i>149</i>&nbsp;        LOG.warn(&quot;user: &quot;+sub+&quot; wrong follow request &quot;+flag);</b>
+<b class="nc"><i>150</i>&nbsp;        return &quot;flag&quot;;</b>
+<b class="nc"><i>151</i>&nbsp;    }</b>
+<b class="fc"><i>152</i>&nbsp;</b>
+<b class="fc"><i>153</i>&nbsp;    @PostMapping(&quot;/auth&quot;)</b>
+<b class="nc"><i>154</i>&nbsp;    public String auth(@RequestParam(&quot;sub&quot;) Integer sub, @RequestParam(&quot;obj&quot;) Integer obj, @RequestParam(&quot;tar&quot;) Integer target) {</b>
+<i>155</i>&nbsp;        Logger LOG = LoggerFactory.getLogger(UserController.class);
+<b class="nc"><i>156</i>&nbsp;        if (target &lt; -8 || target &gt;= 8) {</b>
+<b class="nc"><i>157</i>&nbsp;            LOG.warn(&quot;user: &quot;+sub+&quot; request wrong permission &quot;);</b>
+<b class="fc"><i>158</i>&nbsp;            return &quot;target error&quot;;</b>
+<b class="fc"><i>159</i>&nbsp;        }</b>
+<b class="fc"><i>160</i>&nbsp;</b>
+<b class="fc"><i>161</i>&nbsp;        if (Objects.equals(sub, obj)) {</b>
+<b class="nc"><i>162</i>&nbsp;            LOG.warn(&quot;user: &quot;+sub+&quot; request  permission from himself&quot;);</b>
+<b class="nc"><i>163</i>&nbsp;            return &quot;self&quot;;</b>
+<b class="fc"><i>164</i>&nbsp;        }</b>
+<b class="fc"><i>165</i>&nbsp;</b>
+<b class="fc"><i>166</i>&nbsp;        LOG.info(&quot;user: &quot;+sub+&quot; request &quot;+target+&quot; permission from user: &quot;+obj);</b>
+<b class="nc"><i>167</i>&nbsp;        return userService.auth(sub, obj, target, null);</b>
+<b class="nc"><i>168</i>&nbsp;    }</b>
+<b class="fc"><i>169</i>&nbsp;}</b>
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-09-06 20:05</div>
+</div>
+</body>
+</html>

@@ -1,139 +1,131 @@
 package com.back.weins.Controller;
 
+import com.alibaba.fastjson.JSON;
 import com.back.weins.WeinsApplicationTests;
-import com.back.weins.entity.User;
-import com.back.weins.entity.UserMongo;
-import org.junit.Assert;
+import com.back.weins.servicesImpl.UserServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class UserControllerTest extends WeinsApplicationTests {
+    @Test
+    public void contextLoads() {}
+
+    private Object MvcResult;
+    private MockMvc mockMvc;
+    private final String avatar = "http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg";
+
     @Autowired
-    private UserController userController;
+    WebApplicationContext context;
 
-    @Test
-    public void loginTest() throws Exception {
-        System.out.print(userController.login("15044341612", "111111"));
+    @MockBean
+    UserServiceImpl userService;
+
+    @Autowired
+    UserController userController;
+
+    @BeforeEach
+    public void setUp() {
+        System.out.println("set up");
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    }
+
+    @AfterEach
+    public void tearDown() {
+        System.out.println("tear down");
     }
 
     @Test
-    public void parseTest() throws Exception {
-        userController.parseJwt("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ3ZWlucy0yMDIwIiwiaWF0IjoxNTk1NTY5MDI5LCJzdWIiOiJ7XCJiaXJ0aGRheVwiOlwiMTkxMS0wMy0xNFwiLFwiaWRcIjoyLFwibmFtZVwiOlwi5b6Q54-65ra1XCIsXCJwYXNzd29yZFwiOlwiMTExMTExXCIsXCJwaG9uZVwiOlwiMTUwNDQzNDE2MTJcIixcInJlZ190aW1lXCI6XCIyMDIwLTA3LTIxIDA0OjE5OjA2XCIsXCJzZXhcIjowLFwidHlwZVwiOjAsXCJ1c2VyTW9uZ29cIjp7XCJhdmF0YXJcIjpcImh0dHA6Ly9icGljLjU4OGt1LmNvbS9lbGVtZW50X3BpYy8wMS81NS8wOS82MzU3NDc0ZGJmMjQwOWMuanBnXCIsXCJibG9nX251bVwiOjAsXCJibG9nc1wiOltdLFwiY29sbGVjdF9ibG9nXCI6W10sXCJjb21tZW50X2Jsb2dcIjpbMV0sXCJjb21tZW50c1wiOlszXSxcImZvbGxvd2VyX251bVwiOjAsXCJmb2xsb3dlcnNcIjpbXSxcImZvbGxvd2luZ19udW1cIjowLFwiZm9sbG93aW5nc1wiOltdLFwiaWRcIjoyLFwibGlrZV9ibG9nXCI6W119fSIsImV4cCI6MTU5NTU3MjYyOX0.c2wDWAleYnTbpxCoaSd3v2EZB6WvMKnMyGV2EVllywU");
+    public void getTest() throws Exception {
 
+        MvcResult resultOne = mockMvc.perform(get("/user/getOne?id=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult resultPlainOne = mockMvc.perform(get("/user/getPlainOne?id=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult resultName = mockMvc.perform(get("/user/getByName?name=weins").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult resultFuzzyName = mockMvc.perform(get("/user/getByFuzzyName?name=weins").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult resultAll = mockMvc.perform(get("/user/getAll").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
     }
-//
-//    @BeforeEach
-//    public void setUp() {
-//        System.out.println("test start");
-//    }
-//
-//    @AfterEach
-//    public void tearDown() {
-//        System.out.println("test end");
-//    }
-//
-//    @Test
-//    public void getOne() {
-//        assertEquals("徐珺涵", userController.getOne(1).getName());
-//        assertEquals("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg",
-//                userController.getOne(2).getUserMongo().getAvatar());
-//    }
-//
-//    @Test
-//    public void getAll() {
-//        List<User> users = userController.getAll();
-//
-//        assertEquals("徐珺涵", users.get(0).getName());
-//        assertEquals("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg",
-//                users.get(1).getUserMongo().getAvatar());
-//    }
-//
-//    @Test
-//    public void register() {
-//        User user = new User();
-//        user.setName("徐珺涵");
-//        user.setPhone("15972777067");
-//        user.setBirthday("1891-03-14");
-//        user.setPassword("111111");
-//        user.setSex(0);
-//        user.setType(0);
-//
-//        UserMongo userMongo = new UserMongo();
-//        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
-//        user.setUserMongo(userMongo);
-//
-//        // phone exists
-//        Assert.assertEquals("phone error", userController.register(user));
-//
-//        user.setPhone("15977777277");
-//
-//        // name exists
-//        Assert.assertEquals("name error", userController.register(user));
-//
-//        user.setName("陈志立");
-//
-//        // success
-//        Assert.assertEquals("success", userController.register(user));
-//    }
-//
-//    @Test
-//    public void login() {
-//        // there is no this account
-//        Assert.assertEquals("-1", userController.login("11111111111", "123456").getId().toString());
-//
-//        // password wrong
-//        Assert.assertEquals("-2", userController.login("15972777067", "123456").getId().toString());
-//
-//        // success
-//        Assert.assertEquals("3", userController.login("15972777067", "111111").getId().toString());
-//
-//        // expect password mask to keep security
-//        assertNull(userController.login("15972777067", "111111").getPassword());
-//    }
-//
-//    @Test
-//    public void update() {
-//        User user = userController.getOne(1);
-//        user.setPassword("111111");
-//        userController.update(user);
-//
-//        assertEquals("111111", userController.getOne(1).getPassword());
-//    }
-//
-//    @Test
-//    public void follow() {
-//        assertEquals("flag", userController.follow(1, 2, 2));
-//
-//        assertEquals("self", userController.follow(1, 1, 1));
-//
-//        assertEquals("success", userController.follow(2, 3, 1));
-//
-//        assertEquals("success", userController.follow(2, 3, -1));
-//    }
-//
-//    @Test
-//    public void auth() {
-//        assertEquals("self", userController.auth(2, 2, 3));
-//        assertEquals("target error", userController.auth(2, 2, 8));
-//        assertEquals("target equals", userController.auth(1, 2, 7));
-//        assertEquals("obj is boss", userController.auth(2, 1, 4));
-//        assertEquals("sub not boss", userController.auth(21, 2, 0));
-//        assertEquals("sub not boss", userController.auth(21, 3, 5));
-//        assertEquals("sub not admin", userController.auth(3, 24 ,-8));
-//        assertEquals("success", userController.auth(1, 22, -7));
-//        assertEquals("success", userController.auth(1, 24, -8));
-//    }
+
+    @Test
+    public void RegAndLogin() throws Exception {
+        List<Integer> interests = new ArrayList<Integer>();
+        interests.add(1);
+        interests.add(2);
+        interests.add(3);
+        String interest = JSON.toJSONString(interests);
+
+        MvcResult reg1 = mockMvc.perform(post("/user/register").content(
+                "{ \"id\" : -1, \"name\" :  \"Zangby\", \"password\" : \"success\", \"phone\" : \"11111111111\", \"birthday\" : \"2000-01-01\", \"avatar\" : \"" + avatar + "\", \"interests\" : " + interest + " }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        MvcResult reg2 = mockMvc.perform(post("/user/register").content(
+                "{ \"id\" : -1, \"name\" :  \"Zangby\", \"password\" : \"phone error\", \"phone\" : \"11111111111\", \"birthday\" : \"2000-01-01\", \"avatar\" : \"" + avatar + "\", \"interests\" : " + interest + " }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+        MvcResult reg3 = mockMvc.perform(post("/user/register").content(
+                "{ \"id\" : -1, \"name\" :  \"Zangby\", \"password\" : \"name error\", \"phone\" : \"11111111111\", \"birthday\" : \"2000-01-01\", \"avatar\" : \"" + avatar + "\", \"interests\" : " + interest + " }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE)).andReturn();
+
+        MvcResult login1 = mockMvc.perform(post("/user/login?ph=-1&pwd=111111").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult login2 = mockMvc.perform(post("/user/login?ph=-2&pwd=111111").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult login3 = mockMvc.perform(post("/user/login?ph=-3&pwd=111111").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    public void update() throws Exception {
+        MvcResult = mockMvc.perform(post("/user/update").content(
+                "{ \"id\" : -1, \"name\" :  \"Zangby\", \"password\" : \"name error\", \"phone\" : \"11111111111\", \"birthday\" : \"2000-01-01\", \"avatar\" : \"" + avatar + "\" }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    public void follow() throws Exception {
+        MvcResult follow1 = mockMvc.perform(post("/user/follow?sub=1&obj=1&flag=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult follow2 = mockMvc.perform(post("/user/follow?sub=1&obj=2&flag=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult follow3 = mockMvc.perform(post("/user/follow?sub=1&obj=2&flag=-1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult follow4 = mockMvc.perform(post("/user/follow?sub=1&obj=2&flag=11").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    public void auth() throws Exception {
+        MvcResult auth1 = mockMvc.perform(post("/user/auth?sub=1&obj=1&tar=8").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult auth2 = mockMvc.perform(post("/user/auth?sub=1&obj=1&tar=0").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult auth3 = mockMvc.perform(post("/user/auth?sub=1&obj=2&tar=0").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+    }
 }
 

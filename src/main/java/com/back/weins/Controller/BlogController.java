@@ -1,7 +1,6 @@
 package com.back.weins.Controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.back.weins.DaoImpl.BlogDaoImpl;
 import com.back.weins.Utils.RequestUtils.BlogUtil;
 import com.back.weins.Utils.RequestUtils.ChangeUtil;
 import com.back.weins.Utils.RequestUtils.CommentUtils;
@@ -22,8 +21,6 @@ public class BlogController {
 
     @Autowired
     BlogService blogService;
-    @Autowired
-    BlogDaoImpl blogDao;
 
     @GetMapping(value="/setLabel")
     public String setLabel(@RequestParam("label") String label) {
@@ -64,10 +61,18 @@ public class BlogController {
     }
 
     @GetMapping("/page/getPublicBlogs")
-    public List<JSONObject> getPublicBlogs_page(@RequestParam("index") Integer index, @RequestParam("num") Integer num) {
+    public List<JSONObject> getPublicBlogs_page(@RequestParam("index") Integer index,
+                                                @RequestParam("num") Integer num) {
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
         LOG.info(" getPublicBlogs by page : index:"+index+" num:"+ num);
         return blogService.getPublicBlog_page(index, num);
+    }
+
+    @GetMapping("/getBlogsByLabel")
+    public List<JSONObject> getBlogsByLabel(@RequestParam("lid") Integer lid, @RequestParam("uid") Integer uid){
+        Logger LOG = LoggerFactory.getLogger(BlogController.class);
+        LOG.info("user : "+uid+" getBlogs by label : labelid: "+lid);
+        return blogService.getBlogsByLabel(lid, uid);
     }
 
     @GetMapping("/page/getBlogsByLabel")
@@ -78,13 +83,6 @@ public class BlogController {
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
         LOG.info("user : "+uid+" getBlogs by label : labelid: "+lid+" page  index: "+index+" num: "+ num);
         return blogService.getBlogsByLabel_page(lid, uid, index, num);
-    }
-
-    @GetMapping("/getBlogsByLabel")
-    public List<JSONObject> getBlogsByLabel(@RequestParam("lid") Integer lid, @RequestParam("uid") Integer uid){
-        Logger LOG = LoggerFactory.getLogger(BlogController.class);
-        LOG.info("user : "+uid+" getBlogs by label : labelid: "+lid);
-        return blogService.getBlogsByLabel(lid, uid);
     }
 
     @GetMapping("/getBlogsLogined")
@@ -104,38 +102,65 @@ public class BlogController {
     }
 
     @GetMapping("/getBlogsById")
-    public List<JSONObject> getBlogsById(@RequestParam("uid") Integer uid, @RequestParam("to_see_uid") Integer to_see_uid) {
+    public List<JSONObject> getBlogsById(@RequestParam("uid") Integer uid,
+                                         @RequestParam("to_see_uid") Integer to_see_uid) {
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
         LOG.info("user : "+uid+" getBlogs by id: "+to_see_uid);
         return blogService.getBlogsById(uid, to_see_uid);
     }
 
     @GetMapping("/like")
-    public boolean setLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
+    public boolean setLike(@RequestParam("uid") Integer uid,
+                           @RequestParam("bid") Integer bid) {
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
-        LOG.info("user : "+uid+" liked Blog -- blogid: "+bid);
+        LOG.info("user : "+uid+" liked Blog -- blog.id: "+bid);
         return blogService.setLike(uid, bid);
     }
 
-    @GetMapping("/collect")
-    public boolean setCollect(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("flag") boolean flag){
+    @GetMapping("/removeLike")
+    public boolean removeLike(@RequestParam("uid") Integer uid,
+                              @RequestParam("bid") Integer bid){
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
-        if(flag==true)
-        {
-            LOG.info("user : "+uid+" collected Blog -- blogid: "+bid);
-        }
+        LOG.info("user : "+uid+" unliked Blog -- blog.id: "+bid);
+        return blogService.removeLike(uid, bid);
+    }
+
+    @GetMapping("/collect")
+    public boolean setCollect(@RequestParam("uid") Integer uid,
+                              @RequestParam("bid") Integer bid,
+                              @RequestParam("flag") boolean flag) {
+        Logger LOG = LoggerFactory.getLogger(BlogController.class);
+        if (flag)
+            LOG.info("user : "+uid+" collected Blog -- blog.id: "+bid);
+
         else
-        {
-            LOG.info("user : "+uid+" uncollected Blog -- blogid: "+bid);
-        }
+            LOG.info("user : "+uid+" uncollected Blog -- blog.id: "+bid);
+
         return blogService.setCollect(uid, bid, flag);
     }
 
-    @GetMapping("/removeLike")
-    public boolean removeLike(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid){
+    @PostMapping("/setComment")
+    public boolean setComment(@RequestBody CommentUtils commentUtils){
+        boolean result=blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid(), commentUtils.getRoot_cid());
+
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
-        LOG.info("user : "+uid+" unliked Blog -- blogid: "+bid);
-        return blogService.removeLike(uid, bid);
+
+        if(result)
+            LOG.info("user : "+commentUtils.getUid()+" commented  blog :"+commentUtils.getBid()+" of user :"+commentUtils.getTo_uid()+"  successfully, comment id :"+commentUtils.getTo_cid()+" root comment id :"+commentUtils.getRoot_cid());
+        else
+            LOG.info("user : "+commentUtils.getUid()+" commented  blog :"+commentUtils.getBid()+" of user :"+commentUtils.getTo_uid()+"  unsuccessfully, comment id :"+commentUtils.getTo_cid()+" root comment id :"+commentUtils.getRoot_cid());
+
+
+        return result;
+    }
+
+    @PostMapping("/removeComment")
+    public boolean removeComment(@RequestParam("uid") Integer uid,
+                                 @RequestParam("cid") Integer cid,
+                                 @RequestParam("type") Integer type){
+        Logger LOG = LoggerFactory.getLogger(BlogController.class);
+        LOG.info("user : "+uid+" remove comment -- commentid: "+cid+ " type "+type);
+        return blogService.removeComment(uid, cid, type);
     }
 
     @PostMapping("/setReblog")
@@ -151,68 +176,31 @@ public class BlogController {
     public boolean removeBlog(@RequestParam("uid") Integer uid, @RequestParam("bid") Integer bid, @RequestParam("type") Integer type){
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
         boolean result=blogService.removeBlog(uid, bid, type);
-        if(result)
-        {
-            LOG.info("user : "+uid+" removed Blog successfully-- blogid: "+bid);
-        }
-        else
-        {
-            LOG.info("user : "+uid+" failed to remove Blog -- blogid: "+bid);
-        }
-
-        return result;
-    }
-
-    @PostMapping("/setComment")
-    public boolean setComment(@RequestBody CommentUtils commentUtils){
-        boolean result=blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid(), commentUtils.getRoot_cid());
-
-        Logger LOG = LoggerFactory.getLogger(BlogController.class);
 
         if(result)
-        {
-            LOG.info("user : "+commentUtils.getUid()+" commented  blog :"+commentUtils.getBid()+" of user :"+commentUtils.getTo_uid()+"  successfully, comment id :"+commentUtils.getTo_cid()+" root comment id :"+commentUtils.getRoot_cid());
-        }
+            LOG.info("user : "+uid+" removed Blog successfully-- blog.id: "+bid);
         else
-        {
-            LOG.info("user : "+commentUtils.getUid()+" commented  blog :"+commentUtils.getBid()+" of user :"+commentUtils.getTo_uid()+"  unsuccessfully, comment id :"+commentUtils.getTo_cid()+" root comment id :"+commentUtils.getRoot_cid());
-        }
+            LOG.info("user : "+uid+" failed to remove Blog -- blog.id: "+bid);
 
-//        return blogService.setComment(commentUtils.getUid(), commentUtils.getTo_uid(), commentUtils.getBid(), commentUtils.getContent(), commentUtils.getPost_time(), commentUtils.getTo_cid(), commentUtils.getRoot_cid());
         return result;
-    }
-
-    @PostMapping("/removeComment")
-    public boolean removeComment(@RequestParam("uid") Integer uid, @RequestParam("cid") Integer cid, @RequestParam("type") Integer type){
-        Logger LOG = LoggerFactory.getLogger(BlogController.class);
-        LOG.info("user : "+uid+" remove comment -- commentid: "+cid+ " type "+type);
-//        LOG.info("user : "commentUtils.getUid()+" commented  blog :"+commentUtils.getBid()+" of user :"+commentUtils.getTo_uid()+" , comment id :"+commentUtils.getTo_cid()+" root comment id :"+commentUtils.getRoot_cid())
-        return blogService.removeComment(uid, cid, type);
     }
 
     @PostMapping("/changeBlog")
     public boolean changeBlog(@RequestBody ChangeUtil changeUtil) {
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
         boolean result=blogService.changeBlog(changeUtil.getUid(), changeUtil.getBid(), changeUtil.getContent(), changeUtil.getType());
-        if(result)
-        {
+
+        if (result)
             LOG.info("user : "+changeUtil.getUid()+"changed blog "+changeUtil.getBid()+" successfully,content "+changeUtil.getContent()+" type: "+changeUtil.getType());
-        }
         else
-        {
             LOG.info("user : "+changeUtil.getUid()+"changed blog "+changeUtil.getBid()+" unsuccessfully,content "+changeUtil.getContent()+" type: "+changeUtil.getType());
-        }
+
         return result;
     }
 
     @GetMapping("/getSingleBlog")
     public JSONObject getSingleBlog(@RequestParam("bid") Integer bid) {
         return blogService.getSingleBlog(bid);
-    }
-
-    @GetMapping("/test")
-    public List<JSONObject> test(@RequestParam("bid") Integer bid) {
-        return blogDao.findAllComments(bid);
     }
 
     @GetMapping("/page/recommend")

@@ -1,150 +1,141 @@
 package com.back.weins.Controller;
 
-import com.alibaba.fastjson.JSON;
-import com.back.weins.Utils.RequestUtils.BlogUtil;
-import com.back.weins.Utils.RequestUtils.CommentUtils;
-import com.back.weins.Utils.RequestUtils.ReblogUtil;
-import com.back.weins.Utils.RequestUtils.RegisterUtil;
-import com.back.weins.entity.Label;
-
-import com.back.weins.entity.User;
-import com.back.weins.entity.UserMongo;
-import org.junit.Test;
+import com.back.weins.WeinsApplicationTests;
+import com.back.weins.servicesImpl.BlogServiceImpl;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.*;
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BlogControllerTest {
+class BlogControllerTest extends WeinsApplicationTests {
+
+    @Test
+    public void contextLoads() {}
+
+    @Autowired
+    WebApplicationContext context;
 
     @Autowired
     private BlogController blogController;
 
-    @Autowired
-    private UserController userController;
-//
-//    private MockMvc mockMvc;
-//
-    @Test
-    public void testSetBlog() throws Exception {
-//        List<String> image = new ArrayList<String>();
-//        image.add("default");
-//        image.add("default");
-//        image.add("default");
-//        image.add("default");
-//        String ima = JSON.toJSONString(image);
-//        List<Label> labe = new ArrayList<Label>();
-//        Label la = new Label();
-//        la.setId(5);
-//        la.setContent("美食");
-//        la.setFlag(0);
-//        labe.add(la);
-//        Label la1 = new Label();
-//        la1.setId(7);
-//        la1.setContent("运动");
-//        la1.setFlag(0);
-//        labe.add(la1);
-//        String lab = JSON.toJSONString(labe);
-//        BlogUtil blogUtil = new BlogUtil(1, 3, "自己可见：今天天气很晴朗，鸟儿生生唱", "2020-7-15", "null", ima,
-//                lab, "敖宇晨");
-//        Integer t = blogController.setBlog(blogUtil);
-        System.out.println("cao");
+    @MockBean
+    private BlogServiceImpl blogService;
 
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        System.out.println("set up");
+        mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
-//
-//    @Test
-//    public void testGetBlog(){
-////        System.out.print(blogController.getPublicBlogs());
-//        ReblogUtil reblogUtil = new ReblogUtil(2, 3, 3, "开心", "2020-7-27", "疾风剑豪");
-//        blogController.setReblog(reblogUtil);
-//    }
 
-//
-//    @Test
-//    public void testGetBlogsByLabel(){
-//        //userController.follow(2, 1, -1);
-//        System.out.print(blogController.getBlogsByLabel(5, 1).size());
-//    }
-    @Test
-    public void testGetBlogsLogined(){
-//        userController.follow(1, 2, 1);
-//        userController.follow(3, 1, 1);
-//        userController.follow(3, 2, 1);
-//        User user = new User();
-//        user.setName("徐珺涵");
-//        user.setPhone("15044341612");
-//        user.setBirthday("1911-03-14");
-//        user.setPassword("111111");
-//        user.setReg_time("2020-07-21 14:00:00");
-//        user.setSex(0);
-//        user.setType(0);
-//
-//        UserMongo userMongo = new UserMongo();
-//        userMongo.setAvatar("http://bpic.588ku.com/element_pic/01/55/09/6357474dbf2409c.jpg");
-//        user.setUserMongo(userMongo);
-//        userController.register(user);
-//        List<Integer> tmp = new ArrayList<>();
-//        tmp.add(1);
-//        tmp.add(2);
-//        RegisterUtil registerUtil = new RegisterUtil(-1,
-//                "1",
-//                "111111",
-//                "15044341612",
-//                "2000-07-01",
-//                "?",
-//                0,
-//                tmp);
-//        userController.register(registerUtil);
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(1, 1);
-        map.put(2, 2);
-        map.put(3, 3);
-        System.out.println(map.get(4));
-//        System.out.print((blogController.getBlogsLogined(3)).size());
+    @AfterEach
+    void tearDown() {
+        System.out.println("tear down");
     }
-//
-//    @Test
-//    public void setLikeTest(){
-//        blogController.setLike(2, 4);
-//        blogController.setLike(3, 4);
-//    }
-//
-//    @Test
-//    public void removeLikeTest(){
-//        blogController.removeLike(2, 4);
-//    }
-//
-//    @Test
-//    public void removeBlogTest(){
-//        blogController.removeBlog(1, 4, 0);
-//    }
-//
-//    @Test
-//    public void setReblog(){
-//
-//    }
-//
-//    @Test
-//    public void setCommentTest(){
-//        CommentUtils commentUtils = new CommentUtils(2, 1, "2020-7-29", 1, -1, "第二条评论！！");
-//
-//        blogController.setComment(commentUtils);
-//    }
-//
-//    @Test
-//    public void setCollect(){
-////        blogController.setCollect(3, 3, true);
-//        blogController.setCollect(3, 3, false);
-//    }
+
+    @Test
+    public void hello() {
+        System.out.println("hello");
+    }
+
+    @Test
+    public void label() throws Exception {
+        MvcResult resultSet = mockMvc.perform(get("/blog/setLabel?label=CHINA!").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult resultGet = mockMvc.perform(get("/blog/getLabels").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult resultGetFuzzy = mockMvc.perform(get("/blog/findFuzzyLabels?lab=CH").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+    }
 
 
+//    uid;
+//    private Integer type;
+//    private String content;
+//    private String post_day;
+//    private String video;
+//    private String imag;
+//    private String label;
+//    private String username;
+    @Test
+    public void getBlogs() throws Exception {
+        MvcResult setBlog = mockMvc.perform(post("/blog/setBlog").content(
+                "{ \"uid\" : 1, \"type\" : 3, \"content\" : \"hello world\", \"post_day\" : \"2020-09-01 08:00:00\", " +
+                        "\"video\" : \"video\", \"imag\" : \"image\", \"label\" : \"labels\", \"username\" : \"weins\" }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isOk()).andReturn();
 
+        MvcResult getPub = mockMvc.perform(get("/blog/getPublicBlogs").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult getPubPage = mockMvc.perform(get("/blog/page/getPublicBlogs?index=0&num=5").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult getLab = mockMvc.perform(get("/blog/getBlogsByLabel?lid=1&uid=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult getLabPage = mockMvc.perform(get("/blog/page/getBlogsByLabel?lid=1&uid=1&index=0&num=5").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult getLogin = mockMvc.perform(get("/blog/getBlogsLogined?uid=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult getLoginPage = mockMvc.perform(get("/blog/page/getBlogsLogined?uid=1&index=0&num=5").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult getById = mockMvc.perform(get("/blog/getBlogsById?uid=1&to_see_uid=2").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult getSingle = mockMvc.perform(get("/blog/getSingleBlog?bid=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult getRecommendPage = mockMvc.perform(get("/blog/page/recommend?uid=1&index=0&num=5").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult getRecommendNotLoginPage = mockMvc.perform(get("/blog/page/recommendNotLogin?index=0&num=5").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+    }
+
+    @Test
+    public void CounterOps() throws Exception {
+        MvcResult like = mockMvc.perform(get("/blog/like?uid=1&bid=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult removeLike = mockMvc.perform(get("/blog/removeLike?uid=1&bid=1").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult collect = mockMvc.perform(get("/blog/collect?uid=1&bid=1&flag=true").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult unCollect = mockMvc.perform(get("/blog/collect?uid=1&bid=1&flag=false").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult comment = mockMvc.perform(get("/blog/setComment").content(
+                "{ \"uid\" : 1, \"to_uid\" : 2, \"post_time\" : \"2020-09-01 08:00:00\", \"bid\" : 1, " +
+                        "\"to_cid\" : 1, \"content\" : \"I agree with you\", \"root_cid\": 1 }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult removeComment = mockMvc.perform(get("/blog/removeComment?uid=1&cid=1&type=2").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+    }
+
+
+//    Integer uid;
+//    Integer to_uid;
+//    String post_time;
+//    Integer bid;
+//    Integer to_cid;
+//    String content;
+//    Integer root_cid;
 }
