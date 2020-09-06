@@ -42,6 +42,9 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
     @Query(value = "select * from blog limit ?1,?2", nativeQuery = true)
     List<Blog> findPage(Integer index, Integer num);
 
+    @Query(value = "select count(*) from blog", nativeQuery = true)
+    Integer getTotal();
+
 //    @Nullable
 //    @Cacheable(value = "blogs")
 //    @Query(value = "select * from blog where id=?1", nativeQuery = true)

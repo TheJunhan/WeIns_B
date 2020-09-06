@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -197,14 +198,15 @@ public class BlogDaoImpl implements BlogDao {
     @Cacheable(value="blogs_page")
     public List<JSONObject> getPublicBlog_page(Integer index, Integer num) {
         List<JSONObject> res = new ArrayList<JSONObject>();
-        Integer tool = 0;
+        Integer tool = 1;
         Integer counter = 0;
+        Integer total = blogRepository.getTotal();
         while(true) {
-            List<Blog> blogs = blogRepository.findPage(index + tool * num, num);
-            if(blogs == null) break;
+            List<Blog> blogs = blogRepository.findPage(total - index - tool * num, num);
+            if(blogs.size() == 0) break;
             //List<BlogMongo> blogMongos = blogMongoRepository.findAll();
             boolean tool1 = false;
-            for(int i = 0; i < blogs.size(); ++i) {
+            for(int i = blogs.size() - 1; i >= 0; --i) {
                 counter++;
                 if(blogs.get(i).getType()!=3 && blogs.get(i).getType()!=7) continue;
                 if(blogs.get(i).getIs_del() == 1) continue;
@@ -393,10 +395,13 @@ public class BlogDaoImpl implements BlogDao {
         if(userMongo == null) return null;
         List<Integer> followings = userMongo.getFollowings();
         Integer counter = 0;
+        Integer tool = 1;
+        Integer total = blogRepository.getTotal();
         while(true) {
-            List<Blog> blogs = blogRepository.findPage(index, num);
+            List<Blog> blogs = blogRepository.findPage(total - index - tool * num, num);
+            assert blogs != null;
             if(blogs.size() == 0) break;
-            for(int i = 0; i < blogs.size(); ++i) {
+            for(int i = blogs.size() - 1; i >= 0; --i) {
                 counter++;
                 //判断是否能返回
                 if(blogs.get(i).getType() == 0 || blogs.get(i).getType() == 4){
@@ -831,19 +836,20 @@ public class BlogDaoImpl implements BlogDao {
          * 开始挑选推荐，
          * 目前是用最简单的推荐，即前三个喜欢的标签必定会被推荐和关注的人必会被推荐
          * **/
-        Integer tool = 0;
+        Integer tool = 1;
         Integer counter = 0;
+        Integer total = blogRepository.getTotal();
 
         while(true)
         {
 
-            List<Blog> blogs = blogRepository.findPage(index + num * tool, num);
+            List<Blog> blogs = blogRepository.findPage(total - index - num * tool, num);
 
 
             if(blogs.size() == 0) break;
             tool++;
             //System.out.println(tool);
-            for(int i = 0; i < blogs.size(); ++i)
+            for(int i = blogs.size() - 1; i >= 0; --i)
             {
                 boolean judge = false;
                 counter++;
@@ -925,18 +931,20 @@ public class BlogDaoImpl implements BlogDao {
     @Cacheable("blogs")
     public List<JSONObject> recommend_notLogin(Integer index, Integer num) {
         List<JSONObject> rec_res = new ArrayList<>();
-        Integer counter = 0, tool = 0;
+        Integer counter = 0, tool = 1;
+        Integer total = blogRepository.getTotal();
 
         while(true) {
             //每页至少推荐一个
             Integer least = 0;
             //拿到一页
-            List<Blog> blogList = blogRepository.findPage(index + num * tool, num);
+            List<Blog> blogList = blogRepository.findPage(total - index - tool * num, num);
+
             assert blogList != null;
             if(blogList.size() == 0) break;
             tool++;
             boolean flag = false;
-            for(int  i = 0; i < blogList.size(); ++i) {
+            for(int  i = blogList.size() - 1; i >= 0; --i) {
                 counter++;
                 //判断是否公开可见
                 if(blogList.get(i).getType() != 3 && blogList.get(i).getType()!= 7) continue;
