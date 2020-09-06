@@ -395,7 +395,7 @@ public class BlogDaoImpl implements BlogDao {
         Integer counter = 0;
         while(true) {
             List<Blog> blogs = blogRepository.findPage(index, num);
-            if(blogs == null) break;
+            if(blogs.size() == 0) break;
             for(int i = 0; i < blogs.size(); ++i) {
                 counter++;
                 //判断是否能返回

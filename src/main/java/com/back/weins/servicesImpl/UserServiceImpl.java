@@ -1,6 +1,5 @@
 package com.back.weins.servicesImpl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.back.weins.Constant.Constant;
 import com.back.weins.DaoImpl.UserDaoImpl;
 import com.back.weins.Utils.JwtTokenUtil;
@@ -9,7 +8,6 @@ import com.back.weins.entity.User;
 import com.back.weins.entity.UserMongo;
 import com.back.weins.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -54,7 +52,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String save(User user){
-        System.out.println(user);
         if (userDao.getByName(user.getName()) != null)
             return "error";
         userDao.save(user);
@@ -64,25 +61,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public String update(RegisterUtil registerUtil, List<User> Test){
         Boolean flag = (Test != null);
-
         User res = flag ? Test.get(0) : userDao.getOne(registerUtil.getId());
 
         if (!Objects.equals(registerUtil.getName(), res.getName())) {
             User NameRes = flag ? Test.get(1) : userDao.getByName(registerUtil.getName());
 
-            if (NameRes != null)
+            if (NameRes != null && NameRes.getId() != -1)
                 return "error";
-//            if (userDao.getByName(registerUtil.getName()) != null)
-//                return "error";
         }
 
         if (!Objects.equals(registerUtil.getPhone(), res.getPhone())) {
             User PhoneRes = flag ? Test.get(2) : userDao.getByPhone(registerUtil.getPhone());
 
-            if (PhoneRes != null)
+            if (PhoneRes != null && PhoneRes.getId() != -1)
                 return "errorPhone";
-//            if (userDao.getByPhone(registerUtil.getPhone()) != null)
-//                return "errorPhone";
         }
 
         if (registerUtil.getName() != null)
@@ -116,15 +108,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value="users", key = "#registerUtil.phone")
-    public String register(RegisterUtil registerUtil) {
-        if (userDao.getByPhone(registerUtil.getPhone()) != null) {
-            return "phone error";
-        }
+    public String register(RegisterUtil registerUtil, List<User> Test) {
+        Boolean flag = (Test != null);
 
-        if (userDao.getByName(registerUtil.getName()) != null) {
+        User PhoneRes = flag ? Test.get(0) : userDao.getByPhone(registerUtil.getPhone());
+        if (PhoneRes != null && PhoneRes.getId() != -1)
+            return "phone error";
+
+        User NameRes = flag ? Test.get(1) : userDao.getByName(registerUtil.getName());
+        if (NameRes != null && NameRes.getId() != -1)
             return "name error";
-        }
 
         User user = new User();
         user.setName(registerUtil.getName());
@@ -135,9 +128,9 @@ public class UserServiceImpl implements UserService {
         UserMongo mongo = new UserMongo();
         Map<Integer, Integer> tmp = new HashMap<>();
 
-        for(Integer i = 0; i < registerUtil.getInterests().size(); ++i) {
+        for(int i = 0; i < registerUtil.getInterests().size(); ++i)
             tmp.put(registerUtil.getInterests().get(i), 5);
-        }
+
         mongo.setInterests(tmp);
         mongo.setAvatar(registerUtil.getAvatar());
         user.setUserMongo(mongo);
@@ -158,29 +151,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value="users", key = "#phone")
-    public User login(String phone, String password){
-        User user1 = userDao.getByPhone(phone);
-        if (user1 == null) {
+    public User login(String phone, String password, User Test) {
+        User user1 = (Test != null) ? Test : userDao.getByPhone(phone);
+        if (user1 == null || ((Test != null) && Test.getId() == -1))
             return userMask(-1);
-        }
-        else if (!Objects.equals(user1.getPassword(), password)) {
+
+        else if (!Objects.equals(user1.getPassword(), password))
             return userMask(-2);
-        }
+
         User user2 = new User();
         user2.setPhone(user1.getPhone());
         user2.setPassword(user1.getPassword());
         user2.setId(user1.getId());
-        String jwt = jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user2), Constant.JWT_TTL);
+        String jwt = (Test != null) ? "HFKJSHKFUUFHDKJhskajhkjhak21u3iuehfdskjhskjahdkuwduyfew"
+                : jwtTokenUtil.createJWT(Constant.JWT_ID, JwtTokenUtil.generealSubject(user2), Constant.JWT_TTL);
         user1.setPassword(jwt);
 
         return user1;
     }
 
     @Override
-    public void follow_relation(Integer sub, Integer obj, Integer flag) {
-        User user1 = userDao.getOne(sub);
-        User user2 = userDao.getOne(obj);
+    public void follow_relation(Integer sub, Integer obj, Integer flag, List<User> Test) {
+        User user1 = (Test != null) ? Test.get(0) : userDao.getOne(sub);
+        User user2 = (Test != null) ? Test.get(1) : userDao.getOne(obj);
 
         UserMongo userMongo1 = user1.getUserMongo();
         UserMongo userMongo2 = user2.getUserMongo();
@@ -207,23 +200,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String auth(Integer sub, Integer obj, Integer target) {
-        User user1 = userDao.getOne(sub);
-        User user2 = userDao.getOne(obj);
+    public String auth(Integer sub, Integer obj, Integer target, List<User> Test) {
+        User user1 = (Test != null) ? Test.get(0) : userDao.getOne(sub);
+        User user2 = (Test != null) ? Test.get(1) : userDao.getOne(obj);
         Integer subject = user1.getType();
         Integer origin = user2.getType();
 
-        if (Objects.equals(target, origin)) {
+        if (Objects.equals(target, origin))
             return "target equals";
-        }
 
         // 主语必须是正常的管理员
         if (subject < 1)
             return "sub not admin";
 
-        if (origin == 8) {
+        if (origin == 8)
             return "obj is boss";
-        }
 
         // 对象是普通用户
         else if (origin == 0 || origin == -8) {
@@ -234,9 +225,8 @@ public class UserServiceImpl implements UserService {
             }
 
             // 对普通用户的封禁/解禁需要100的权限
-            else if (subject < 4) {
+            else if (subject < 4)
                 return "sub no ban auth";
-            }
         }
 
         else {
