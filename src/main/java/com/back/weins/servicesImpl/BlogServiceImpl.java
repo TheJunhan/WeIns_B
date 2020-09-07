@@ -35,13 +35,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, String imag, String lab) {
+    public Integer setBlog(Integer uid, Integer type, String content, String post_day, String video, String imag, String lab, User Test) {
         List<String> image = JSON.parseArray(imag, String.class);
         List<Label> label = JSON.parseArray(lab, Label.class);
 
         Integer blogId = blogDao.setBlog(uid, type, content, post_day, video, image, label);
 
-        User user = userDao.getOne(uid);
+        User user = (Test != null) ? Test : userDao.getOne(uid);
         UserMongo userMongo = user.getUserMongo();
         List<Integer> blogs = userMongo.getBlogs();
         blogs.add(blogId);
@@ -65,7 +65,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<JSONObject> getBlogsByLabel(Integer lid, Integer uid) {
-        return blogDao.getBlogsByLabel(lid, uid);
+        return blogDao.getBlogsByLabel(lid, uid, null);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<JSONObject> getBlogsLogined(Integer uid) {
-        return blogDao.getBlogsLogined(uid);
+        return blogDao.getBlogsLogined(uid, null);
     }
 
     @Override
@@ -145,14 +145,11 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<JSONObject> recommend(Integer uid, Integer index, Integer num) {
-
-        return blogDao.recomment(uid, index, num);
+        return blogDao.recommend(uid, index, num);
     }
 
     @Override
     public List<JSONObject> recommend_notLogin(Integer index, Integer num) {
         return blogDao.recommend_notLogin(index, num);
     }
-
-
 }

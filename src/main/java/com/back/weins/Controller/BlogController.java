@@ -45,12 +45,11 @@ public class BlogController {
 
     @PostMapping("/setBlog")
     public Integer setBlog(@RequestBody BlogUtil blogUtil) {
-        System.out.println(blogUtil);
         Logger LOG = LoggerFactory.getLogger(BlogController.class);
-        LOG.info("user : "+blogUtil.getUid()+" set blog : type: "+blogUtil.getType()+" content : "+blogUtil.getContent()+" day : "+
-                blogUtil.getPost_day()+" video "+ blogUtil.getVideo()+" img "+ blogUtil.getImag()+" label "+ blogUtil.getLabel());
+        LOG.info("user : "+blogUtil.getUid()+" set blog : type: "+blogUtil.getType()+" content: "+blogUtil.getContent()+" day: "+
+                blogUtil.getPost_day()+" video: "+ blogUtil.getVideo()+" images: "+ blogUtil.getImag()+" label: "+ blogUtil.getLabel());
         return blogService.setBlog(blogUtil.getUid(), blogUtil.getType(), blogUtil.getContent(),
-                blogUtil.getPost_day(), blogUtil.getVideo(), blogUtil.getImag(), blogUtil.getLabel());
+                blogUtil.getPost_day(), blogUtil.getVideo(), blogUtil.getImag(), blogUtil.getLabel(), null);
     }
 
     @GetMapping("/getPublicBlogs")

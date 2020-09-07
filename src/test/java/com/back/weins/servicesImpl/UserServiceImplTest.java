@@ -76,9 +76,8 @@ class UserServiceImplTest extends WeinsApplicationTests {
 
     @Test
     public void save() {
-        for (User user : getUsers()) {
+        for (User user : getUsers())
             userService.save(user);
-        }
 
         List<User> users = new ArrayList<User>();
         when(userDao.getAll()).thenReturn(users);
@@ -104,9 +103,8 @@ class UserServiceImplTest extends WeinsApplicationTests {
     @Test
     public void update() {
         List<User> users = getUsers();
-        for (User user: users) {
+        for (User user: users)
             userService.save(user);
-        }
 
         User user = users.get(0);
         User user1 = users.get(1);
@@ -154,11 +152,10 @@ class UserServiceImplTest extends WeinsApplicationTests {
     }
 
     @Test
-    public void registerAndLogin() {
+    public void register() {
         List<User> users = getUsers();
-        for (User user: users) {
+        for (User user: users)
             userService.save(user);
-        }
 
         User user1 = users.get(1);
         User user2 = users.get(2);
@@ -273,16 +270,4 @@ class UserServiceImplTest extends WeinsApplicationTests {
         user1.setType(8);
         assertEquals("success", userService.auth(1, 2, 3, Test));
     }
-
-//
-//    @Test
-//    public void auth() {
-//        assertEquals("target equals", userService.auth(1, 2, 7));
-//        assertEquals("obj is boss", userService.auth(2, 1, 4));
-//        assertEquals("sub not boss", userService.auth(21, 2, 0));
-//        assertEquals("sub not boss", userService.auth(21, 3, 5));
-//        assertEquals("sub not admin", userService.auth(3, 24 ,-8));
-//        assertEquals("success", userService.auth(1, 22, -7));
-//        assertEquals("success", userService.auth(1, 24, -8));
-//    }
 }

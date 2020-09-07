@@ -6,6 +6,7 @@ import com.back.weins.Dao.LabelAndBlogDao;
 import com.back.weins.WeinsApplicationTests;
 import com.back.weins.entity.Blog;
 import com.back.weins.entity.Label;
+import com.back.weins.entity.UserMongo;
 import com.back.weins.repository.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -96,8 +97,6 @@ class BlogDaoImplTest extends WeinsApplicationTests {
     @Test
     public void save() {
         String time = getTime();
-//        List<String> images = new ArrayList<String>();
-//        List<Label> labels = getLabels();
 
         Blog blog = new Blog();
         blog.setUid(1);
@@ -110,11 +109,49 @@ class BlogDaoImplTest extends WeinsApplicationTests {
     }
 
     @Test
-    public void MultiSave() {
-        for (int i = 0; i < 10; ++i) {
+    public void UtilFuncTest() {
+        blogDao.TestUtilFunctions();
+    }
+
+    @Test
+    public void MultiSaveAndLotsOfOpTest() {
+        for (int i = 0; i < 10; ++i)
             blogDao.setBlog(1, 1, content, getTime(), video, getImages(), getLabels());
-        }
+
+        assertNull(blogDao.getSingleBlog(1));
+
         List<JSONObject> expect = new ArrayList<JSONObject>();
-        List<JSONObject> pubBlogs = blogDao.getPublicBlog();
+        List<JSONObject> expectPage = new ArrayList<JSONObject>();
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("next_index", 0);
+        expectPage.add(jsonObject);
+
+        assertEquals(expect, blogDao.getPublicBlog());
+        assertEquals(expectPage, blogDao.getPublicBlog_page(0, 5));
+
+        assertEquals(expect, blogDao.getBlogsByLabel(1, 1, new UserMongo()));
+        assertNull(blogDao.getBlogsByLabel_page(1, 1, 0, 5));
+
+        assertEquals(expect, blogDao.getBlogsLogined(1, new UserMongo()));
+        assertNull(blogDao.getBlogsLogined_page(1, 0, 5));
+
+        assertNull(blogDao.getBlogsById(1, 2));
+
+        assertNull(blogDao.recommend(1, 0, 5));
+        assertEquals(expectPage, blogDao.recommend_notLogin(0, 5));
+
+        assertFalse(blogDao.setComment(1, 2, 1, "I agree with you", getTime(), 1, 1));
+        assertFalse(blogDao.removeComment(1, 1, 2));
+
+        assertFalse(blogDao.setLike(1, 1));
+        assertFalse(blogDao.removeLike(1, 1));
+
+        assertFalse(blogDao.setCollect(1, 1, true));
+        assertFalse(blogDao.setCollect(1, 1, false));
+
+        assertFalse(blogDao.setReblog(1, 1, 3, "I agree with you", getTime()));
+        assertFalse(blogDao.removeBlog(1, 1, 2));
+        assertFalse(blogDao.changeBlog(1, 1, "I disagree with you", 3));
     }
 }
