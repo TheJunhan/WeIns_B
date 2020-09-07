@@ -16,9 +16,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,11 +50,6 @@ class BlogControllerTest extends WeinsApplicationTests {
     }
 
     @Test
-    public void hello() {
-        System.out.println("hello");
-    }
-
-    @Test
     public void label() throws Exception {
         MvcResult resultSet = mockMvc.perform(get("/blog/setLabel?label=CHINA!").contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk()).andReturn();
@@ -67,15 +59,6 @@ class BlogControllerTest extends WeinsApplicationTests {
                 .andExpect(status().isOk()).andReturn();
     }
 
-
-//    uid;
-//    private Integer type;
-//    private String content;
-//    private String post_day;
-//    private String video;
-//    private String imag;
-//    private String label;
-//    private String username;
     @Test
     public void getBlogs() throws Exception {
         MvcResult setBlog = mockMvc.perform(post("/blog/setBlog").content(
@@ -121,21 +104,24 @@ class BlogControllerTest extends WeinsApplicationTests {
         MvcResult unCollect = mockMvc.perform(get("/blog/collect?uid=1&bid=1&flag=false").contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk()).andReturn();
 
-        MvcResult comment = mockMvc.perform(get("/blog/setComment").content(
+        MvcResult comment = mockMvc.perform(post("/blog/setComment").content(
                 "{ \"uid\" : 1, \"to_uid\" : 2, \"post_time\" : \"2020-09-01 08:00:00\", \"bid\" : 1, " +
                         "\"to_cid\" : 1, \"content\" : \"I agree with you\", \"root_cid\": 1 }"
         ).contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk()).andReturn();
-        MvcResult removeComment = mockMvc.perform(get("/blog/removeComment?uid=1&cid=1&type=2").contentType(MediaType.APPLICATION_JSON_VALUE))
+        MvcResult removeComment = mockMvc.perform(post("/blog/removeComment?uid=1&cid=1&type=2").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+
+        MvcResult reBlog = mockMvc.perform(post("/blog/setReblog").content(
+                "{ \"uid\" : 1, \"bid\" : 1, \"post_day\" : \"2020-09-01 08:00:00\", \"type\" : 3, " +
+                        "\"username\" : \"weins\", \"content\" : \"I agree with you\" }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult removeBlog = mockMvc.perform(get("/blog/removeBlog?uid=1&bid=1&type=2").contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk()).andReturn();
+        MvcResult changeBlog = mockMvc.perform(post("/blog/changeBlog").content(
+                "{ \"uid\" : 1, \"bid\" : 1, \"type\" : 3, \"content\" : \"I agree with you\" }"
+        ).contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk()).andReturn();
     }
-
-
-//    Integer uid;
-//    Integer to_uid;
-//    String post_time;
-//    Integer bid;
-//    Integer to_cid;
-//    String content;
-//    Integer root_cid;
 }

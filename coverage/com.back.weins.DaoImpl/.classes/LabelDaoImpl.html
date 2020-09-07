@@ -47,36 +47,39 @@
 </td>
 <td class="coverageStat">
   <span class="percent">
-    75%
+    53.3%
   </span>
   <span class="absValue">
-    (24/ 32)
+    (24/ 45)
   </span>
 </td>
 </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$273c4054</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$398e8600</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$3357599b</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$398e8600$$FastClassBySpringCGLIB$$a3fd05a8</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$7ffbcafa</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$464391a8</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$a1b7f91e</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$717ab2d5</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$a1b7f91e$$FastClassBySpringCGLIB$$ec798143</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$717ab2d5$$FastClassBySpringCGLIB$$9a75b75c</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$db8eb6e1</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$7f98725b</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$db8eb6e1$$FastClassBySpringCGLIB$$ff0937c2</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$bcd3cd9e</td>
   </tr>
   <tr>
-    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$e227da20</td>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$bf8f34ff</td>
+  </tr>
+  <tr>
+    <td class="name">LabelDaoImpl$$EnhancerBySpringCGLIB$$cb2fcd65</td>
   </tr>
   <tr>
     <td class="name">LabelDaoImpl$$FastClassBySpringCGLIB$$e9f47ee2</td>
@@ -93,10 +96,10 @@
 </td>
 <td class="coverageStat">
   <span class="percent">
-    75%
+    53.3%
   </span>
   <span class="absValue">
-    (24/ 32)
+    (24/ 45)
   </span>
 </td>
 </tr>
@@ -137,78 +140,75 @@
 <i>29</i>&nbsp;
 <i>30</i>&nbsp;        // insert new
 <b class="fc"><i>31</i>&nbsp;        if (label.getId() == null) {</b>
-<b class="fc"><i>32</i>&nbsp;            System.out.println(&quot;insert new&quot;);</b>
-<b class="fc"><i>33</i>&nbsp;            Label label1 = labelRepository.findByContent(label.getContent());</b>
-<i>34</i>&nbsp;
-<i>35</i>&nbsp;            // exists and deleted, set non-deleted
-<b class="fc"><i>36</i>&nbsp;            if (label1 != null) {</b>
-<b class="fc"><i>37</i>&nbsp;                if (label1.getFlag() == 1) {</b>
-<b class="nc"><i>38</i>&nbsp;                    label1.setFlag(0);</b>
-<b class="nc"><i>39</i>&nbsp;                    labelRepository.save(label1);</b>
-<i>40</i>&nbsp;                }
-<i>41</i>&nbsp;                else {
-<b class="fc"><i>42</i>&nbsp;                    return &quot;existed&quot;;</b>
-<i>43</i>&nbsp;                }
-<i>44</i>&nbsp;            }
-<i>45</i>&nbsp;
-<i>46</i>&nbsp;            else
-<b class="fc"><i>47</i>&nbsp;                labelRepository.save(label);</b>
-<i>48</i>&nbsp;
-<b class="fc"><i>49</i>&nbsp;            return &quot;success&quot;;</b>
-<i>50</i>&nbsp;        }
-<i>51</i>&nbsp;
-<i>52</i>&nbsp;        // update
-<i>53</i>&nbsp;        else {
-<b class="fc"><i>54</i>&nbsp;            System.out.println(&quot;update&quot;);</b>
-<b class="fc"><i>55</i>&nbsp;            Label label1 = labelRepository.findByContent(label.getContent());</b>
+<b class="fc"><i>32</i>&nbsp;            Label label1 = labelRepository.findByContent(label.getContent());</b>
+<b class="fc"><i>33</i>&nbsp;</b>
+<i>34</i>&nbsp;            // exists and deleted, set non-deleted
+<b class="nc"><i>35</i>&nbsp;            if (label1 != null) {</b>
+<b class="fc"><i>36</i>&nbsp;                if (label1.getFlag() == 1) {</b>
+<b class="fc"><i>37</i>&nbsp;                    label1.setFlag(0);</b>
+<b class="nc"><i>38</i>&nbsp;                    labelRepository.save(label1);</b>
+<b class="nc"><i>39</i>&nbsp;                }</b>
+<i>40</i>&nbsp;                else
+<b class="nc"><i>41</i>&nbsp;                    return &quot;existed&quot;;</b>
+<b class="fc"><i>42</i>&nbsp;            }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;            else
+<b class="nc"><i>45</i>&nbsp;                labelRepository.save(label);</b>
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;            return &quot;success&quot;;</b>
+<i>48</i>&nbsp;        }
+<b class="fc"><i>49</i>&nbsp;</b>
+<i>50</i>&nbsp;        // update
+<i>51</i>&nbsp;        else {
+<b class="fc"><i>52</i>&nbsp;            Label label1 = labelRepository.findByContent(label.getContent());</b>
+<i>53</i>&nbsp;
+<b class="fc"><i>54</i>&nbsp;            if (label1 != null)</b>
+<b class="nc"><i>55</i>&nbsp;                return &quot;existed&quot;;</b>
 <i>56</i>&nbsp;
-<b class="fc"><i>57</i>&nbsp;            if (label1 != null)</b>
-<b class="nc"><i>58</i>&nbsp;                return &quot;existed&quot;;</b>
-<i>59</i>&nbsp;
-<i>60</i>&nbsp;            else {
-<b class="fc"><i>61</i>&nbsp;                labelRepository.save(label);</b>
-<b class="fc"><i>62</i>&nbsp;                return &quot;update&quot;;</b>
-<i>63</i>&nbsp;            }
-<i>64</i>&nbsp;        }
-<i>65</i>&nbsp;    }
-<i>66</i>&nbsp;
-<i>67</i>&nbsp;    @Override
-<i>68</i>&nbsp;    public void deleteById(Integer id) {
-<b class="fc"><i>69</i>&nbsp;        Label label = labelRepository.getOne(id);</b>
+<b class="nc"><i>57</i>&nbsp;            else {</b>
+<b class="fc"><i>58</i>&nbsp;                labelRepository.save(label);</b>
+<b class="fc"><i>59</i>&nbsp;                return &quot;update&quot;;</b>
+<i>60</i>&nbsp;            }
+<b class="nc"><i>61</i>&nbsp;        }</b>
+<b class="nc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    @Override
+<i>65</i>&nbsp;    public void deleteById(Integer id) {
+<b class="nc"><i>66</i>&nbsp;        Label label = labelRepository.getOne(id);</b>
+<i>67</i>&nbsp;
+<b class="nc"><i>68</i>&nbsp;        if (label == null || label.getFlag() == 1)</b>
+<b class="fc"><i>69</i>&nbsp;            return;</b>
 <i>70</i>&nbsp;
-<b class="fc"><i>71</i>&nbsp;        if (label == null || label.getFlag() == 1)</b>
-<b class="fc"><i>72</i>&nbsp;            return;</b>
-<i>73</i>&nbsp;
-<b class="nc"><i>74</i>&nbsp;        label.setFlag(1);</b>
-<b class="nc"><i>75</i>&nbsp;        labelRepository.save(label);</b>
-<b class="nc"><i>76</i>&nbsp;    }</b>
-<i>77</i>&nbsp;
-<i>78</i>&nbsp;    @Override
-<i>79</i>&nbsp;    public void deleteByContent(String content) {
-<b class="fc"><i>80</i>&nbsp;        Label label = labelRepository.findByContent(content);</b>
-<i>81</i>&nbsp;
-<b class="fc"><i>82</i>&nbsp;        if (label != null &amp;&amp; label.getFlag() == 0) {</b>
-<b class="nc"><i>83</i>&nbsp;            label.setFlag(1);</b>
-<b class="nc"><i>84</i>&nbsp;            labelRepository.save(label);</b>
-<i>85</i>&nbsp;        }
-<b class="fc"><i>86</i>&nbsp;    }</b>
-<i>87</i>&nbsp;
-<i>88</i>&nbsp;    @Override
-<i>89</i>&nbsp;    public List&lt;Label&gt; getLabels() {
-<b class="fc"><i>90</i>&nbsp;        return labelRepository.findAll();</b>
-<i>91</i>&nbsp;    }
-<i>92</i>&nbsp;
-<i>93</i>&nbsp;    @Override
-<i>94</i>&nbsp;    public List&lt;Label&gt; findLabels(String lab) {
-<b class="fc"><i>95</i>&nbsp;        return labelRepository.findPuzzy(&#39;%&#39; + lab + &#39;%&#39;);</b>
-<i>96</i>&nbsp;    }
-<i>97</i>&nbsp;}
+<b class="fc"><i>71</i>&nbsp;        label.setFlag(1);</b>
+<b class="fc"><i>72</i>&nbsp;        labelRepository.save(label);</b>
+<b class="nc"><i>73</i>&nbsp;    }</b>
+<b class="nc"><i>74</i>&nbsp;</b>
+<b class="nc"><i>75</i>&nbsp;    @Override</b>
+<b class="nc"><i>76</i>&nbsp;    public void deleteByContent(String content) {</b>
+<b class="nc"><i>77</i>&nbsp;        Label label = labelRepository.findByContent(content);</b>
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;        if (label != null &amp;&amp; label.getFlag() == 0) {</b>
+<b class="fc"><i>80</i>&nbsp;            label.setFlag(1);</b>
+<b class="nc"><i>81</i>&nbsp;            labelRepository.save(label);</b>
+<b class="fc"><i>82</i>&nbsp;        }</b>
+<b class="nc"><i>83</i>&nbsp;    }</b>
+<b class="nc"><i>84</i>&nbsp;</b>
+<i>85</i>&nbsp;    @Override
+<b class="fc"><i>86</i>&nbsp;    public List&lt;Label&gt; getLabels() {</b>
+<b class="fc"><i>87</i>&nbsp;        return labelRepository.findAll();</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<b class="fc"><i>90</i>&nbsp;    @Override</b>
+<i>91</i>&nbsp;    public List&lt;Label&gt; findLabels(String lab) {
+<b class="fc"><i>92</i>&nbsp;        return labelRepository.findPuzzy(&#39;%&#39; + lab + &#39;%&#39;);</b>
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;}
 </div>
 </div>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2020-09-06 20:05</div>
+    <div style="float:right;">generated on 2020-09-07 19:20</div>
 </div>
 </body>
 </html>

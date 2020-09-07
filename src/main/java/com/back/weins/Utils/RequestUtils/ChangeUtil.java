@@ -10,11 +10,4 @@ public class ChangeUtil {
     Integer bid;
     String content;
     Integer type;
-
-//    ChangeUtil(Integer uid, Integer bid, String content, Integer type) {
-//        this.uid = uid;
-//        this.bid = bid;
-//        this.content = content;
-//        this.type = type;
-//    }
 }

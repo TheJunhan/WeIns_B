@@ -29,7 +29,6 @@ public class LabelDaoImpl implements LabelDao {
 
         // insert new
         if (label.getId() == null) {
-            System.out.println("insert new");
             Label label1 = labelRepository.findByContent(label.getContent());
 
             // exists and deleted, set non-deleted
@@ -38,9 +37,8 @@ public class LabelDaoImpl implements LabelDao {
                     label1.setFlag(0);
                     labelRepository.save(label1);
                 }
-                else {
+                else
                     return "existed";
-                }
             }
 
             else
@@ -51,7 +49,6 @@ public class LabelDaoImpl implements LabelDao {
 
         // update
         else {
-            System.out.println("update");
             Label label1 = labelRepository.findByContent(label.getContent());
 
             if (label1 != null)
